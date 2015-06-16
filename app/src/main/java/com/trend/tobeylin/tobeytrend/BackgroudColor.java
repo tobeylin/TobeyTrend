@@ -18,7 +18,7 @@ public enum BackgroudColor {
         this.colorInt = colorInt;
     }
 
-    private int getInt() {
+    public int getInt() {
         return this.colorInt;
     }
 

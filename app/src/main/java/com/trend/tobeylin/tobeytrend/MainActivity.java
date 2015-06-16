@@ -6,8 +6,10 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
+import android.widget.LinearLayout;
 
+import com.trend.tobeylin.tobeytrend.data.generator.BackgroundColorGenerator;
+import com.trend.tobeylin.tobeytrend.data.generator.KeywordGenerator;
 import com.trend.tobeylin.tobeytrend.ui.TypeEditText;
 
 import java.util.Random;
@@ -17,8 +19,10 @@ import java.util.TimerTask;
 
 public class MainActivity extends Activity implements KeywordGenerator.KeywordGeneratorListener, TypeEditText.OnTypeListener {
 
+    private LinearLayout backgroundLinearLayout = null;
     private TypeEditText keywordTypeEditText = null;
     private KeywordGenerator keywordGenerator = null;
+    private BackgroundColorGenerator backgroundColorGenerator = null;
     private Timer keywordTimer = null;
     private String[] keywords = {};
 
@@ -29,22 +33,25 @@ public class MainActivity extends Activity implements KeywordGenerator.KeywordGe
         setContentView(R.layout.activity_main);
 
         initLayout();
-        initKeywordGenerator();
+        initGenerator();
     }
 
     private void initLayout() {
 
         keywordTypeEditText = (TypeEditText) findViewById(R.id.main_testTypeTextView);
         keywordTypeEditText.setOnTypeListener(this);
+        backgroundLinearLayout = (LinearLayout) findViewById(R.id.main_backgrounLinearLayout);
 
     }
 
-    private void initKeywordGenerator() {
+    private void initGenerator() {
 
         keywordGenerator = KeywordGenerator.getInstance(this);
         keywordGenerator.setCountry(Country.TW);
         keywordGenerator.setListener(this);
-        keywordGenerator.sync();
+        keywordGenerator.sync();;
+
+        backgroundColorGenerator = BackgroundColorGenerator.getInstance();
 
     }
 
@@ -87,9 +94,11 @@ public class MainActivity extends Activity implements KeywordGenerator.KeywordGe
     }
 
     private void startKeyword(){
+
         keywordTimer = new Timer();
         keywords = keywordGenerator.getKeywords();
         keywordTimer.schedule(new KeywordTimerTask(), 1000);
+
     }
 
     private void stopKeyword(){
@@ -131,6 +140,8 @@ public class MainActivity extends Activity implements KeywordGenerator.KeywordGe
     @Override
     public void onTypeStart() {
         stopKeyword();
+        int backgroundColorInt = backgroundColorGenerator.getColor();
+        backgroundLinearLayout.setBackgroundColor(backgroundColorInt);
     }
 
     @Override
