@@ -1,7 +1,9 @@
 package com.trend.tobeylin.tobeytrend.ui;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import java.util.Timer;
@@ -12,6 +14,7 @@ import java.util.TimerTask;
  */
 public class TypeEditText extends EditText {
 
+    private Context context = null;
     private String text = "";
     private Timer typeTimer = null;
     private long TYPE_DELAY_TIME = 300;
@@ -26,14 +29,22 @@ public class TypeEditText extends EditText {
 
     public TypeEditText(Context context) {
         super(context);
+        init(context);
     }
 
     public TypeEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init(context);
     }
 
     public TypeEditText(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init(context);
+    }
+
+    private void init(Context context){
+        this.context = context;
+        hideKeyboard();
     }
 
     public void setOnTypeListener(OnTypeListener listener){
@@ -48,6 +59,7 @@ public class TypeEditText extends EditText {
 
         this.text = text;
         setText("");
+        hideKeyboard();
         typeTimer = new Timer();
         typeTimer.schedule(new TypeTimerTask(), TYPE_DELAY_TIME, TYPE_DELAY_TIME);
         if(listener != null) {
@@ -78,5 +90,12 @@ public class TypeEditText extends EditText {
             });
         }
     };
+
+    private void hideKeyboard(){
+
+        InputMethodManager imm = (InputMethodManager) (context.getSystemService(Activity.INPUT_METHOD_SERVICE));
+        imm.hideSoftInputFromWindow(this.getWindowToken(), 0);
+
+    }
 
 }

@@ -1,16 +1,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/main_backgrounLinearLayout"
+    android:id="@+id/keywordCard_backgrounLinearLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
     android:gravity="center"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <!--
     <com.trend.tobeylin.tobeytrend.ui.TypeEditText
-        android:id="@+id/main_keywordTypeTextView"
+        android:id="@+id/keywordCard_keywordTypeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@null"
@@ -18,11 +21,5 @@
         android:text="keyword"
         android:textSize="40sp"
         android:textColor="@color/keywordText" />
-    -->
-
-    <com.trend.tobeylin.tobeytrend.ui.KeywordCard
-        android:id="@+id/main_keywordCard"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 
 </LinearLayout>

@@ -6,10 +6,16 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.trend.tobeylin.tobeytrend.data.generator.BackgroundColorGenerator;
 import com.trend.tobeylin.tobeytrend.data.generator.KeywordGenerator;
+import com.trend.tobeylin.tobeytrend.ui.KeywordCard;
 import com.trend.tobeylin.tobeytrend.ui.TypeEditText;
 
 import java.util.Random;
@@ -17,10 +23,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class MainActivity extends Activity implements KeywordGenerator.KeywordGeneratorListener, TypeEditText.OnTypeListener {
+public class MainActivity extends Activity implements KeywordGenerator.KeywordGeneratorListener, KeywordCard.OnStateChangeListener {
 
-    private LinearLayout backgroundLinearLayout = null;
-    private TypeEditText keywordTypeEditText = null;
+    private KeywordCard keywordCard = null;
     private KeywordGenerator keywordGenerator = null;
     private BackgroundColorGenerator backgroundColorGenerator = null;
     private Timer keywordTimer = null;
@@ -38,9 +43,8 @@ public class MainActivity extends Activity implements KeywordGenerator.KeywordGe
 
     private void initLayout() {
 
-        keywordTypeEditText = (TypeEditText) findViewById(R.id.main_testTypeTextView);
-        keywordTypeEditText.setOnTypeListener(this);
-        backgroundLinearLayout = (LinearLayout) findViewById(R.id.main_backgrounLinearLayout);
+        keywordCard = (KeywordCard) findViewById(R.id.main_keywordCard);
+        keywordCard.setOnStateChangeListener(this);
 
     }
 
@@ -49,7 +53,7 @@ public class MainActivity extends Activity implements KeywordGenerator.KeywordGe
         keywordGenerator = KeywordGenerator.getInstance(this);
         keywordGenerator.setCountry(Country.TW);
         keywordGenerator.setListener(this);
-        keywordGenerator.sync();;
+        keywordGenerator.sync();
 
         backgroundColorGenerator = BackgroundColorGenerator.getInstance();
 
@@ -60,7 +64,8 @@ public class MainActivity extends Activity implements KeywordGenerator.KeywordGe
 
         super.onDestroy();
         keywordGenerator.removeListener();
-        keywordTypeEditText.removeOnTypeListener();
+        //keywordTypeEditText.removeOnTypeListener();
+        keywordCard.removeOnStateChangeListener();
 
     }
 
@@ -93,7 +98,7 @@ public class MainActivity extends Activity implements KeywordGenerator.KeywordGe
 
     }
 
-    private void startKeyword(){
+    private void startKeyword() {
 
         keywordTimer = new Timer();
         keywords = keywordGenerator.getKeywords();
@@ -101,7 +106,7 @@ public class MainActivity extends Activity implements KeywordGenerator.KeywordGe
 
     }
 
-    private void stopKeyword(){
+    private void stopKeyword() {
         keywordTimer.purge();
         keywordTimer = null;
     }
@@ -116,11 +121,13 @@ public class MainActivity extends Activity implements KeywordGenerator.KeywordGe
             message.obj = keywords[randomKeywordIndex];
             handler.sendMessage(message);
         }
-    };
+    }
+
+    ;
 
     public static final int KEYWORD_MESSAGE = 1;
 
-    private Handler handler = new Handler(){
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
 
@@ -129,7 +136,9 @@ public class MainActivity extends Activity implements KeywordGenerator.KeywordGe
                 case KEYWORD_MESSAGE:
 
                     String keyword = (String) msg.obj;
-                    keywordTypeEditText.startTypeText(keyword);
+                    keywordCard.setKeyword(keyword);
+                    int backgroundColorInt = backgroundColorGenerator.getColor();
+                    keywordCard.setBackgroundColor(backgroundColorInt);
                     break;
 
                 default:
@@ -138,14 +147,12 @@ public class MainActivity extends Activity implements KeywordGenerator.KeywordGe
     };
 
     @Override
-    public void onTypeStart() {
+    public void onKeywordTypeStart() {
         stopKeyword();
-        int backgroundColorInt = backgroundColorGenerator.getColor();
-        backgroundLinearLayout.setBackgroundColor(backgroundColorInt);
     }
 
     @Override
-    public void onTypeFinish() {
+    public void onKeywordTypeFinish() {
         startKeyword();
     }
 }
