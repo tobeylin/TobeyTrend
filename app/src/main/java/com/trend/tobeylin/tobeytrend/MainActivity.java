@@ -8,21 +8,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.trend.tobeylin.tobeytrend.entity.RegionTopSearchEntity;
+import com.trend.tobeylin.tobeytrend.ui.TypeEditText;
 
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class MainActivity extends Activity implements KeywordGenerator.KeywordGeneratorListener {
+public class MainActivity extends Activity implements KeywordGenerator.KeywordGeneratorListener, TypeEditText.OnTypeListener {
 
-    private TextView keywordTextView = null;
+    private TypeEditText keywordTypeEditText = null;
     private KeywordGenerator keywordGenerator = null;
+    private Timer keywordTimer = null;
     private String[] keywords = {};
 
     @Override
@@ -37,7 +34,8 @@ public class MainActivity extends Activity implements KeywordGenerator.KeywordGe
 
     private void initLayout() {
 
-        keywordTextView = (TextView) findViewById(R.id.main_keywordTextView);
+        keywordTypeEditText = (TypeEditText) findViewById(R.id.main_testTypeTextView);
+        keywordTypeEditText.setOnTypeListener(this);
 
     }
 
@@ -55,6 +53,7 @@ public class MainActivity extends Activity implements KeywordGenerator.KeywordGe
 
         super.onDestroy();
         keywordGenerator.removeListener();
+        keywordTypeEditText.removeOnTypeListener();
 
     }
 
@@ -83,14 +82,22 @@ public class MainActivity extends Activity implements KeywordGenerator.KeywordGe
     @Override
     public void onSyncFinish() {
 
-        //TO-DO: Timer
-        Timer keywordTimer = new Timer();
-        keywords = keywordGenerator.getKeywords();
-        keywordTimer.schedule(keywordTimerTask, 1000, 3000);
+        startKeyword();
 
     }
 
-    private TimerTask keywordTimerTask = new TimerTask() {
+    private void startKeyword(){
+        keywordTimer = new Timer();
+        keywords = keywordGenerator.getKeywords();
+        keywordTimer.schedule(new KeywordTimerTask(), 1000);
+    }
+
+    private void stopKeyword(){
+        keywordTimer.purge();
+        keywordTimer = null;
+    }
+
+    private class KeywordTimerTask extends TimerTask {
         @Override
         public void run() {
             Message message = new Message();
@@ -113,11 +120,21 @@ public class MainActivity extends Activity implements KeywordGenerator.KeywordGe
                 case KEYWORD_MESSAGE:
 
                     String keyword = (String) msg.obj;
-                    keywordTextView.setText(keyword);
+                    keywordTypeEditText.startTypeText(keyword);
                     break;
-                
+
                 default:
             }
         }
     };
+
+    @Override
+    public void onTypeStart() {
+        stopKeyword();
+    }
+
+    @Override
+    public void onTypeFinish() {
+        startKeyword();
+    }
 }
