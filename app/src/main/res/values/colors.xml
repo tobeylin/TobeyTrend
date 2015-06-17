@@ -2,5 +2,7 @@
 <resources>
 
     <color name="keywordText">#FFFFFF</color>
+    <color name="orange">#FFAA33</color>
+    <color name="half_transparent">#33000000</color>
 
 </resources>

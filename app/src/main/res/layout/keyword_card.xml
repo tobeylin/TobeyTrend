@@ -19,9 +19,12 @@
         android:background="@null"
         android:textCursorDrawable="@null"
         android:text="keyword"
-        android:textSize="40sp"
+        android:textSize="50sp"
         android:textColor="@color/keywordText"
         android:textStyle="bold"
-        android:inputType="textNoSuggestions"/>
+        android:inputType="textNoSuggestions"
+        android:shadowRadius="1"
+        android:shadowColor="@color/half_transparent"
+        android:shadowDy="3"/>
 
 </LinearLayout>
