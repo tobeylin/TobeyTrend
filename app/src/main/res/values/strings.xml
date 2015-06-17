@@ -3,4 +3,55 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+
+    <!-- Region -->
+    <string name="action_all">All Regions</string>
+    <string name="action_AR">Argentina</string>
+    <string name="action_AU">Australia</string>
+    <string name="action_AT">Austria</string>
+    <string name="action_BE">Belgium</string>
+    <string name="action_BR">Brazil</string>
+    <string name="action_CA">Canada</string>
+    <string name="action_CL">Chile</string>
+    <string name="action_CO">Colombia</string>
+    <string name="action_CZ">Czech Republic</string>
+    <string name="action_DE">Denmark</string>
+    <string name="action_Eg">Egypt</string>
+    <string name="action_FI">Finland</string>
+    <string name="action_FR">France</string>
+    <string name="action_GE">Germany</string>
+    <string name="action_GR">Greece</string>
+    <string name="action_HK">Hong Kong</string>
+    <string name="action_HU">Hungary</string>
+    <string name="action_IN">India</string>
+    <string name="action_ID">Indonesia</string>
+    <string name="action_IS">Israel</string>
+    <string name="action_IT">Italy</string>
+    <string name="action_JP">Japan</string>
+    <string name="action_KE">Kenya</string>
+    <string name="action_MA">Malaysia</string>
+    <string name="action_ME">Mexico</string>
+    <string name="action_NE">Netherlands</string>
+    <string name="action_NI">Nigeria</string>
+    <string name="action_NO">Norway</string>
+    <string name="action_PH">Philippines</string>
+    <string name="action_PL">Poland</string>
+    <string name="action_PT">Portugal</string>
+    <string name="action_RO">Romania</string>
+    <string name="action_RU">Russia</string>
+    <string name="action_SA">Saudi Arabia</string>
+    <string name="action_SI">Singapore</string>
+    <string name="action_ZA">South Africa</string>
+    <string name="action_KR">South Korea</string>
+    <string name="action_ES">Spain</string>
+    <string name="action_SE">Sweden</string>
+    <string name="action_CH">Switzerland</string>
+    <string name="action_TW">Taiwan</string>
+    <string name="action_TH">Thailand</string>
+    <string name="action_TR">Turkey</string>
+    <string name="action_UA">Ukraine</string>
+    <string name="action_GB">United Kingdom</string>
+    <string name="action_US">United States</string>
+    <string name="action_VN">Vietnam</string>
+
 </resources>

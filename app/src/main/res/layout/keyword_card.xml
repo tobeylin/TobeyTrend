@@ -20,6 +20,8 @@
         android:textCursorDrawable="@null"
         android:text="keyword"
         android:textSize="40sp"
-        android:textColor="@color/keywordText" />
+        android:textColor="@color/keywordText"
+        android:textStyle="bold"
+        android:inputType="textNoSuggestions"/>
 
 </LinearLayout>

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,7 +12,9 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.trend.tobeylin.tobeytrend.data.generator.BackgroundColorGenerator;
 import com.trend.tobeylin.tobeytrend.data.generator.KeywordGenerator;
@@ -25,7 +28,10 @@ import java.util.TimerTask;
 
 public class MainActivity extends Activity implements KeywordGenerator.KeywordGeneratorListener, KeywordCard.OnStateChangeListener {
 
+    public static final String TAG = MainActivity.class.getSimpleName();
+
     private KeywordCard keywordCard = null;
+    private ProgressBar progressBar = null;
     private KeywordGenerator keywordGenerator = null;
     private BackgroundColorGenerator backgroundColorGenerator = null;
     private Timer keywordTimer = null;
@@ -36,22 +42,27 @@ public class MainActivity extends Activity implements KeywordGenerator.KeywordGe
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         initLayout();
         initGenerator();
+
     }
 
     private void initLayout() {
 
+        getActionBar().setTitle("");
         keywordCard = (KeywordCard) findViewById(R.id.main_keywordCard);
+        keywordCard.setVisibility(View.INVISIBLE);
         keywordCard.setOnStateChangeListener(this);
+        progressBar = (ProgressBar) findViewById(R.id.main_progressBar);
+        progressBar.setVisibility(View.VISIBLE);
 
     }
 
     private void initGenerator() {
 
         keywordGenerator = KeywordGenerator.getInstance(this);
-        keywordGenerator.setCountry(Country.TW);
+        //TO-DO: TW to All
+        // keywordGenerator.setCountry(Country.TW);
         keywordGenerator.setListener(this);
         keywordGenerator.sync();
 
@@ -64,7 +75,6 @@ public class MainActivity extends Activity implements KeywordGenerator.KeywordGe
 
         super.onDestroy();
         keywordGenerator.removeListener();
-        //keywordTypeEditText.removeOnTypeListener();
         keywordCard.removeOnStateChangeListener();
 
     }
@@ -83,17 +93,31 @@ public class MainActivity extends Activity implements KeywordGenerator.KeywordGe
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id){
+            case R.id.action_TW:
+                updateKeywords(Country.TW);
+                break;
+            case R.id.action_US:
+                updateKeywords(Country.US);
+                break;
+            default:
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+    private void updateKeywords(Country country){
+
+        keywords = keywordGenerator.getKeywords(country);
+
+    }
+
     @Override
     public void onSyncFinish() {
 
+        progressBar.setVisibility(View.INVISIBLE);
+        keywordCard.setVisibility(View.VISIBLE);
+        updateKeywords(Country.TW);
         startKeyword();
 
     }
@@ -101,8 +125,7 @@ public class MainActivity extends Activity implements KeywordGenerator.KeywordGe
     private void startKeyword() {
 
         keywordTimer = new Timer();
-        keywords = keywordGenerator.getKeywords();
-        keywordTimer.schedule(new KeywordTimerTask(), 1000);
+        keywordTimer.schedule(new KeywordTimerTask(), 3000);
 
     }
 
@@ -136,9 +159,8 @@ public class MainActivity extends Activity implements KeywordGenerator.KeywordGe
                 case KEYWORD_MESSAGE:
 
                     String keyword = (String) msg.obj;
-                    keywordCard.setKeyword(keyword);
                     int backgroundColorInt = backgroundColorGenerator.getColor();
-                    keywordCard.setBackgroundColor(backgroundColorInt);
+                    keywordCard.setKeyword(keyword, backgroundColorInt);
                     break;
 
                 default:

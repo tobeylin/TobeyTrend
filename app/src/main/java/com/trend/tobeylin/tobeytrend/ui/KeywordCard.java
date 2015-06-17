@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -21,15 +22,20 @@ import java.util.Random;
  */
 public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeListener {
 
+    public static final String TAG = KeywordCard.class.getSimpleName();
+
     private Context context = null;
     private List<TypeEditText> keywordTypeEditTexts = null;
     private List<LinearLayout> backgroundLinearLayouts = null;
     private OnStateChangeListener listener = null;
 
     private final int DEFAULT_VIEW_BUFFER_SIZE = 2;
+    private final long DEFAULT_ANIMATION_DURATION = 600;
     private List<View> keywordCardViews = null;
     private int currentViewIndex = 0;
-    private int animationDuration = 0;
+    private long animationDuration = 0;
+    private String keyword = "keyword";
+
 
     public enum AnimationDirection {
         Right, Left, Top, Bottom;
@@ -63,7 +69,7 @@ public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeLi
         keywordCardViews = new ArrayList<>();
         keywordTypeEditTexts = new ArrayList<>();
         backgroundLinearLayouts = new ArrayList<>();
-        animationDuration = 600;
+        animationDuration = DEFAULT_ANIMATION_DURATION;
         initCardView();
 
     }
@@ -84,7 +90,7 @@ public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeLi
 
             LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
             addView(keywordCard, layoutParams);
-            int visibility = (i != 0)? View.GONE: View.VISIBLE;
+            int visibility = (i != 0)? View.INVISIBLE: View.VISIBLE;
             keywordCard.setVisibility(visibility);
 
         }
@@ -99,89 +105,110 @@ public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeLi
         this.listener = null;
     }
 
-    public void setKeyword(String keyword) {
+    public void setKeyword(String keyword, int backgroundColor) {
 
+        this.keyword = keyword;
         int nextViewIndex = (currentViewIndex + 1) % DEFAULT_VIEW_BUFFER_SIZE;
-
         View currentView = keywordCardViews.get(currentViewIndex);
         View nextView = keywordCardViews.get(nextViewIndex);
-        nextView.setVisibility(View.GONE);
 
-        keywordTypeEditTexts.get(nextViewIndex).startTypeText(keyword);
+        nextView.setVisibility(View.VISIBLE);
+        keywordTypeEditTexts.get(nextViewIndex).setText("");
+        backgroundLinearLayouts.get(nextViewIndex).setBackgroundColor(backgroundColor);
+
+        currentView.setVisibility(View.VISIBLE);
+
         transition(currentView, nextView);
-        currentViewIndex = nextViewIndex;
+
     }
 
     private void transition(final View currentView, final View nextView){
 
+        currentView.setVisibility(View.VISIBLE);
         nextView.setVisibility(View.VISIBLE);
-        ObjectAnimator transitionAnimator = getRandomAnimator(currentView, nextView);
-        transitionAnimator.addListener(new AnimatorListenerAdapter() {
+
+        List<ObjectAnimator> moveAnimators = getRandomAnimator(currentView, nextView);
+        ObjectAnimator moveInAnimator = moveAnimators.get(0);
+        ObjectAnimator moveOutAnimator = moveAnimators.get(1);
+
+        moveInAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                currentView.setVisibility(View.GONE);
-                //TO-DO: start type next view.
+
+                Log.i(TAG, "move in end");
+
+                View previosView = keywordCardViews.get(currentViewIndex);
+                previosView.setVisibility(View.GONE);
+                Log.i(TAG, "previous view = (" + previosView.getTop() + ", " + previosView.getLeft() + ")");
+
+                currentViewIndex = (currentViewIndex + 1) % DEFAULT_VIEW_BUFFER_SIZE;
+                View currentView = keywordCardViews.get(currentViewIndex);
+                currentView.setVisibility(VISIBLE);
+
+                keywordTypeEditTexts.get(currentViewIndex).startTypeText(keyword);
+                Log.i(TAG, "current view = (" + currentView.getTop() + ", " + currentView.getLeft() + ") " + keyword);
+
+
+
             }
         });
 
-        transitionAnimator.setDuration(animationDuration);
-        transitionAnimator.start();
+        moveOutAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+            }
+        });
+
+        moveInAnimator.setDuration(animationDuration);
+        moveOutAnimator.setDuration(animationDuration);
+        moveInAnimator.start();
+        moveOutAnimator.start();
 
     }
 
-    private ObjectAnimator getRandomAnimator(final View currentView, final View nextView){
+    private List<ObjectAnimator> getRandomAnimator(final View moveOutView, final View moveInView){
 
         AnimationDirection[] directions = AnimationDirection.values();
         Random random = new Random();
-        int randomDirectionIndex = random.nextInt(directions.length);
+        int randomDirectionIndex = random.nextInt(2);
         AnimationDirection randomDirection = directions[randomDirectionIndex];
 
-        return  createAnimator(randomDirection, currentView, nextView);
+        List<ObjectAnimator> moveAnimators = createMoveAnimator(randomDirection, moveOutView, moveInView);
+        return moveAnimators;
+
     }
 
-    private ObjectAnimator createAnimator(AnimationDirection direction, final View currentView, final View nextView){
+    private List<ObjectAnimator> createMoveAnimator(AnimationDirection direction, final View moveOutView, final View moveInView){
 
-        ObjectAnimator objectAnimator;
+        ObjectAnimator moveInAnimator;
+        ObjectAnimator moveOutAnimator;
         switch (direction) {
             case Right:
-                objectAnimator = ObjectAnimator.ofFloat(nextView, "translationX", getWidth(), 0f);
+                moveInAnimator = ObjectAnimator.ofFloat(moveInView, "translationX", getWidth(), 0f);
+                moveOutAnimator = ObjectAnimator.ofFloat(moveOutView, "translationX", 0f, 0 - getWidth());
                 break;
             case Left:
-                objectAnimator = ObjectAnimator.ofFloat(nextView, "translationX", 0 - getWidth(), 0f);
+                moveInAnimator = ObjectAnimator.ofFloat(moveInView, "translationX", 0 - getWidth(), 0f);
+                moveOutAnimator = ObjectAnimator.ofFloat(moveOutView, "translationX", 0f, getWidth());
                 break;
             case Top:
-                objectAnimator = ObjectAnimator.ofFloat(nextView, "translationY", 0 - getHeight(), 0f);
+                moveInAnimator = ObjectAnimator.ofFloat(moveInView, "translationY", 0 - getHeight(), 0f);
+                moveOutAnimator = ObjectAnimator.ofFloat(moveOutView, "translationY", 0f, getHeight());
                 break;
             case Bottom:
-                objectAnimator = ObjectAnimator.ofFloat(nextView, "translationY", getHeight(), 0f);
+                moveInAnimator = ObjectAnimator.ofFloat(moveInView, "translationY", getHeight(), 0f);
+                moveOutAnimator = ObjectAnimator.ofFloat(moveOutView, "translationY", 0f, 0 - getHeight());
                 break;
             default:
-                objectAnimator = ObjectAnimator.ofFloat(nextView, "translationX", getWidth(), 0f);
+                moveInAnimator = ObjectAnimator.ofFloat(moveInView, "translationX", getWidth(), 0f);
+                moveOutAnimator = ObjectAnimator.ofFloat(moveOutView, "translationX", 0f, 0 - getWidth());
         }
+        List<ObjectAnimator> moveAnimators = new ArrayList<>();
+        moveAnimators.add(moveInAnimator);
+        moveAnimators.add(moveOutAnimator);
 
-        return objectAnimator;
-
-    }
-
-    private void crossfade(final View currentView, final View nextView){
-
-        nextView.setAlpha(0f);
-        nextView.setVisibility(View.VISIBLE);
-        nextView.animate()
-                .alpha(1f)
-                .setDuration(animationDuration)
-                .setListener(null);
-
-        currentView.animate()
-                .alpha(0f)
-                .setDuration(animationDuration)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        currentView.setVisibility(View.GONE);
-                    }
-                });
+        return moveAnimators;
 
     }
 
@@ -205,7 +232,7 @@ public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeLi
 
     public void setBackgroundColor(int color) {
 
-        backgroundLinearLayouts.get(currentViewIndex).setBackgroundColor(color);
+        backgroundLinearLayouts.get((currentViewIndex + 1) % DEFAULT_VIEW_BUFFER_SIZE).setBackgroundColor(color);
 
     }
 }

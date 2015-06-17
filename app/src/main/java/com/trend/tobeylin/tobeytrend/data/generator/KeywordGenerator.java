@@ -122,11 +122,13 @@ public class KeywordGenerator {
 
     public String[] getKeywords(){
 
-        return topSearchEntity.getCountryKeywords(country.getCountryName());
+        return getKeywords(country);
 
     }
 
-    public void setOutputSize(int size) {
+    public String[] getKeywords(Country country) {
+
+        return topSearchEntity.getCountryKeywords(country.getCountryName());
 
     }
 
