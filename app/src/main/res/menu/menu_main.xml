@@ -4,6 +4,11 @@
     tools:context=".MainActivity">
 
     <item
+        android:id="@+id/action_All"
+        android:title="@string/action_all"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_TW"
         android:title="@string/action_TW"
         app:showAsAction="never" />

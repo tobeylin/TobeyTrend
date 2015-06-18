@@ -2,6 +2,9 @@ package com.trend.tobeylin.tobeytrend.entity;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by tobeylin on 15/6/15.
@@ -56,7 +59,7 @@ public class RegionTopSearchEntity implements Serializable {
     String[] UA = new String[20];
     String[] VN = new String[20];
 
-    public String[] getCountryKeywords(String countryName){
+    public List<String> getCountryKeywords(String countryName){
 
         Object keywords = null;
         try {
@@ -71,11 +74,25 @@ public class RegionTopSearchEntity implements Serializable {
             e.printStackTrace();
         }
 
-        return (String[])keywords;
+        return Arrays.asList((String[])keywords);
 
     }
 
-    public void getAllCountries(){
+    public List<String> getAllCountryKeywords(){
+
+        List<String> allKeywords = new ArrayList<>();
+
+        try {
+            Field[] countryFields = RegionTopSearchEntity.class.getDeclaredFields();
+            for (Field countryFiled : countryFields) {
+                String[] countryKeywords = (String[])countryFiled.get(this);
+                allKeywords.addAll(Arrays.asList(countryKeywords));
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        return allKeywords;
 
     }
 

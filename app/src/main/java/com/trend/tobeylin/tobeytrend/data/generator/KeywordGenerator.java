@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 import com.trend.tobeylin.tobeytrend.Country;
 import com.trend.tobeylin.tobeytrend.entity.RegionTopSearchEntity;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -120,15 +121,21 @@ public class KeywordGenerator {
 
     }
 
-    public String[] getKeywords(){
+    public List<String> getKeywords(){
 
         return getKeywords(country);
 
     }
 
-    public String[] getKeywords(Country country) {
+    public List<String> getKeywords(Country country) {
 
-        return topSearchEntity.getCountryKeywords(country.getCountryName());
+        List<String> keywords;
+        if(country == Country.All) {
+            keywords = topSearchEntity.getAllCountryKeywords();
+        } else {
+            keywords = topSearchEntity.getCountryKeywords(country.getCountryName());
+        }
+        return keywords;
 
     }
 

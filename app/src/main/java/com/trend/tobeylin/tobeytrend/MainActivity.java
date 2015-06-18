@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,6 +14,8 @@ import com.trend.tobeylin.tobeytrend.data.generator.BackgroundColorGenerator;
 import com.trend.tobeylin.tobeytrend.data.generator.KeywordGenerator;
 import com.trend.tobeylin.tobeytrend.ui.KeywordCard;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -27,8 +30,10 @@ public class MainActivity extends Activity implements KeywordGenerator.KeywordGe
     private KeywordGenerator keywordGenerator = null;
     private BackgroundColorGenerator backgroundColorGenerator = null;
     private Timer keywordTimer = null;
-    private String[] keywords = {};
+    private List<String> keywords = null;
     private final long SHOW_KEYWORD_DURATION = 3000;
+    private Country country = Country.TW;
+    private int keywordIndex = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +59,7 @@ public class MainActivity extends Activity implements KeywordGenerator.KeywordGe
     private void initGenerator() {
 
         keywordGenerator = KeywordGenerator.getInstance(this);
-        //TO-DO: TW to All
-        // keywordGenerator.setCountry(Country.TW);
+        keywordGenerator.setCountry(Country.All);
         keywordGenerator.setListener(this);
         keywordGenerator.sync();
 
@@ -87,6 +91,9 @@ public class MainActivity extends Activity implements KeywordGenerator.KeywordGe
         int id = item.getItemId();
 
         switch (id){
+            case R.id.action_All:
+                updateKeywords(Country.All);
+                break;
             case R.id.action_TW:
                 updateKeywords(Country.TW);
                 break;
@@ -100,9 +107,9 @@ public class MainActivity extends Activity implements KeywordGenerator.KeywordGe
     }
 
     private void updateKeywords(Country country){
-
+        this.country = country;
         keywords = keywordGenerator.getKeywords(country);
-
+        Collections.shuffle(keywords);
     }
 
     @Override
@@ -132,14 +139,19 @@ public class MainActivity extends Activity implements KeywordGenerator.KeywordGe
         public void run() {
             Message message = new Message();
             message.what = KEYWORD_MESSAGE;
-            Random random = new Random();
-            int randomKeywordIndex = random.nextInt(keywords.length);
-            message.obj = keywords[randomKeywordIndex];
+            message.obj = getKeyword();
             handler.sendMessage(message);
         }
     }
+    private String getKeyword(){
 
-    ;
+        if(keywordIndex == keywords.size()) {
+            updateKeywords(country);
+            keywordIndex = 0;
+        }
+        String keyword = keywords.get(keywordIndex++);
+        return keyword;
+    }
 
     public static final int KEYWORD_MESSAGE = 1;
 
