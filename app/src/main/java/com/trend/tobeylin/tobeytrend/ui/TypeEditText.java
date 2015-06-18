@@ -17,7 +17,8 @@ public class TypeEditText extends EditText {
     private Context context = null;
     private String text = "";
     private Timer typeTimer = null;
-    private long TYPE_DELAY_TIME = 300;
+    private long TYPE_DELAY_TIME = 0;
+    private long DEFAULT_TYPE_SPEED = 300;
     private OnTypeListener listener = null;
 
     public interface OnTypeListener {
@@ -61,7 +62,7 @@ public class TypeEditText extends EditText {
         setText("");
         hideKeyboard();
         typeTimer = new Timer();
-        typeTimer.schedule(new TypeTimerTask(), TYPE_DELAY_TIME, TYPE_DELAY_TIME);
+        typeTimer.schedule(new TypeTimerTask(), TYPE_DELAY_TIME, DEFAULT_TYPE_SPEED);
         if(listener != null) {
             listener.onTypeStart();
         }
