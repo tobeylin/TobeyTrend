@@ -1,8 +1,5 @@
 package com.trend.tobeylin.tobeytrend.ui;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -10,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.trend.tobeylin.tobeytrend.R;
@@ -28,7 +24,7 @@ public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeLi
 
     private Context context = null;
     private List<TypeEditText> keywordTypeEditTexts = null;
-    private List<LinearLayout> backgroundLinearLayouts = null;
+    private List<RelativeLayout> backgroundLinearLayouts = null;
     private OnStateChangeListener listener = null;
 
     private final int DEFAULT_VIEW_BUFFER_SIZE = 2;
@@ -89,8 +85,8 @@ public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeLi
             keywordTypeEditText.setOnTypeListener(this);
             keywordTypeEditTexts.add(keywordTypeEditText);
 
-            LinearLayout backgroundLinearLayout = (LinearLayout) keywordCard.findViewById(R.id.keywordCard_backgrounLinearLayout);
-            backgroundLinearLayouts.add(backgroundLinearLayout);
+            RelativeLayout backgroundRelativeLayout = (RelativeLayout) keywordCard.findViewById(R.id.keywordCard_backgrounLinearLayout);
+            backgroundLinearLayouts.add(backgroundRelativeLayout);
 
             LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
             addView(keywordCard, layoutParams);

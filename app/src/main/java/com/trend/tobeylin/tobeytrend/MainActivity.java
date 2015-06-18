@@ -80,8 +80,10 @@ public class MainActivity extends Activity implements KeywordGenerator.KeywordGe
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
         return true;
     }
 
@@ -95,6 +97,15 @@ public class MainActivity extends Activity implements KeywordGenerator.KeywordGe
         switch (id){
             case R.id.action_All:
                 country = Country.All;
+                break;
+            case R.id.action_AR:
+                country = Country.AR;
+                break;
+            case R.id.action_AU:
+                country = Country.AU;
+                break;
+            case R.id.action_IL:
+                country = Country.IL;
                 break;
             case R.id.action_TW:
                 country = Country.TW;

@@ -9,6 +9,21 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/action_AR"
+        android:title="@string/action_AR"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_AU"
+        android:title="@string/action_AU"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_IL"
+        android:title="@string/action_IL"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_TW"
         android:title="@string/action_TW"
         app:showAsAction="never" />
