@@ -4,22 +4,14 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.TranslateAnimation;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.trend.tobeylin.tobeytrend.data.generator.BackgroundColorGenerator;
 import com.trend.tobeylin.tobeytrend.data.generator.KeywordGenerator;
 import com.trend.tobeylin.tobeytrend.ui.KeywordCard;
-import com.trend.tobeylin.tobeytrend.ui.TypeEditText;
 
 import java.util.Random;
 import java.util.Timer;
@@ -36,6 +28,7 @@ public class MainActivity extends Activity implements KeywordGenerator.KeywordGe
     private BackgroundColorGenerator backgroundColorGenerator = null;
     private Timer keywordTimer = null;
     private String[] keywords = {};
+    private final long SHOW_KEYWORD_DURATION = 3000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,7 +118,7 @@ public class MainActivity extends Activity implements KeywordGenerator.KeywordGe
     private void startKeyword() {
 
         keywordTimer = new Timer();
-        keywordTimer.schedule(new KeywordTimerTask(), 3000);
+        keywordTimer.schedule(new KeywordTimerTask(), SHOW_KEYWORD_DURATION);
 
     }
 

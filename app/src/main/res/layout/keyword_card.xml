@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:background="@null"
         android:textCursorDrawable="@null"
-        android:text="keyword"
+        android:text=""
         android:textSize="50sp"
         android:textColor="@color/keywordText"
         android:textStyle="bold"

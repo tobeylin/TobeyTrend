@@ -8,6 +8,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
@@ -35,6 +37,8 @@ public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeLi
     private int currentViewIndex = 0;
     private long animationDuration = 0;
     private String keyword = "keyword";
+    private int cardWidth = 0;
+    private int cardHeight = 0;
 
 
     public enum AnimationDirection {
@@ -112,11 +116,8 @@ public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeLi
         View currentView = keywordCardViews.get(currentViewIndex);
         View nextView = keywordCardViews.get(nextViewIndex);
 
-        nextView.setVisibility(View.VISIBLE);
         keywordTypeEditTexts.get(nextViewIndex).setText("");
         backgroundLinearLayouts.get(nextViewIndex).setBackgroundColor(backgroundColor);
-
-        currentView.setVisibility(View.VISIBLE);
 
         transition(currentView, nextView);
 
@@ -127,92 +128,86 @@ public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeLi
         currentView.setVisibility(View.VISIBLE);
         nextView.setVisibility(View.VISIBLE);
 
-        List<ObjectAnimator> moveAnimators = getRandomAnimator(currentView, nextView);
-        ObjectAnimator moveInAnimator = moveAnimators.get(0);
-        ObjectAnimator moveOutAnimator = moveAnimators.get(1);
+        List<Animation> moveAnimations = getRandomDirectionAnimation();
+        Animation moveInAnimation = moveAnimations.get(0);
+        Animation moveOutAnimation = moveAnimations.get(1);
 
-        moveInAnimator.addListener(new AnimatorListenerAdapter() {
+        moveInAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
-            public void onAnimationEnd(Animator animation) {
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
 
                 Log.i(TAG, "move in end");
 
                 View previosView = keywordCardViews.get(currentViewIndex);
+                keywordTypeEditTexts.get(currentViewIndex).removeOnTypeListener();
                 previosView.setVisibility(View.GONE);
-                Log.i(TAG, "previous view = (" + previosView.getTop() + ", " + previosView.getLeft() + ")");
 
                 currentViewIndex = (currentViewIndex + 1) % DEFAULT_VIEW_BUFFER_SIZE;
                 View currentView = keywordCardViews.get(currentViewIndex);
                 currentView.setVisibility(VISIBLE);
-
+                keywordTypeEditTexts.get(currentViewIndex).setOnTypeListener(KeywordCard.this);
                 keywordTypeEditTexts.get(currentViewIndex).startTypeText(keyword);
-                Log.i(TAG, "current view = (" + currentView.getTop() + ", " + currentView.getLeft() + ") " + keyword);
-
-
 
             }
-        });
 
-        moveOutAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
+            public void onAnimationRepeat(Animation animation) {
+
             }
         });
 
-        moveInAnimator.setDuration(animationDuration);
-        moveOutAnimator.setDuration(animationDuration);
-        moveInAnimator.start();
-        moveOutAnimator.start();
+        currentView.startAnimation(moveOutAnimation);
+        nextView.startAnimation(moveInAnimation);
 
     }
-
-    private List<ObjectAnimator> getRandomAnimator(final View moveOutView, final View moveInView){
+    private List<Animation> getRandomDirectionAnimation(){
 
         AnimationDirection[] directions = AnimationDirection.values();
         Random random = new Random();
-        int randomDirectionIndex = random.nextInt(2);
+        int randomDirectionIndex = random.nextInt(directions.length);
         AnimationDirection randomDirection = directions[randomDirectionIndex];
-
-        List<ObjectAnimator> moveAnimators = createMoveAnimator(randomDirection, moveOutView, moveInView);
-        return moveAnimators;
+        return getDirectionAnimation(randomDirection);
 
     }
 
-    private List<ObjectAnimator> createMoveAnimator(AnimationDirection direction, final View moveOutView, final View moveInView){
+    private List<Animation> getDirectionAnimation(AnimationDirection direction) {
 
-        ObjectAnimator moveInAnimator;
-        ObjectAnimator moveOutAnimator;
-        switch (direction) {
+        Animation moveInAnimation;
+        Animation moveOutAnimation;
+        switch (direction){
             case Right:
-                moveInAnimator = ObjectAnimator.ofFloat(moveInView, "translationX", getWidth(), 0f);
-                moveOutAnimator = ObjectAnimator.ofFloat(moveOutView, "translationX", 0f, 0 - getWidth());
+                moveInAnimation = AnimationUtils.loadAnimation(context, R.anim.slide_right_move_in);
+                moveOutAnimation = AnimationUtils.loadAnimation(context, R.anim.slide_right_move_out);
                 break;
             case Left:
-                moveInAnimator = ObjectAnimator.ofFloat(moveInView, "translationX", 0 - getWidth(), 0f);
-                moveOutAnimator = ObjectAnimator.ofFloat(moveOutView, "translationX", 0f, getWidth());
+                moveInAnimation = AnimationUtils.loadAnimation(context, R.anim.slide_left_move_in);
+                moveOutAnimation = AnimationUtils.loadAnimation(context, R.anim.slide_left_move_out);
                 break;
             case Top:
-                moveInAnimator = ObjectAnimator.ofFloat(moveInView, "translationY", 0 - getHeight(), 0f);
-                moveOutAnimator = ObjectAnimator.ofFloat(moveOutView, "translationY", 0f, getHeight());
+                moveInAnimation = AnimationUtils.loadAnimation(context, R.anim.slide_top_move_in);
+                moveOutAnimation = AnimationUtils.loadAnimation(context, R.anim.slide_top_move_out);
                 break;
             case Bottom:
-                moveInAnimator = ObjectAnimator.ofFloat(moveInView, "translationY", getHeight(), 0f);
-                moveOutAnimator = ObjectAnimator.ofFloat(moveOutView, "translationY", 0f, 0 - getHeight());
+                moveInAnimation = AnimationUtils.loadAnimation(context, R.anim.slide_bottom_move_in);
+                moveOutAnimation = AnimationUtils.loadAnimation(context, R.anim.slide_bottom_move_out);
                 break;
             default:
-                moveInAnimator = ObjectAnimator.ofFloat(moveInView, "translationX", getWidth(), 0f);
-                moveOutAnimator = ObjectAnimator.ofFloat(moveOutView, "translationX", 0f, 0 - getWidth());
+                moveInAnimation = AnimationUtils.loadAnimation(context, R.anim.slide_right_move_in);
+                moveOutAnimation = AnimationUtils.loadAnimation(context, R.anim.slide_right_move_out);
         }
-        List<ObjectAnimator> moveAnimators = new ArrayList<>();
-        moveAnimators.add(moveInAnimator);
-        moveAnimators.add(moveOutAnimator);
-
-        return moveAnimators;
+        List<Animation> moveAnimations = new ArrayList<>();
+        moveAnimations.add(moveInAnimation);
+        moveAnimations.add(moveOutAnimation);
+        return moveAnimations;
 
     }
 
-    @Override
+        @Override
     public void onTypeStart() {
 
         if(listener != null){
