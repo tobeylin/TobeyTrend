@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:gravity="center"
+    android:gravity="center_vertical"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
@@ -22,7 +22,7 @@
         android:textSize="50sp"
         android:textColor="@color/keywordText"
         android:textStyle="bold"
-        android:inputType="textNoSuggestions"
+        android:inputType="textNoSuggestions|textMultiLine"
         android:shadowRadius="1"
         android:shadowColor="@color/half_transparent"
         android:shadowDy="3"/>
