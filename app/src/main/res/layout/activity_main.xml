@@ -4,10 +4,9 @@
     android:id="@+id/main_backgrounLinearLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFC8B4"
+    android:background="@color/yellow"
     android:gravity="center"
     tools:context=".MainActivity">
-
 
     <com.trend.tobeylin.tobeytrend.ui.KeywordCard
         android:id="@+id/main_keywordCard"
@@ -20,5 +19,18 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/main_showTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="10dp"
+        android:text="@string/main_show_region"
+        android:textColor="@color/show_region_text"
+        android:shadowRadius="1"
+        android:shadowColor="@color/half_transparent"
+        android:shadowDy="3" />
 
 </RelativeLayout>

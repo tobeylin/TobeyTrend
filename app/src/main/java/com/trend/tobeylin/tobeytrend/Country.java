@@ -5,13 +5,62 @@ package com.trend.tobeylin.tobeytrend;
  */
 public enum Country {
 
-    All("0"), ZA("40"), DE("15"), SA("36"), AR("30"), AU("8"), AT("44"), BE("41"), BR("18"), CA("13"), CL("38"), CO("32"), KR("23"), DK("49"), EG("29"), ES("26"), US("1"), FI("50"), FR("16"), GR("48"), HK("10"), HU("45"), IN("3"), ID("19"), IL("6"), IT("27"), JP("4"), KE("37"), MY("34"), MX("21"), NG("52"), NO("51"), NL("17"), PH("25"), PL("31"), PT("47"), CZ("43"), RO("39"), GB("9"), RU("14"), SG("5"), SE("42"), CH("46"), TW("12"), TH("33"), TR("24"), UA("35"), VN("28");
+    All("0", "All Regions"),
+    AR("30", "Argentina"),
+    AU("8", "Australia"),
+    AT("44", "Austria"),
+    BE("41", "Belgium"),
+    BR("18", "Brazil"),
+    CA("13", "Canada"),
+    CL("38", "Chile"),
+    CO("32", "Colombia"),
+    CZ("43", "Czech Republic"),
+    DK("49", "Denmark"),
+    EG("29", "Egypt"),
+    FI("50", "Finland"),
+    FR("16", "France"),
+    DE("15", "Germany"),
+    GR("48", "Greece"),
+    HK("10", "Hong Kong"),
+    HU("45", "Hungary"),
+    IN("3", "India"),
+    ID("19", "Indonesia"),
+    IL("6", "Israel"),
+    IT("27", "Italy"),
+    JP("4", "Japan"),
+    KE("37", "Kenya"),
+    MY("34", "Malaysia"),
+    MX("21", "Mexico"),
+    NL("17", "Netherlands"),
+    NG("52", "Nigeria"),
+    NO("51", "Norway"),
+    PH("25", "Philippines"),
+    PL("31", "Poland"),
+    PT("47", "Portugal"),
+    RO("39", "Romania"),
+    RU("14", "Russia"),
+    SA("36", "Saudi Arabia"),
+    SG("5", "Singapore"),
+    ZA("40", "South Africa"),
+    KR("23", "South Korea"),
+    ES("26","Spain"),
+    SE("42", "Sweden"),
+    CH("46", "Switzerland"),
+    TW("12", "Taiwan"),
+    TH("33", "Thailand"),
+    TR("24", "Turkey"),
+    UA("35", "Ukraine"),
+    GB("9", "United Kingdom"),
+    US("1", "United States"),
+    VN("28", "Vietnam");
 
     private String countryCode;
+    private String fullName;
 
-    Country(String countryCode) {
+    Country(String countryCode, String fullName) {
 
         this.countryCode = countryCode;
+        this.fullName = fullName;
 
     }
 
@@ -45,6 +94,10 @@ public enum Country {
 
         return this.name();
 
+    }
+
+    public String getFullName(){
+        return this.fullName;
     }
 
 }

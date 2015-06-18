@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="keywordText">#FFFFFF</color>
-    <color name="orange">#FFAA33</color>
+    <color name="keyword_text">#FFFFFF</color>
+    <color name="show_region_text">#FFFFFF</color>
     <color name="half_transparent">#33000000</color>
+    <color name="yellow">#F5B400</color>
+    <color name="red">#DB4639</color>
+    <color name="blue">#4387F4</color>
+    <color name="green">#0F9F59</color>
 
 </resources>

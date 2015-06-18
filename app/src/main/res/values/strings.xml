@@ -2,7 +2,7 @@
     <string name="app_name">TobeyTrend</string>
 
     <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+    <string name="main_show_region">Showing the latest hot searches in %s.</string>
 
     <!-- Region -->
     <string name="action_all">All Regions</string>

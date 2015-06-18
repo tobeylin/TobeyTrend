@@ -20,7 +20,7 @@
         android:textCursorDrawable="@null"
         android:text=""
         android:textSize="50sp"
-        android:textColor="@color/keywordText"
+        android:textColor="@color/keyword_text"
         android:textStyle="bold"
         android:inputType="textNoSuggestions|textMultiLine"
         android:shadowRadius="1"

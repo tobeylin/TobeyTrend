@@ -4,11 +4,11 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.trend.tobeylin.tobeytrend.data.generator.BackgroundColorGenerator;
 import com.trend.tobeylin.tobeytrend.data.generator.KeywordGenerator;
@@ -16,7 +16,6 @@ import com.trend.tobeylin.tobeytrend.ui.KeywordCard;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -27,12 +26,13 @@ public class MainActivity extends Activity implements KeywordGenerator.KeywordGe
 
     private KeywordCard keywordCard = null;
     private ProgressBar progressBar = null;
+    private TextView showCountryTextView = null;
     private KeywordGenerator keywordGenerator = null;
     private BackgroundColorGenerator backgroundColorGenerator = null;
     private Timer keywordTimer = null;
     private List<String> keywords = null;
     private final long SHOW_KEYWORD_DURATION = 3000;
-    private Country country = Country.TW;
+    private Country country = Country.All;
     private int keywordIndex = 0;
 
     @Override
@@ -53,6 +53,8 @@ public class MainActivity extends Activity implements KeywordGenerator.KeywordGe
         keywordCard.setOnStateChangeListener(this);
         progressBar = (ProgressBar) findViewById(R.id.main_progressBar);
         progressBar.setVisibility(View.VISIBLE);
+        showCountryTextView = (TextView) findViewById(R.id.main_showTextView);
+        setShowCountry(country.getFullName());
 
     }
 
@@ -92,24 +94,30 @@ public class MainActivity extends Activity implements KeywordGenerator.KeywordGe
 
         switch (id){
             case R.id.action_All:
-                updateKeywords(Country.All);
+                country = Country.All;
                 break;
             case R.id.action_TW:
-                updateKeywords(Country.TW);
+                country = Country.TW;
                 break;
             case R.id.action_US:
-                updateKeywords(Country.US);
+                country = Country.US;
                 break;
             default:
         }
 
+        updateKeywords();
+        setShowCountry(country.getFullName());
+
         return super.onOptionsItemSelected(item);
     }
 
-    private void updateKeywords(Country country){
-        this.country = country;
+    private void updateKeywords(){
         keywords = keywordGenerator.getKeywords(country);
         Collections.shuffle(keywords);
+    }
+
+    private void setShowCountry(String country){
+        showCountryTextView.setText(getString(R.string.main_show_region, country));
     }
 
     @Override
@@ -117,7 +125,7 @@ public class MainActivity extends Activity implements KeywordGenerator.KeywordGe
 
         progressBar.setVisibility(View.INVISIBLE);
         keywordCard.setVisibility(View.VISIBLE);
-        updateKeywords(Country.TW);
+        updateKeywords();
         startKeyword();
 
     }
@@ -146,7 +154,7 @@ public class MainActivity extends Activity implements KeywordGenerator.KeywordGe
     private String getKeyword(){
 
         if(keywordIndex == keywords.size()) {
-            updateKeywords(country);
+            updateKeywords();
             keywordIndex = 0;
         }
         String keyword = keywords.get(keywordIndex++);
