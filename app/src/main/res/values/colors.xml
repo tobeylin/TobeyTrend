@@ -2,6 +2,7 @@
 <resources>
 
     <color name="keyword_text">#FFFFFF</color>
+    <color name="country_text">#FFFFFF</color>
     <color name="show_region_text">#FFFFFF</color>
     <color name="half_transparent">#33000000</color>
     <color name="yellow">#F5B400</color>

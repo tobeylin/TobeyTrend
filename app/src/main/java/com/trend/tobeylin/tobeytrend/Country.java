@@ -1,5 +1,8 @@
 package com.trend.tobeylin.tobeytrend;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by tobeylin on 15/6/15.
  */
@@ -54,12 +57,12 @@ public enum Country {
     US("1", "United States"),
     VN("28", "Vietnam");
 
-    private String countryCode;
+    private String code;
     private String fullName;
 
-    Country(String countryCode, String fullName) {
+    Country(String code, String fullName) {
 
-        this.countryCode = countryCode;
+        this.code = code;
         this.fullName = fullName;
 
     }
@@ -70,7 +73,7 @@ public enum Country {
         Country result = Country.TW;
 
         for (int i = 0; i < countries.length; ++i) {
-            if(countries[i].getCountryCode().equals(countryCode)) {
+            if(countries[i].getCode().equals(countryCode)) {
                 result = countries[i];
                 break;
             }
@@ -78,26 +81,55 @@ public enum Country {
         return result;
     }
 
-    public static Country getCountryByName(String countryName) {
+    public static Country getCountryBySimpleName(String countryName) {
 
+        //TO-DO: valueOf
         return valueOf(countryName);
 
     }
 
-    public String getCountryCode() {
+    public static Country getCountryByFullName(String fullName) {
 
-        return this.countryCode;
+        Country[] countries = Country.values();
+        Country result = Country.TW;
+
+        for (int i = 0; i < countries.length; ++i) {
+            if(countries[i].getFullName().equals(fullName)) {
+                result = countries[i];
+                break;
+            }
+        }
+        return result;
 
     }
 
-    public String getCountryName() {
+    public String getCode() {
+
+        return this.code;
+
+    }
+
+    public String getSimpleName() {
 
         return this.name();
 
     }
 
     public String getFullName(){
+
         return this.fullName;
+
+    }
+
+    public static List<String> getAllCountriesFullName(){
+
+        Country[] countries = Country.values();
+        List<String> countryFullNames = new ArrayList<>();
+        for(Country country: countries){
+            countryFullNames.add(country.getFullName());
+        }
+        return countryFullNames;
+
     }
 
 }

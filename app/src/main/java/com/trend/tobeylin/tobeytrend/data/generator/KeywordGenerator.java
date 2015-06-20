@@ -13,7 +13,6 @@ import com.google.gson.Gson;
 import com.trend.tobeylin.tobeytrend.Country;
 import com.trend.tobeylin.tobeytrend.entity.RegionTopSearchEntity;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -111,8 +110,8 @@ public class KeywordGenerator {
         Country[] countries = Country.values();
 
         for(int i = 0; i < countries.length; ++i) {
-            String countryCode = countries[i].getCountryCode();
-            String countryName = countries[i].getCountryName();
+            String countryCode = countries[i].getCode();
+            String countryName = countries[i].getSimpleName();
             String pattern = "\"" + countryCode + "\"";
             text = text.replaceFirst(pattern, countryName);
         }
@@ -133,7 +132,7 @@ public class KeywordGenerator {
         if(country == Country.All) {
             keywords = topSearchEntity.getAllCountryKeywords();
         } else {
-            keywords = topSearchEntity.getCountryKeywords(country.getCountryName());
+            keywords = topSearchEntity.getCountryKeywords(country.getSimpleName());
         }
         return keywords;
 

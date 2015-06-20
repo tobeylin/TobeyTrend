@@ -1,13 +1,23 @@
 package com.trend.tobeylin.tobeytrend;
 
+import android.app.ActionBar;
 import android.app.Activity;
+import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import com.trend.tobeylin.tobeytrend.data.generator.BackgroundColorGenerator;
@@ -20,7 +30,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class MainActivity extends Activity implements KeywordGenerator.KeywordGeneratorListener, KeywordCard.OnStateChangeListener {
+public class MainActivity extends Activity implements KeywordGenerator.KeywordGeneratorListener, KeywordCard.OnStateChangeListener, AdapterView.OnItemSelectedListener {
 
     public static final String TAG = MainActivity.class.getSimpleName();
 
@@ -58,6 +68,35 @@ public class MainActivity extends Activity implements KeywordGenerator.KeywordGe
 
     }
 
+    private void initCountrySpinner(){
+
+        View actionBarView = LayoutInflater.from(this).inflate(R.layout.actionbar, null, false);
+        actionBarView.setLayoutParams(new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT));
+        Spinner countrySpinner = (Spinner) actionBarView.findViewById(R.id.actionbar_selectCountrySpinner);
+        SpinnerAdapter countrySpinnerAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, Country.getAllCountriesFullName());
+        countrySpinner.setAdapter(countrySpinnerAdapter);
+        countrySpinner.setOnItemSelectedListener(this);
+        getActionBar().setDisplayShowCustomEnabled(true);
+        getActionBar().setCustomView(actionBarView);
+
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+        List<String> countries = Country.getAllCountriesFullName();
+        String selectCountryFullName = countries.get(position);
+        country = Country.getCountryByFullName(selectCountryFullName);
+        updateKeywords();
+        setShowCountry(country.getFullName());
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+
     private void initGenerator() {
 
         keywordGenerator = KeywordGenerator.getInstance(this);
@@ -78,50 +117,6 @@ public class MainActivity extends Activity implements KeywordGenerator.KeywordGe
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        switch (id){
-            case R.id.action_All:
-                country = Country.All;
-                break;
-            case R.id.action_AR:
-                country = Country.AR;
-                break;
-            case R.id.action_AU:
-                country = Country.AU;
-                break;
-            case R.id.action_IL:
-                country = Country.IL;
-                break;
-            case R.id.action_TW:
-                country = Country.TW;
-                break;
-            case R.id.action_US:
-                country = Country.US;
-                break;
-            default:
-        }
-
-        updateKeywords();
-        setShowCountry(country.getFullName());
-
-        return super.onOptionsItemSelected(item);
-    }
-
     private void updateKeywords(){
         keywords = keywordGenerator.getKeywords(country);
         Collections.shuffle(keywords);
@@ -136,6 +131,7 @@ public class MainActivity extends Activity implements KeywordGenerator.KeywordGe
 
         progressBar.setVisibility(View.INVISIBLE);
         keywordCard.setVisibility(View.VISIBLE);
+        initCountrySpinner();
         updateKeywords();
         startKeyword();
 
