@@ -13,9 +13,8 @@ import com.google.gson.Gson;
 import com.trend.tobeylin.tobeytrend.Country;
 import com.trend.tobeylin.tobeytrend.entity.RegionTopSearchEntity;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by tobeylin on 15/6/15.
@@ -26,25 +25,22 @@ public class KeywordGenerator {
     private static final String TOP_SEARCH_REQUEST_URL = "http://hawttrends.appspot.com/api/terms/";
 
     private static KeywordGenerator instance = null;
-
-    private Map<String, List<String>> topSearchByRegion;
-    private int outputSize = 1;
+    private List<String> keywords = null;
     private KeywordGeneratorListener listener = null;
     private RegionTopSearchEntity topSearchEntity = null;
-    private Context context = null;
     private RequestQueue requestQueue = null;
     private Country country = Country.All;
+    private int keywordPointer = 0;
+
 
     public interface KeywordGeneratorListener{
 
-        public void onSyncFinish();
+        void onSyncFinish();
 
     }
 
     private KeywordGenerator(Context context) {
 
-        this.context = context;
-        topSearchByRegion = new HashMap<>();
         requestQueue = Volley.newRequestQueue(context);
 
     }
@@ -73,6 +69,7 @@ public class KeywordGenerator {
     public void setCountry(Country country){
 
         this.country = country;
+        updateKeywords();
 
     }
 
@@ -87,6 +84,7 @@ public class KeywordGenerator {
                 response = replaceNumber(response);
                 Gson gson = new Gson();
                 topSearchEntity = gson.fromJson(response, RegionTopSearchEntity.class);
+                keywords = getShuffleKeywords();
 
                 if (listener != null) {
                     listener.onSyncFinish();
@@ -136,6 +134,29 @@ public class KeywordGenerator {
         }
         return keywords;
 
+    }
+
+    private List<String> getShuffleKeywords(){
+
+        List<String> keywords = getKeywords();
+        Collections.shuffle(keywords);
+        return keywords;
+
+    }
+
+    public String getRandomKeyword(){
+
+        if(keywordPointer == keywords.size()){
+            updateKeywords();
+            keywordPointer = 0;
+        }
+        String keyword = keywords.get(keywordPointer++);
+
+        return keyword;
+    }
+
+    private void updateKeywords(){
+        keywords = getShuffleKeywords();
     }
 
 }

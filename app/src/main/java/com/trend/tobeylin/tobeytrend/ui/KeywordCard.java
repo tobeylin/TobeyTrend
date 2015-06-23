@@ -31,10 +31,9 @@ public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeLi
     private final long DEFAULT_ANIMATION_DURATION = 600;
     private List<View> keywordCardViews = null;
     private int currentViewIndex = 0;
-    private long animationDuration = 0;
     private String keyword = "keyword";
-    private int cardWidth = 0;
-    private int cardHeight = 0;
+    private int[] backgroundColors;
+    private int backgroundColorIndex = 0;
 
 
     public enum AnimationDirection {
@@ -69,7 +68,6 @@ public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeLi
         keywordCardViews = new ArrayList<>();
         keywordTypeEditTexts = new ArrayList<>();
         backgroundLinearLayouts = new ArrayList<>();
-        animationDuration = DEFAULT_ANIMATION_DURATION;
         initCardView();
 
     }
@@ -105,6 +103,20 @@ public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeLi
         this.listener = null;
     }
 
+    public void setKeyword(String keyword) {
+
+        this.keyword = keyword;
+        int nextViewIndex = (currentViewIndex + 1) % DEFAULT_VIEW_BUFFER_SIZE;
+        View currentView = keywordCardViews.get(currentViewIndex);
+        View nextView = keywordCardViews.get(nextViewIndex);
+
+        keywordTypeEditTexts.get(nextViewIndex).setText("");
+        backgroundLinearLayouts.get(nextViewIndex).setBackgroundColor(getBackgroundColor());
+
+        transition(currentView, nextView);
+
+    }
+
     public void setKeyword(String keyword, int backgroundColor) {
 
         this.keyword = keyword;
@@ -136,8 +148,6 @@ public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeLi
 
             @Override
             public void onAnimationEnd(Animation animation) {
-
-                Log.i(TAG, "move in end");
 
                 View previosView = keywordCardViews.get(currentViewIndex);
                 keywordTypeEditTexts.get(currentViewIndex).removeOnTypeListener();
@@ -221,9 +231,28 @@ public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeLi
 
     }
 
+    /**
+     * Set the background color of next keyword.
+     * @param color
+     */
     public void setBackgroundColor(int color) {
 
         backgroundLinearLayouts.get((currentViewIndex + 1) % DEFAULT_VIEW_BUFFER_SIZE).setBackgroundColor(color);
+
+    }
+
+    /**
+     * Set a background color list. The background color of keyword card will be set according to the order of this list
+     * @param backgroundColors
+     */
+    public void setBackgroundColors(int[] backgroundColors){
+        this.backgroundColors = backgroundColors;
+    }
+
+    private int getBackgroundColor(){
+
+        backgroundColorIndex = (backgroundColorIndex == backgroundColors.length)? 0: backgroundColorIndex;
+        return backgroundColors[backgroundColorIndex++];
 
     }
 }

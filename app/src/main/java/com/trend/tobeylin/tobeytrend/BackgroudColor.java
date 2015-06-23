@@ -14,12 +14,23 @@ public enum BackgroudColor {
 
     private int colorInt;
 
-    private BackgroudColor(int colorInt) {
+    BackgroudColor(int colorInt) {
         this.colorInt = colorInt;
     }
 
     public int getInt() {
         return this.colorInt;
+    }
+
+    public static int[] getAll(){
+
+        BackgroudColor[] colors = BackgroudColor.values();
+        int[] colorInt = new int[4];
+        for(int i = 0; i < colorInt.length; ++i){
+            colorInt[i] = colors[i].getInt();
+        }
+        return colorInt;
+
     }
 
 }
