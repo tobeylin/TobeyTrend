@@ -28,6 +28,7 @@ local.properties
 # the project can be imported from settings.gradle
 .idea
 *.iml
+app/app.iml
 
 # Old-style IDEA project files
 *.ipr
