@@ -20,7 +20,7 @@ public class TypeEditText extends EditText implements View.OnTouchListener {
     private String text = "";
     private Timer typeTimer = null;
     private long TYPE_DELAY_TIME = 0;
-    private long DEFAULT_TYPE_SPEED = 300;
+    private long DEFAULT_TYPE_SPEED = 150;
     private OnTypeListener listener = null;
 
     public interface OnTypeListener {

@@ -18,7 +18,7 @@ public class KeywordCardAdapter extends RecyclerView.Adapter<KeywordCardAdapter.
 
     private final int DEFAULT_GRID_WIDTH_COUNT = 2;
     private final int DEFAULT_GRID_HEIGHT_COUNT = 2;
-    private final long DEFAULT_SHOW_KEYWORD_DURATION = 3000;
+    private final long DEFAULT_SHOW_KEYWORD_DURATION = 2000;
     private int gridWidthCount = DEFAULT_GRID_WIDTH_COUNT;
     private int gridHeightCount = DEFAULT_GRID_HEIGHT_COUNT;
     private long show_keyword_duration = DEFAULT_SHOW_KEYWORD_DURATION;
