@@ -24,10 +24,8 @@ public class TypeEditText extends EditText implements View.OnTouchListener {
     private OnTypeListener listener = null;
 
     public interface OnTypeListener {
-
         void onTypeStart();
         void onTypeFinish();
-
     }
 
     public TypeEditText(Context context) {
