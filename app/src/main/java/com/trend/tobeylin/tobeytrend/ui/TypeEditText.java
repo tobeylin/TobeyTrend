@@ -3,6 +3,8 @@ package com.trend.tobeylin.tobeytrend.ui;
 import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
@@ -12,7 +14,7 @@ import java.util.TimerTask;
 /**
  * Created by tobeylin on 15/6/16.
  */
-public class TypeEditText extends EditText {
+public class TypeEditText extends EditText implements View.OnTouchListener {
 
     private Context context = null;
     private String text = "";
@@ -46,6 +48,17 @@ public class TypeEditText extends EditText {
     private void init(Context context){
         this.context = context;
         hideKeyboard();
+        setOnTouchListener(this);
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        return true;
+    }
+
+    @Override
+    protected void onSelectionChanged(int selStart, int selEnd) {
+        setSelection(this.length());
     }
 
     public void setOnTypeListener(OnTypeListener listener){
