@@ -4,6 +4,12 @@
     <string name="hello_world">Hello world!</string>
     <string name="main_show_region">Showing the latest hot searches in %s.</string>
 
+    <string name="select_view_dialog_title">Select View</string>
+    <string name="select_view_dialog_width">Width</string>
+    <string name="select_view_dialog_height">Height</string>
+    <string name="select_view_confirm_button">Confirm</string>
+    <string name="select_view_cancel_button">Cancel</string>
+
     <!-- Region -->
     <string name="action_all">All Regions</string>
     <string name="action_AR">Argentina</string>

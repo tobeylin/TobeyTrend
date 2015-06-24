@@ -1,5 +1,6 @@
 package com.trend.tobeylin.tobeytrend.ui;
 
+import android.content.Context;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,16 +17,25 @@ import com.trend.tobeylin.tobeytrend.data.generator.KeywordGenerator;
  */
 public class KeywordCardAdapter extends RecyclerView.Adapter<KeywordCardAdapter.ViewHolder> {
 
-    private final int DEFAULT_GRID_WIDTH_COUNT = 2;
-    private final int DEFAULT_GRID_HEIGHT_COUNT = 2;
+    private final int DEFAULT_GRID_WIDTH_COUNT = 1;
+    private final int DEFAULT_GRID_HEIGHT_COUNT = 1;
     private final long DEFAULT_SHOW_KEYWORD_DURATION = 2000;
     private int gridWidthCount = DEFAULT_GRID_WIDTH_COUNT;
     private int gridHeightCount = DEFAULT_GRID_HEIGHT_COUNT;
     private long show_keyword_duration = DEFAULT_SHOW_KEYWORD_DURATION;
     private KeywordGenerator keywordGenerator;
+    private Context context;
 
-    public KeywordCardAdapter(KeywordGenerator keywordGenerator){
+    public KeywordCardAdapter(Context context, KeywordGenerator keywordGenerator){
+        this.context = context;
         this.keywordGenerator = keywordGenerator;
+    }
+
+    public KeywordCardAdapter(Context context, KeywordGenerator keywordGenerator, int widthCount, int heightCount){
+        this.context = context;
+        this.keywordGenerator = keywordGenerator;
+        this.gridWidthCount = widthCount;
+        this.gridHeightCount = heightCount;
     }
 
     public void setKeywordGenerator(KeywordGenerator keywordGenerator){
@@ -46,9 +56,9 @@ public class KeywordCardAdapter extends RecyclerView.Adapter<KeywordCardAdapter.
         LayoutInflater layoutInflater = LayoutInflater.from(viewGroup.getContext());
         View keywordCardView = layoutInflater.inflate(R.layout.keyword_card_item, viewGroup, false);
         final ViewHolder viewHolder = new ViewHolder(keywordCardView);
-
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, getItemHeight(viewGroup));
         keywordCardView.setLayoutParams(layoutParams);
+        viewHolder.keywordCard.setKeywordTextSize(getTextSize());
         viewHolder.keywordCard.setBackgroundColors(BackgroudColor.getAll());
         viewHolder.keywordCard.setOnStateChangeListener(new KeywordCard.OnStateChangeListener() {
             @Override
@@ -100,14 +110,32 @@ public class KeywordCardAdapter extends RecyclerView.Adapter<KeywordCardAdapter.
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
+        public View view;
         public KeywordCard keywordCard;
 
         public ViewHolder(View keywordCardView){
             super(keywordCardView);
+            this.view = keywordCardView;
             this.keywordCard = (KeywordCard) keywordCardView.findViewById(R.id.item_keywordCard);
         }
 
     }
 
+    private float getTextSize(){
+
+        int total = gridWidthCount * gridHeightCount;
+        float textSize;
+        if (total <= 2){
+            textSize = context.getResources().getDimension(R.dimen.keyword_text_size_1);
+        } else if (total > 2 && total <= 4){
+            textSize = context.getResources().getDimension(R.dimen.keyword_text_size_2);
+        }else if (total > 4 && total <= 10){
+            textSize = context.getResources().getDimension(R.dimen.keyword_text_size_3);
+        } else {
+            textSize = context.getResources().getDimension(R.dimen.keyword_text_size_5);
+        }
+
+        return textSize;
+    }
 
 }

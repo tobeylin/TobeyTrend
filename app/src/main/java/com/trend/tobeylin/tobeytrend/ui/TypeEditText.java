@@ -96,7 +96,6 @@ public class TypeEditText extends EditText implements View.OnTouchListener {
                             listener.onTypeFinish();
                         }
                         typeTimer.cancel();
-                        typeTimer = null;
                     }
                 }
             });

@@ -3,6 +3,7 @@ package com.trend.tobeylin.tobeytrend.ui;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
@@ -22,6 +23,8 @@ public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeLi
 
     public static final String TAG = KeywordCard.class.getSimpleName();
 
+    private static final int DEFAULT_VIEW_WIDTH = 300;
+    private static final int DEFAULT_VIEW_HEIGHT = 300;
     private Context context = null;
     private List<TypeEditText> keywordTypeEditTexts = null;
     private List<RelativeLayout> backgroundLinearLayouts = null;
@@ -34,6 +37,7 @@ public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeLi
     private String keyword = "keyword";
     private int[] backgroundColors;
     private int backgroundColorIndex = 0;
+
 
 
     public enum AnimationDirection {
@@ -254,5 +258,41 @@ public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeLi
         backgroundColorIndex = (backgroundColorIndex == backgroundColors.length)? 0: backgroundColorIndex;
         return backgroundColors[backgroundColorIndex++];
 
+    }
+
+//    @Override
+//    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+//
+//        int width  = measureDimension(DEFAULT_VIEW_WIDTH, widthMeasureSpec);
+//        int height = measureDimension(DEFAULT_VIEW_HEIGHT, heightMeasureSpec);
+//        super.setMeasuredDimension(width, height);
+//
+//
+//        //Log.i(TAG, "Width = " + getMeasuredWidth() + " Height = " + getMeasuredHeight());
+//    }
+
+    private int measureDimension(int defaultSize, int measureSpec){
+
+        int result = 0;
+
+        int specMode = MeasureSpec.getMode(measureSpec);
+        int specSize = MeasureSpec.getSize(measureSpec);
+
+        if (specMode == MeasureSpec.EXACTLY) {
+            result = specSize;
+            Log.i(TAG, "EXACTLY " + result);
+        } else if (specMode == MeasureSpec.AT_MOST) {
+            result = Math.min(defaultSize, specSize);
+            Log.i(TAG, "AT_MOST " + result);
+        } else {
+            result = defaultSize;
+        }
+
+        return result;
+    }
+
+    public void setKeywordTextSize(float textSizeSp){
+        keywordTypeEditTexts.get(0).setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeSp);
+        keywordTypeEditTexts.get(1).setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeSp);
     }
 }
