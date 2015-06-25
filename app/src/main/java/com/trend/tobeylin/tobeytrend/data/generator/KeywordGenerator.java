@@ -33,7 +33,7 @@ public class KeywordGenerator {
     private int keywordPointer = 0;
 
 
-    public interface KeywordGeneratorListener{
+    public interface KeywordGeneratorListener {
 
         void onSyncFinish();
 
@@ -45,35 +45,35 @@ public class KeywordGenerator {
 
     }
 
-    public static KeywordGenerator getInstance(Context context){
+    public static KeywordGenerator getInstance(Context context) {
 
-        if(instance == null){
+        if (instance == null) {
             instance = new KeywordGenerator(context);
         }
         return instance;
 
     }
 
-    public void setListener(KeywordGeneratorListener listener){
+    public void setListener(KeywordGeneratorListener listener) {
 
         this.listener = listener;
 
     }
 
-    public void removeListener(){
+    public void removeListener() {
 
         this.listener = null;
 
     }
 
-    public void setCountry(Country country){
+    public void setCountry(Country country) {
 
         this.country = country;
         updateKeywords();
 
     }
 
-    public void sync(){
+    public void sync() {
 
         StringRequest getTopSearchRequest = new StringRequest(Request.Method.GET, TOP_SEARCH_REQUEST_URL, new Response.Listener<String>() {
             @Override
@@ -103,11 +103,11 @@ public class KeywordGenerator {
 
     }
 
-    private String replaceNumber(String text){
+    private String replaceNumber(String text) {
 
         Country[] countries = Country.values();
 
-        for(int i = 0; i < countries.length; ++i) {
+        for (int i = 0; i < countries.length; ++i) {
             String countryCode = countries[i].getCode();
             String countryName = countries[i].getSimpleName();
             String pattern = "\"" + countryCode + "\"";
@@ -118,7 +118,7 @@ public class KeywordGenerator {
 
     }
 
-    public List<String> getKeywords(){
+    public List<String> getKeywords() {
 
         return getKeywords(country);
 
@@ -127,7 +127,7 @@ public class KeywordGenerator {
     public List<String> getKeywords(Country country) {
 
         List<String> keywords;
-        if(country == Country.All) {
+        if (country == Country.All) {
             keywords = topSearchEntity.getAllCountryKeywords();
         } else {
             keywords = topSearchEntity.getCountryKeywords(country.getSimpleName());
@@ -136,7 +136,7 @@ public class KeywordGenerator {
 
     }
 
-    private List<String> getShuffleKeywords(){
+    private List<String> getShuffleKeywords() {
 
         List<String> keywords = getKeywords();
         Collections.shuffle(keywords);
@@ -144,19 +144,21 @@ public class KeywordGenerator {
 
     }
 
-    public String getRandomKeyword(){
+    public String getRandomKeyword() {
 
-        if(keywordPointer == keywords.size()){
+        if (keywordPointer == keywords.size()) {
             updateKeywords();
             keywordPointer = 0;
         }
-        String keyword = keywords.get(keywordPointer++);
 
-        return keyword;
+        return keywords.get(keywordPointer++);
     }
 
-    private void updateKeywords(){
+    private void updateKeywords() {
+
+        keywordPointer = 0;
         keywords = getShuffleKeywords();
+
     }
 
 }
