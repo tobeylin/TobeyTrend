@@ -133,7 +133,7 @@ public class KeywordCardAdapter extends RecyclerView.Adapter<KeywordCardAdapter.
         }else if (total > 4 && total <= 10){
             textSize = context.getResources().getDimension(R.dimen.keyword_text_size_3);
         } else {
-            textSize = context.getResources().getDimension(R.dimen.keyword_text_size_5);
+            textSize = context.getResources().getDimension(R.dimen.keyword_text_size_4);
         }
 
         return textSize;
