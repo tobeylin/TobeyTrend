@@ -60,5 +60,6 @@
     <string name="action_US">United States</string>
     <string name="action_VN">Vietnam</string>
     <string name="title_activity_test">TestActivity</string>
+    <string name="action_settings">Settings</string>
 
 </resources>

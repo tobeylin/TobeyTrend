@@ -9,6 +9,8 @@ import android.view.View;
  */
 public class KeywordCardLayoutManager extends GridLayoutManager{
 
+    public static final String TAG = KeywordCardLayoutManager.class.getSimpleName();
+
     private static final int DEFAULT_WIDTH_COUNT = 1;
     private static final int DEFAULT_HEIGHT_COUNT = 1;
     private int widthCount = DEFAULT_WIDTH_COUNT;
