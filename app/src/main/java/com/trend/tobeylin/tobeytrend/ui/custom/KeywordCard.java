@@ -251,6 +251,8 @@ public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeLi
      */
     public void setBackgroundColors(int[] backgroundColors){
         this.backgroundColors = backgroundColors;
+        Random random  = new Random();
+        backgroundColorIndex = random.nextInt(this.backgroundColors.length);
     }
 
     private int getBackgroundColor(){
