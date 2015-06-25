@@ -86,6 +86,8 @@ public class MainActivity extends FragmentActivity implements KeywordGenerator.K
         String selectCountryFullName = countries.get(position);
         country = Country.getCountryByFullName(selectCountryFullName);
         keywordGenerator.setCountry(country);
+        keywordCardAdapter = new KeywordCardAdapter(this, keywordGenerator, gridWidth, gridHeight);
+        keywordCardRecycleView.setAdapter(keywordCardAdapter);
         setShowCountry(country.getFullName());
 
     }
