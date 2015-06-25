@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.trend.tobeylin.tobeytrend.Country;
 import com.trend.tobeylin.tobeytrend.R;
 import com.trend.tobeylin.tobeytrend.data.generator.KeywordGenerator;
+import com.trend.tobeylin.tobeytrend.ui.adapter.CountrySpinnerAdapter;
 import com.trend.tobeylin.tobeytrend.ui.adapter.KeywordCardAdapter;
 import com.trend.tobeylin.tobeytrend.ui.adapter.KeywordCardLayoutManager;
 
@@ -70,7 +71,7 @@ public class MainActivity extends FragmentActivity implements KeywordGenerator.K
         ImageView gridImageView = (ImageView) actionBarView.findViewById(R.id.actionbar_gridImageView);
         gridImageView.setOnClickListener(this);
         Spinner countrySpinner = (Spinner) actionBarView.findViewById(R.id.actionbar_selectCountrySpinner);
-        SpinnerAdapter countrySpinnerAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, Country.getAllCountriesFullName());
+        CountrySpinnerAdapter countrySpinnerAdapter = new CountrySpinnerAdapter(Country.getAllCountriesFullName());
         countrySpinner.setAdapter(countrySpinnerAdapter);
         countrySpinner.setOnItemSelectedListener(this);
         getActionBar().setDisplayShowCustomEnabled(true);
@@ -91,7 +92,7 @@ public class MainActivity extends FragmentActivity implements KeywordGenerator.K
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-
+        showCountryTextView.setVisibility(View.VISIBLE);
     }
 
     private void initGenerator() {
@@ -111,6 +112,7 @@ public class MainActivity extends FragmentActivity implements KeywordGenerator.K
     }
 
     private void setShowCountry(String country){
+        showCountryTextView.setVisibility(View.VISIBLE);
         showCountryTextView.setText(getString(R.string.main_show_region, country));
     }
 
