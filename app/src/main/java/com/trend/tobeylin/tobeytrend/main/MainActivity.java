@@ -18,8 +18,8 @@ import android.widget.TextView;
 import com.trend.tobeylin.tobeytrend.Country;
 import com.trend.tobeylin.tobeytrend.R;
 import com.trend.tobeylin.tobeytrend.data.generator.KeywordGenerator;
-import com.trend.tobeylin.tobeytrend.ui.KeywordCardAdapter;
-import com.trend.tobeylin.tobeytrend.ui.KeywordCardLayoutManager;
+import com.trend.tobeylin.tobeytrend.ui.adapter.KeywordCardAdapter;
+import com.trend.tobeylin.tobeytrend.ui.adapter.KeywordCardLayoutManager;
 
 import java.util.List;
 

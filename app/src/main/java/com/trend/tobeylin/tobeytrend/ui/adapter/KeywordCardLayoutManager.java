@@ -1,4 +1,4 @@
-package com.trend.tobeylin.tobeytrend.ui;
+package com.trend.tobeylin.tobeytrend.ui.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.GridLayoutManager;

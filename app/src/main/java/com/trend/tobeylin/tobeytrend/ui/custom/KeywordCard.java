@@ -1,4 +1,4 @@
-package com.trend.tobeylin.tobeytrend.ui;
+package com.trend.tobeylin.tobeytrend.ui.custom;
 
 import android.content.Context;
 import android.util.AttributeSet;

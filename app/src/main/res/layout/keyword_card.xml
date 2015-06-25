@@ -7,7 +7,7 @@
     android:gravity="center_vertical"
     tools:context=".MainActivity">
 
-    <com.trend.tobeylin.tobeytrend.ui.TypeEditText
+    <com.trend.tobeylin.tobeytrend.ui.custom.TypeEditText
         android:id="@+id/keywordCard_keywordTypeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

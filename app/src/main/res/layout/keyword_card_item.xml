@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:gravity="center">
 
-    <com.trend.tobeylin.tobeytrend.ui.KeywordCard
+    <com.trend.tobeylin.tobeytrend.ui.custom.KeywordCard
         android:id="@+id/item_keywordCard"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

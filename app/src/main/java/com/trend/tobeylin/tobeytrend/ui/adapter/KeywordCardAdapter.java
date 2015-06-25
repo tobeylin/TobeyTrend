@@ -1,4 +1,4 @@
-package com.trend.tobeylin.tobeytrend.ui;
+package com.trend.tobeylin.tobeytrend.ui.adapter;
 
 import android.content.Context;
 import android.os.Handler;
@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import com.trend.tobeylin.tobeytrend.BackgroudColor;
 import com.trend.tobeylin.tobeytrend.R;
 import com.trend.tobeylin.tobeytrend.data.generator.KeywordGenerator;
+import com.trend.tobeylin.tobeytrend.ui.custom.KeywordCard;
 
 /**
  * Created by tobeylin on 15/6/23.
