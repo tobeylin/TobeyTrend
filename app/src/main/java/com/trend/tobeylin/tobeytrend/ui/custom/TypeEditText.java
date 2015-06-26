@@ -68,11 +68,6 @@ public class TypeEditText extends EditText implements View.OnTouchListener {
         this.onClickListener = l;
     }
 
-    @Override
-    protected void onSelectionChanged(int selStart, int selEnd) {
-        setSelection(this.length());
-    }
-
     public void setOnTypeListener(OnTypeListener listener){
         this.listener = listener;
     }
@@ -87,11 +82,20 @@ public class TypeEditText extends EditText implements View.OnTouchListener {
         setText("");
         hideKeyboard();
         requestFocus();
-        typeTimer = new Timer();
+        createTypeTimer();
         typeTimer.schedule(new TypeTimerTask(), TYPE_DELAY_TIME, DEFAULT_TYPE_SPEED);
         if(listener != null) {
             listener.onTypeStart();
         }
+
+    }
+
+    private void createTypeTimer(){
+
+        if(typeTimer != null){
+            typeTimer.cancel();
+        }
+        typeTimer = new Timer();
 
     }
 
