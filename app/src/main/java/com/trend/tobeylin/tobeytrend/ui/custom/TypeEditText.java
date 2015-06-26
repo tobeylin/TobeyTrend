@@ -72,6 +72,7 @@ public class TypeEditText extends EditText implements View.OnTouchListener {
         this.text = text;
         setText("");
         hideKeyboard();
+        requestFocus();
         typeTimer = new Timer();
         typeTimer.schedule(new TypeTimerTask(), TYPE_DELAY_TIME, DEFAULT_TYPE_SPEED);
         if(listener != null) {
