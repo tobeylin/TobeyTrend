@@ -19,7 +19,7 @@ import java.util.Random;
 /**
  * Created by tobeylin on 15/6/16.
  */
-public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeListener {
+public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeListener, View.OnClickListener {
 
     public static final String TAG = KeywordCard.class.getSimpleName();
 
@@ -29,6 +29,7 @@ public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeLi
     private List<TypeEditText> keywordTypeEditTexts = null;
     private List<RelativeLayout> backgroundLinearLayouts = null;
     private OnStateChangeListener listener = null;
+    private OnKeywordClickListener keywordClickListener = null;
 
     private final int DEFAULT_VIEW_BUFFER_SIZE = 2;
     private final long DEFAULT_ANIMATION_DURATION = 600;
@@ -38,8 +39,6 @@ public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeLi
     private int[] backgroundColors;
     private int backgroundColorIndex = 0;
 
-
-
     public enum AnimationDirection {
         Right, Left, Top, Bottom;
     }
@@ -48,6 +47,12 @@ public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeLi
 
         void onKeywordTypeStart();
         void onKeywordTypeFinish();
+
+    }
+
+    public interface OnKeywordClickListener{
+
+        void onKeywordClick();
 
     }
 
@@ -85,9 +90,11 @@ public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeLi
 
             TypeEditText keywordTypeEditText = (TypeEditText) keywordCard.findViewById(R.id.keywordCard_keywordTypeTextView);
             keywordTypeEditText.setOnTypeListener(this);
+            keywordTypeEditText.setOnClickListener(this);
             keywordTypeEditTexts.add(keywordTypeEditText);
 
             RelativeLayout backgroundRelativeLayout = (RelativeLayout) keywordCard.findViewById(R.id.keywordCard_backgrounLinearLayout);
+            backgroundRelativeLayout.setOnClickListener(this);
             backgroundLinearLayouts.add(backgroundRelativeLayout);
 
             LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
@@ -105,6 +112,18 @@ public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeLi
 
     public void removeOnStateChangeListener(){
         this.listener = null;
+    }
+
+    public void setOnKeywordClickListener(OnKeywordClickListener listener){
+        this.keywordClickListener = listener;
+    }
+
+    public void removeOnKeywordClickListener(){
+        this.keywordClickListener = null;
+    }
+
+    public String getKeyword(){
+        return this.keyword;
     }
 
     public void setKeyword(String keyword) {
@@ -235,6 +254,24 @@ public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeLi
 
     }
 
+    @Override
+    public void onClick(View v) {
+
+        switch (v.getId()) {
+            case R.id.keywordCard_keywordTypeTextView:
+                Log.i(TAG, "keywordCard_keywordTypeTextView click");
+                if(keywordClickListener != null){
+                    keywordClickListener.onKeywordClick();
+                }
+                break;
+            case R.id.keywordCard_backgrounLinearLayout:
+                Log.i(TAG, "keywordCard_backgrounLinearLayout click");
+                break;
+            default:
+        }
+
+    }
+
     /**
      * Set the background color of next keyword.
      * @param color
@@ -260,37 +297,6 @@ public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeLi
         backgroundColorIndex = (backgroundColorIndex == backgroundColors.length)? 0: backgroundColorIndex;
         return backgroundColors[backgroundColorIndex++];
 
-    }
-
-//    @Override
-//    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-//
-//        int width  = measureDimension(DEFAULT_VIEW_WIDTH, widthMeasureSpec);
-//        int height = measureDimension(DEFAULT_VIEW_HEIGHT, heightMeasureSpec);
-//        super.setMeasuredDimension(width, height);
-//
-//
-//        //Log.i(TAG, "Width = " + getMeasuredWidth() + " Height = " + getMeasuredHeight());
-//    }
-
-    private int measureDimension(int defaultSize, int measureSpec){
-
-        int result = 0;
-
-        int specMode = MeasureSpec.getMode(measureSpec);
-        int specSize = MeasureSpec.getSize(measureSpec);
-
-        if (specMode == MeasureSpec.EXACTLY) {
-            result = specSize;
-            Log.i(TAG, "EXACTLY " + result);
-        } else if (specMode == MeasureSpec.AT_MOST) {
-            result = Math.min(defaultSize, specSize);
-            Log.i(TAG, "AT_MOST " + result);
-        } else {
-            result = defaultSize;
-        }
-
-        return result;
     }
 
     public void setKeywordTextSize(float textSizeSp){

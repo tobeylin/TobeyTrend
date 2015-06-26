@@ -22,6 +22,7 @@ public class TypeEditText extends EditText implements View.OnTouchListener {
     private long TYPE_DELAY_TIME = 0;
     private long DEFAULT_TYPE_SPEED = 150;
     private OnTypeListener listener = null;
+    private OnClickListener onClickListener = null;
 
     public interface OnTypeListener {
         void onTypeStart();
@@ -51,7 +52,20 @@ public class TypeEditText extends EditText implements View.OnTouchListener {
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
+
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            if (onClickListener != null) {
+                onClickListener.onClick(v);
+            }
+        }
         return true;
+
+    }
+
+
+    @Override
+    public void setOnClickListener(OnClickListener l) {
+        this.onClickListener = l;
     }
 
     @Override

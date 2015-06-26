@@ -1,10 +1,13 @@
 package com.trend.tobeylin.tobeytrend.main;
 
 import android.app.ActionBar;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -19,11 +22,12 @@ import com.trend.tobeylin.tobeytrend.data.generator.KeywordGenerator;
 import com.trend.tobeylin.tobeytrend.ui.adapter.CountrySpinnerAdapter;
 import com.trend.tobeylin.tobeytrend.ui.adapter.KeywordCardAdapter;
 import com.trend.tobeylin.tobeytrend.ui.adapter.KeywordCardLayoutManager;
+import com.trend.tobeylin.tobeytrend.ui.custom.KeywordCard;
 
 import java.util.List;
 
 
-public class MainActivity extends FragmentActivity implements KeywordGenerator.KeywordGeneratorListener, AdapterView.OnItemSelectedListener, View.OnClickListener, SelectViewDialogFragment.SelectViewDialogListener {
+public class MainActivity extends FragmentActivity implements KeywordGenerator.KeywordGeneratorListener, AdapterView.OnItemSelectedListener, View.OnClickListener, SelectViewDialogFragment.SelectViewDialogListener, KeywordCardAdapter.ViewHolder.OnItemClickListener {
 
     public static final String TAG = MainActivity.class.getSimpleName();
 
@@ -53,6 +57,7 @@ public class MainActivity extends FragmentActivity implements KeywordGenerator.K
         getActionBar().setTitle("");
         keywordCardRecycleView = (RecyclerView) findViewById(R.id.main_keywordCardRecycleView);
         keywordCardRecycleView.setHasFixedSize(true);
+        //keywordCardRecycleView.setO
         keywordCardLayoutManager = new KeywordCardLayoutManager(this);
         keywordCardRecycleView.setLayoutManager(keywordCardLayoutManager);
         progressBar = (ProgressBar) findViewById(R.id.main_progressBar);
@@ -85,6 +90,7 @@ public class MainActivity extends FragmentActivity implements KeywordGenerator.K
         country = Country.getCountryByFullName(selectCountryFullName);
         keywordGenerator.setCountry(country);
         keywordCardAdapter = new KeywordCardAdapter(this, keywordGenerator, gridWidth, gridHeight);
+        keywordCardAdapter.setOnItemClickListener(this);
         keywordCardRecycleView.setAdapter(keywordCardAdapter);
         setShowCountry(country.getFullName());
 
@@ -122,6 +128,7 @@ public class MainActivity extends FragmentActivity implements KeywordGenerator.K
         progressBar.setVisibility(View.INVISIBLE);
         initCountrySpinner();
         keywordCardAdapter = new KeywordCardAdapter(this, keywordGenerator);
+        keywordCardAdapter.setOnItemClickListener(this);
         keywordCardAdapter.setKeywordGenerator(keywordGenerator);
         keywordCardRecycleView.setAdapter(keywordCardAdapter);
 
@@ -170,9 +177,26 @@ public class MainActivity extends FragmentActivity implements KeywordGenerator.K
         keywordCardLayoutManager.setHeightCount(height);
         keywordCardLayoutManager.setWidthCount(width);
         keywordCardAdapter = new KeywordCardAdapter(this, keywordGenerator, width, height);
+        keywordCardAdapter.setOnItemClickListener(this);
         keywordCardRecycleView.setAdapter(keywordCardAdapter);
         gridWidth = width;
         gridHeight = height;
 
+    }
+
+    private void openKeywordSearch(String keyword) {
+        String url = "http://www.google.com/search?q=" + keyword;
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(url));
+        startActivity(i);
+    }
+
+    @Override
+    public void onItemClick(KeywordCard keywordCard) {
+    }
+
+    @Override
+    public void onKeywordClick(String keyword) {
+        openKeywordSearch(keyword);
     }
 }

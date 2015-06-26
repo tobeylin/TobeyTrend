@@ -3,6 +3,7 @@ package com.trend.tobeylin.tobeytrend.ui.adapter;
 import android.content.Context;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,8 @@ public class KeywordCardAdapter extends RecyclerView.Adapter<KeywordCardAdapter.
     private long show_keyword_duration = DEFAULT_SHOW_KEYWORD_DURATION;
     private KeywordGenerator keywordGenerator;
     private Context context;
+    private ViewHolder.OnItemClickListener itemClickListener = null;
+
 
     public KeywordCardAdapter(Context context, KeywordGenerator keywordGenerator){
         this.context = context;
@@ -43,12 +46,12 @@ public class KeywordCardAdapter extends RecyclerView.Adapter<KeywordCardAdapter.
         this.keywordGenerator = keywordGenerator;
     }
 
-    public void setGridWidthCount(int gridWidthCount) {
-        this.gridWidthCount = gridWidthCount;
+    public void setOnItemClickListener(ViewHolder.OnItemClickListener listener){
+        this.itemClickListener = listener;
     }
 
-    public void setGridHeightCount(int gridHeightCount){
-        this.gridHeightCount = gridHeightCount;
+    public void removeOnItemClickListener(){
+        this.itemClickListener = null;
     }
 
     @Override
@@ -80,6 +83,15 @@ public class KeywordCardAdapter extends RecyclerView.Adapter<KeywordCardAdapter.
                 handler.postDelayed(runnable, show_keyword_duration);
             }
         });
+        viewHolder.keywordCard.setOnKeywordClickListener(new KeywordCard.OnKeywordClickListener() {
+            @Override
+            public void onKeywordClick() {
+                if(itemClickListener != null){
+                    itemClickListener.onKeywordClick(viewHolder.keywordCard.getKeyword());
+                }
+            }
+        });
+
         return viewHolder;
 
     }
@@ -103,6 +115,22 @@ public class KeywordCardAdapter extends RecyclerView.Adapter<KeywordCardAdapter.
 
     }
 
+    private float getTextSize(){
+
+        int total = gridWidthCount * gridHeightCount;
+        float textSize;
+        if (total <= 2){
+            textSize = context.getResources().getDimension(R.dimen.keyword_text_size_1);
+        } else if (total > 2 && total <= 4){
+            textSize = context.getResources().getDimension(R.dimen.keyword_text_size_2);
+        }else if (total > 4 && total <= 10){
+            textSize = context.getResources().getDimension(R.dimen.keyword_text_size_3);
+        } else {
+            textSize = context.getResources().getDimension(R.dimen.keyword_text_size_4);
+        }
+
+        return textSize;
+    }
 
     @Override
     public int getItemCount() {
@@ -120,23 +148,26 @@ public class KeywordCardAdapter extends RecyclerView.Adapter<KeywordCardAdapter.
             this.keywordCard = (KeywordCard) keywordCardView.findViewById(R.id.item_keywordCard);
         }
 
-    }
+        public interface OnItemClickListener{
 
-    private float getTextSize(){
+            void onItemClick(KeywordCard keywordCard);
+            void onKeywordClick(String keyword);
 
-        int total = gridWidthCount * gridHeightCount;
-        float textSize;
-        if (total <= 2){
-            textSize = context.getResources().getDimension(R.dimen.keyword_text_size_1);
-        } else if (total > 2 && total <= 4){
-            textSize = context.getResources().getDimension(R.dimen.keyword_text_size_2);
-        }else if (total > 4 && total <= 10){
-            textSize = context.getResources().getDimension(R.dimen.keyword_text_size_3);
-        } else {
-            textSize = context.getResources().getDimension(R.dimen.keyword_text_size_4);
         }
 
-        return textSize;
+        public void setOnItemClickListener(final OnItemClickListener listener){
+
+            keywordCard.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onItemClick((KeywordCard) v);
+                }
+            });
+
+        }
+
     }
+
+
 
 }
