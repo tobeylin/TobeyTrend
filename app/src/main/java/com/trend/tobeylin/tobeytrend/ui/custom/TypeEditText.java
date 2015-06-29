@@ -79,7 +79,7 @@ public class TypeEditText extends EditText implements View.OnTouchListener {
     public void startTypeText(String text) {
 
         this.text = text;
-        setText("");
+        getText().clear();
         hideKeyboard();
         requestFocus();
         createTypeTimer();
@@ -106,10 +106,11 @@ public class TypeEditText extends EditText implements View.OnTouchListener {
                 @Override
                 public void run() {
                     String currentText = getText().toString();
+                    int currentTextLength = currentText.length();
                     if(currentText.length() < text.length()) {
-                        String newText = text.substring(0, currentText.length() + 1);
-                        setText(newText);
-                        setSelection(newText.length());
+                        String appendText = text.substring(currentTextLength, currentTextLength + 1);
+                        getText().append(appendText);
+                        setSelection(currentTextLength + 1);
                     } else {
                         if(listener != null){
                             listener.onTypeFinish();
