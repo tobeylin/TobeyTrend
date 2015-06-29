@@ -20,6 +20,8 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_marginRight="@dimen/actionbar_margin"
-        android:popupBackground="@android:color/transparent"/>
+        android:layout_marginTop="@dimen/actionbar_margin"
+        android:popupBackground="@android:color/transparent"
+        android:background="@null"/>
 
 </RelativeLayout>
