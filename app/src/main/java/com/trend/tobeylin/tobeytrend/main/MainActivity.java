@@ -57,7 +57,6 @@ public class MainActivity extends FragmentActivity implements KeywordGenerator.K
         getActionBar().setTitle("");
         keywordCardRecycleView = (RecyclerView) findViewById(R.id.main_keywordCardRecycleView);
         keywordCardRecycleView.setHasFixedSize(true);
-        //keywordCardRecycleView.setO
         keywordCardLayoutManager = new KeywordCardLayoutManager(this);
         keywordCardRecycleView.setLayoutManager(keywordCardLayoutManager);
         progressBar = (ProgressBar) findViewById(R.id.main_progressBar);
