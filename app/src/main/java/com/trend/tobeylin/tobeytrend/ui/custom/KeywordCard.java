@@ -25,6 +25,10 @@ public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeLi
 
     private static final int DEFAULT_VIEW_WIDTH = 300;
     private static final int DEFAULT_VIEW_HEIGHT = 300;
+    private static final int DEFAULT_BACKGROUND_COLOR_YELLOW_RES = R.color.keyword_card_default_background_yellow;
+    private static final int DEFAULT_BACKGROUND_COLOR_RED_RES = R.color.keyword_card_default_background_red;
+    private static final int DEFAULT_BACKGROUND_COLOR_BLUE_RES = R.color.keyword_card_default_background_blue;
+    private static final int DEFAULT_BACKGROUND_COLOR_GREEN_RES = R.color.keyword_card_default_background_green;
     private Context context = null;
     private List<TypeEditText> keywordTypeEditTexts = null;
     private List<RelativeLayout> backgroundLinearLayouts = null;
@@ -32,7 +36,6 @@ public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeLi
     private OnKeywordClickListener keywordClickListener = null;
 
     private final int DEFAULT_VIEW_BUFFER_SIZE = 2;
-    private final long DEFAULT_ANIMATION_DURATION = 600;
     private List<View> keywordCardViews = null;
     private int currentViewIndex = 0;
     private String keyword = "keyword";
@@ -77,7 +80,19 @@ public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeLi
         keywordCardViews = new ArrayList<>();
         keywordTypeEditTexts = new ArrayList<>();
         backgroundLinearLayouts = new ArrayList<>();
+        backgroundColors = getDefaultBackgroundColors();
         initCardView();
+
+    }
+
+    private int[] getDefaultBackgroundColors(){
+
+        int[] defaultColors = new int[4];
+        defaultColors[0] = context.getResources().getColor(DEFAULT_BACKGROUND_COLOR_YELLOW_RES);
+        defaultColors[1] = context.getResources().getColor(DEFAULT_BACKGROUND_COLOR_RED_RES);
+        defaultColors[2] = context.getResources().getColor(DEFAULT_BACKGROUND_COLOR_BLUE_RES);
+        defaultColors[3] = context.getResources().getColor(DEFAULT_BACKGROUND_COLOR_GREEN_RES);
+        return defaultColors;
 
     }
 
@@ -135,20 +150,6 @@ public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeLi
 
         keywordTypeEditTexts.get(nextViewIndex).setText("");
         backgroundLinearLayouts.get(nextViewIndex).setBackgroundColor(getBackgroundColor());
-
-        transition(currentView, nextView);
-
-    }
-
-    public void setKeyword(String keyword, int backgroundColor) {
-
-        this.keyword = keyword;
-        int nextViewIndex = (currentViewIndex + 1) % DEFAULT_VIEW_BUFFER_SIZE;
-        View currentView = keywordCardViews.get(currentViewIndex);
-        View nextView = keywordCardViews.get(nextViewIndex);
-
-        keywordTypeEditTexts.get(nextViewIndex).setText("");
-        backgroundLinearLayouts.get(nextViewIndex).setBackgroundColor(backgroundColor);
 
         transition(currentView, nextView);
 
