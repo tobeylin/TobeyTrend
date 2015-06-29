@@ -7,9 +7,9 @@
     <color name="show_region_text">#FFFFFF</color>
     <color name="half_transparent">#33000000</color>
     <color name="white_transparent">#DDFFFFFF</color>
-    <color name="yellow">#F5B400</color>
-    <color name="red">#DB4639</color>
-    <color name="blue">#4387F4</color>
-    <color name="green">#0F9F59</color>
+    <color name="background_yellow">#F5B400</color>
+    <color name="background_red">#DB4639</color>
+    <color name="background_blue">#4387F4</color>
+    <color name="background_green">#0F9F59</color>
 
 </resources>

@@ -3,13 +3,12 @@ package com.trend.tobeylin.tobeytrend.ui.adapter;
 import android.content.Context;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import com.trend.tobeylin.tobeytrend.BackgroudColor;
+import com.trend.tobeylin.tobeytrend.BackgroundColor;
 import com.trend.tobeylin.tobeytrend.R;
 import com.trend.tobeylin.tobeytrend.data.generator.KeywordGenerator;
 import com.trend.tobeylin.tobeytrend.ui.custom.KeywordCard;
@@ -63,7 +62,7 @@ public class KeywordCardAdapter extends RecyclerView.Adapter<KeywordCardAdapter.
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, getItemHeight(viewGroup));
         keywordCardView.setLayoutParams(layoutParams);
         viewHolder.keywordCard.setKeywordTextSize(getTextSize());
-        viewHolder.keywordCard.setBackgroundColors(BackgroudColor.getAll());
+        viewHolder.keywordCard.setBackgroundColors(BackgroundColor.getAllColors(context));
         viewHolder.keywordCard.setOnStateChangeListener(new KeywordCard.OnStateChangeListener() {
             @Override
             public void onKeywordTypeStart() {
