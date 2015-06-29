@@ -274,16 +274,6 @@ public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeLi
     }
 
     /**
-     * Set the background color of next keyword.
-     * @param color
-     */
-    public void setBackgroundColor(int color) {
-
-        backgroundLinearLayouts.get((currentViewIndex + 1) % DEFAULT_VIEW_BUFFER_SIZE).setBackgroundColor(color);
-
-    }
-
-    /**
      * Set a background color list. The background color of keyword card will be set according to the order of this list
      * @param backgroundColors
      */
