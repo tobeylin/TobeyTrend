@@ -1,11 +1,16 @@
 package com.trend.tobeylin.tobeytrend.ui.custom;
 
 import android.content.Context;
+import android.text.Layout;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.trend.tobeylin.tobeytrend.R;
@@ -16,9 +21,12 @@ import java.util.TimerTask;
 /**
  * Created by tobeylin on 15/6/30.
  */
-public class TypeTextView extends LinearLayout {
+public class TypeTextView extends RelativeLayout {
+
+    public static final String TAG = TypeTextView.class.getSimpleName();
 
     private TextView textView;
+    private Layout textViewLayout;
     private View textCursorView;
     private String fullText = "";
     private Timer typeTimer = null;
@@ -51,14 +59,26 @@ public class TypeTextView extends LinearLayout {
     }
 
     private void init(Context context){
-        setOrientation(HORIZONTAL);
-        setGravity(Gravity.CENTER);
+        //setGravity(Gravity.CENTER);
         LayoutInflater layoutInflater = LayoutInflater.from(context);
         layoutInflater.inflate(R.layout.type_text_view, this, true);
         textView = (TextView) findViewById(R.id.typeTextView_textView);
         textView.setText("");
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 70);
         textCursorView = findViewById(R.id.typeTextView_textCursorView);
-        textCursorView.setVisibility(View.INVISIBLE);
+        textCursorView.setVisibility(View.GONE);
+    }
+
+    public void setOnTypeListener(OnTypeListener listener){
+        typeListener = listener;
+    }
+
+    public void removeOnTypeListener(){
+        typeListener = null;
+    }
+
+    public void setTextSize(int unit, float size){
+        textView.setTextSize(unit, size);
     }
 
     public void setCursorVisibility(boolean isVisible){
@@ -67,11 +87,14 @@ public class TypeTextView extends LinearLayout {
 
     private void startCursorBlink(){
         prepareCursorTimer();
+        textViewLayout = textView.getLayout();
         cursorBlinkTimer.schedule(new CursorBlinkTimerTask(), TEXT_CURSOR_BLINK_DELAY_TIME, DEFAULT_TEXT_CURSOR_BLINK_SPEED);
     }
 
     private void cancelCursorBlink(){
-        cursorBlinkTimer.cancel();
+        if(cursorBlinkTimer != null) {
+            cursorBlinkTimer.cancel();
+        }
         hideTextCursor();
     }
 
@@ -95,9 +118,11 @@ public class TypeTextView extends LinearLayout {
     }
 
     public void startTypeText(String text){
+        cancelCursorBlink();
         clearText();
         fullText = text;
         prepareTypeTimer();
+        invalidate();
         typeTimer.schedule(new TypeTimerTask(), TYPE_DELAY_TIME, DEFAULT_TYPE_SPEED);
         if(typeListener != null) {
             typeListener.onTypeStart();
@@ -105,10 +130,14 @@ public class TypeTextView extends LinearLayout {
     }
 
     private void prepareTypeTimer(){
+        cancelTypeText();
+        typeTimer = new Timer();
+    }
+
+    public void cancelTypeText(){
         if(typeTimer != null){
             typeTimer.cancel();
         }
-        typeTimer = new Timer();
     }
 
     private class TypeTimerTask extends TimerTask {
@@ -161,11 +190,27 @@ public class TypeTextView extends LinearLayout {
     }
 
     private void hideTextCursor(){
-        textCursorView.setVisibility(View.INVISIBLE);
+        textCursorView.setVisibility(View.GONE);
     }
 
     private void showTextCursor() {
+
+        int lineCount = textViewLayout.getLineCount();
+        float xOffset = textViewLayout.getLineWidth(lineCount - 1);
+        float yOffset = textView.getLineHeight() * (lineCount - 1);
+        RelativeLayout.LayoutParams cursorLayoutParams = new LayoutParams(1, textView.getLineHeight());
+        cursorLayoutParams.setMargins((int) xOffset, (int) yOffset, 0, 0);
+        textCursorView.setLayoutParams(cursorLayoutParams);
         textCursorView.setVisibility(View.VISIBLE);
+
     }
 
+    @Override
+    protected void onWindowVisibilityChanged(int visibility) {
+        super.onWindowVisibilityChanged(visibility);
+        if(VISIBLE != visibility){
+            cancelTypeText();
+            cancelCursorBlink();
+        }
+    }
 }
