@@ -19,7 +19,7 @@ import java.util.Random;
 /**
  * Created by tobeylin on 15/6/16.
  */
-public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeListener, View.OnClickListener {
+public class KeywordCard extends RelativeLayout implements TypeTextView.OnTypeListener, View.OnClickListener {
 
     public static final String TAG = KeywordCard.class.getSimpleName();
 
@@ -30,7 +30,7 @@ public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeLi
     private static final int DEFAULT_BACKGROUND_COLOR_BLUE_RES = R.color.keyword_card_default_background_blue;
     private static final int DEFAULT_BACKGROUND_COLOR_GREEN_RES = R.color.keyword_card_default_background_green;
     private Context context = null;
-    private List<TypeEditText> keywordTypeEditTexts = null;
+    private List<TypeTextView> keywordTypeTextViews = null;
     private List<RelativeLayout> backgroundLinearLayouts = null;
     private OnStateChangeListener listener = null;
     private OnKeywordClickListener keywordClickListener = null;
@@ -78,7 +78,7 @@ public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeLi
 
         this.context = context;
         keywordCardViews = new ArrayList<>();
-        keywordTypeEditTexts = new ArrayList<>();
+        keywordTypeTextViews = new ArrayList<>();
         backgroundLinearLayouts = new ArrayList<>();
         backgroundColors = getDefaultBackgroundColors();
         initCardView();
@@ -100,13 +100,13 @@ public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeLi
 
         for(int i = 0; i < DEFAULT_VIEW_BUFFER_SIZE; ++i) {
 
-            View keywordCard = LayoutInflater.from(this.context).inflate(R.layout.keyword_card, null, false);
+            View keywordCard = LayoutInflater.from(this.context).inflate(R.layout.keyword_card, this, false);
             keywordCardViews.add(keywordCard);
 
-            TypeEditText keywordTypeEditText = (TypeEditText) keywordCard.findViewById(R.id.keywordCard_keywordTypeTextView);
-            keywordTypeEditText.setOnTypeListener(this);
-            keywordTypeEditText.setOnClickListener(this);
-            keywordTypeEditTexts.add(keywordTypeEditText);
+            TypeTextView keywordTypeTextView = (TypeTextView) keywordCard.findViewById(R.id.keywordCard_keywordTypeTextView);
+            keywordTypeTextView.setOnTypeListener(this);
+            keywordTypeTextView.setOnClickListener(this);
+            keywordTypeTextViews.add(keywordTypeTextView);
 
             RelativeLayout backgroundRelativeLayout = (RelativeLayout) keywordCard.findViewById(R.id.keywordCard_backgrounLinearLayout);
             backgroundRelativeLayout.setOnClickListener(this);
@@ -148,7 +148,7 @@ public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeLi
         View currentView = keywordCardViews.get(currentViewIndex);
         View nextView = keywordCardViews.get(nextViewIndex);
 
-        keywordTypeEditTexts.get(nextViewIndex).setText("");
+        keywordTypeTextViews.get(nextViewIndex).clearText();
         backgroundLinearLayouts.get(nextViewIndex).setBackgroundColor(getBackgroundColor());
 
         transition(currentView, nextView);
@@ -174,14 +174,14 @@ public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeLi
             public void onAnimationEnd(Animation animation) {
 
                 View previosView = keywordCardViews.get(currentViewIndex);
-                keywordTypeEditTexts.get(currentViewIndex).removeOnTypeListener();
+                keywordTypeTextViews.get(currentViewIndex).removeOnTypeListener();
                 previosView.setVisibility(View.GONE);
 
                 currentViewIndex = (currentViewIndex + 1) % DEFAULT_VIEW_BUFFER_SIZE;
                 View currentView = keywordCardViews.get(currentViewIndex);
                 currentView.setVisibility(VISIBLE);
-                keywordTypeEditTexts.get(currentViewIndex).setOnTypeListener(KeywordCard.this);
-                keywordTypeEditTexts.get(currentViewIndex).startTypeText(keyword);
+                keywordTypeTextViews.get(currentViewIndex).setOnTypeListener(KeywordCard.this);
+                keywordTypeTextViews.get(currentViewIndex).startTypeText(keyword);
 
             }
 
@@ -291,7 +291,7 @@ public class KeywordCard extends RelativeLayout implements TypeEditText.OnTypeLi
     }
 
     public void setKeywordTextSize(float textSizeSp){
-        keywordTypeEditTexts.get(0).setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeSp);
-        keywordTypeEditTexts.get(1).setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeSp);
+        keywordTypeTextViews.get(0).setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeSp);
+        keywordTypeTextViews.get(1).setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeSp);
     }
 }
