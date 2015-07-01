@@ -1,10 +1,11 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/keywordCard_backgrounLinearLayout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center_vertical"
-    tools:context=".MainActivity">
+<RelativeLayout android:id="@+id/keywordCard_backgrounLinearLayout"
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:custom="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                tools:context=".MainActivity">
 
     <com.trend.tobeylin.tobeytrend.ui.custom.TypeTextView
         android:id="@+id/keywordCard_keywordTypeTextView"
@@ -13,14 +14,12 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginLeft="@dimen/keyword_card_text_margin"
-        android:layout_marginRight="@dimen/keyword_card_text_margin"/>
-    <!--TODO set text style: font size, shadow, color...-->
-    <!--android:textSize="25sp"-->
-    <!--android:textColor="@color/keyword_text"-->
-    <!--android:textStyle="bold"-->
-    <!--android:inputType="textNoSuggestions|textMultiLine"-->
-    <!--android:shadowRadius="1"-->
-    <!--android:shadowColor="@color/half_transparent"-->
-    <!--android:shadowDy="3"/>-->
+        android:layout_marginRight="@dimen/keyword_card_text_margin"
+        custom:textSize="50sp"
+        custom:textColor="@color/keyword_text"
+        custom:cursorColor="@color/keyword_cursor"
+        custom:shadowRadius="1"
+        custom:shadowColor="@color/half_transparent"
+        custom:shadowDy="3"/>
 
 </RelativeLayout>

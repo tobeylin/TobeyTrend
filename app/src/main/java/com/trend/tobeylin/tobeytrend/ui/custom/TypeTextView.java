@@ -1,16 +1,15 @@
 package com.trend.tobeylin.tobeytrend.ui.custom;
 
 import android.content.Context;
-import android.graphics.Point;
+import android.content.res.TypedArray;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.text.Layout;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -27,6 +26,17 @@ public class TypeTextView extends RelativeLayout {
 
     public static final String TAG = TypeTextView.class.getSimpleName();
     private static final int DEFAULT_CURSOR_WIDTH = 1;
+    private static final int DEFAULT_TEXT_COLOR = Color.BLACK;
+    private static final float DEFAULT_TEXT_SIZE = 12;
+    private static final int DEFAULT_TEXT_SHADOW_RADIUS = 1;
+    private static final int DEFAULT_TEXT_SHADOW_COLOR = Color.GRAY;
+    private static final int DEFAULT_TEXT_SHADOW_DX = 0;
+    private static final int DEFAULT_TEXT_SHADOW_DY = 0;
+    private static final int DEFAULT_CURSOR_COLOR = Color.BLACK;
+    private static long TYPE_DELAY_TIME = 0;
+    private static long DEFAULT_TYPE_SPEED = 150;
+    private static long TEXT_CURSOR_BLINK_DELAY_TIME = 0;
+    private static long DEFAULT_TEXT_CURSOR_BLINK_SPEED = 700;
 
     private TextView textView;
     private Layout textViewLayout;
@@ -34,13 +44,17 @@ public class TypeTextView extends RelativeLayout {
     private String fullText = "";
     private Timer typeTimer = null;
     private Timer cursorBlinkTimer = null;
-    private static long TYPE_DELAY_TIME = 0;
-    private static long DEFAULT_TYPE_SPEED = 150;
-    private static long TEXT_CURSOR_BLINK_DELAY_TIME = 0;
-    private static long DEFAULT_TEXT_CURSOR_BLINK_SPEED = 700;
     private OnTypeListener typeListener = null;
+
     private boolean isCursorVisible = true;
     private int cursorWidth = DEFAULT_CURSOR_WIDTH;
+    private int cursorColor = DEFAULT_CURSOR_COLOR;
+    private int textColor = DEFAULT_TEXT_COLOR;
+    private float textSize = DEFAULT_TEXT_SIZE;
+    private int textShadowRadius = DEFAULT_TEXT_SHADOW_RADIUS;
+    private int textShadowColor = DEFAULT_TEXT_SHADOW_COLOR;
+    private int textShadowDx = DEFAULT_TEXT_SHADOW_DX;
+    private int textShadowDy = DEFAULT_TEXT_SHADOW_DY;
 
     public interface OnTypeListener {
         void onTypeStart();
@@ -54,21 +68,41 @@ public class TypeTextView extends RelativeLayout {
 
     public TypeTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        initAttrs(context, attrs);
         init(context);
     }
 
     public TypeTextView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        initAttrs(context, attrs);
         init(context);
+    }
+
+    private void initAttrs(Context context, AttributeSet attrs){
+        TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.TypeTextView, 0, 0);
+        try{
+            textSize = a.getDimension(R.styleable.TypeTextView_textSize, DEFAULT_TEXT_SIZE);
+            textColor = a.getColor(R.styleable.TypeTextView_textColor, DEFAULT_TEXT_COLOR);
+            cursorColor = a.getColor(R.styleable.TypeTextView_cursorColor, DEFAULT_CURSOR_COLOR);
+            textShadowRadius = a.getInteger(R.styleable.TypeTextView_shadowRadius, DEFAULT_TEXT_SHADOW_RADIUS);
+            textShadowColor = a.getColor(R.styleable.TypeTextView_shadowColor, DEFAULT_TEXT_SHADOW_COLOR);
+            textShadowDx = a.getInteger(R.styleable.TypeTextView_shadowDx, DEFAULT_TEXT_SHADOW_DX);
+            textShadowDy = a.getInteger(R.styleable.TypeTextView_shadowDy, DEFAULT_TEXT_SHADOW_DY);
+        } finally {
+            a.recycle();
+        }
     }
 
     private void init(Context context){
         LayoutInflater layoutInflater = LayoutInflater.from(context);
         layoutInflater.inflate(R.layout.type_text_view, this, true);
         textView = (TextView) findViewById(R.id.typeTextView_textView);
-        textView.setText("");
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 70);
+        textView.setTypeface(null, Typeface.BOLD);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
+        textView.setTextColor(textColor);
+        textView.setShadowLayer(textShadowRadius, textShadowDx, textShadowDy, textShadowColor);
         textCursorView = findViewById(R.id.typeTextView_textCursorView);
+        textCursorView.setBackgroundColor(cursorColor);
         textCursorView.setVisibility(View.GONE);
     }
 

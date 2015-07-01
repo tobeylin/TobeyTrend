@@ -2,6 +2,7 @@
 <resources>
 
     <color name="keyword_text">#FFFFFF</color>
+    <color name="keyword_cursor">#FFFFFF</color>
     <color name="country_text">#000000</color>
     <color name="dialog_text">#000000</color>
     <color name="show_region_text">#FFFFFF</color>
