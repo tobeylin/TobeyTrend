@@ -1,6 +1,7 @@
 package com.trend.tobeylin.tobeytrend.ui.custom;
 
 import android.content.Context;
+import android.graphics.Point;
 import android.text.Layout;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 
 import com.trend.tobeylin.tobeytrend.R;
 
+import java.text.Bidi;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -24,6 +26,7 @@ import java.util.TimerTask;
 public class TypeTextView extends RelativeLayout {
 
     public static final String TAG = TypeTextView.class.getSimpleName();
+    private static final int DEFAULT_CURSOR_WIDTH = 1;
 
     private TextView textView;
     private Layout textViewLayout;
@@ -37,6 +40,7 @@ public class TypeTextView extends RelativeLayout {
     private static long DEFAULT_TEXT_CURSOR_BLINK_SPEED = 700;
     private OnTypeListener typeListener = null;
     private boolean isCursorVisible = true;
+    private int cursorWidth = DEFAULT_CURSOR_WIDTH;
 
     public interface OnTypeListener {
         void onTypeStart();
@@ -59,7 +63,6 @@ public class TypeTextView extends RelativeLayout {
     }
 
     private void init(Context context){
-        //setGravity(Gravity.CENTER);
         LayoutInflater layoutInflater = LayoutInflater.from(context);
         layoutInflater.inflate(R.layout.type_text_view, this, true);
         textView = (TextView) findViewById(R.id.typeTextView_textView);
@@ -194,15 +197,50 @@ public class TypeTextView extends RelativeLayout {
     }
 
     private void showTextCursor() {
-
-        int lineCount = textViewLayout.getLineCount();
-        float xOffset = textViewLayout.getLineWidth(lineCount - 1);
-        float yOffset = textView.getLineHeight() * (lineCount - 1);
-        RelativeLayout.LayoutParams cursorLayoutParams = new LayoutParams(1, textView.getLineHeight());
-        cursorLayoutParams.setMargins((int) xOffset, (int) yOffset, 0, 0);
+        LayoutParams cursorLayoutParams = getCursorLayoutParams();
         textCursorView.setLayoutParams(cursorLayoutParams);
         textCursorView.setVisibility(View.VISIBLE);
+    }
 
+    private LayoutParams getCursorLayoutParams(){
+        float xOffset = getCursorXOffset();
+        float yOffset = getCursorYOffset();
+        int cursorHeight = textView.getLineHeight();
+        RelativeLayout.LayoutParams cursorLayoutParams = new LayoutParams(cursorWidth, cursorHeight);
+        cursorLayoutParams.setMargins((int) xOffset, (int) yOffset, 0, 0);
+        return cursorLayoutParams;
+    }
+
+    private float getCursorXOffset(){
+        float xOffset = 0;
+        if(textViewLayout != null) {
+            int lineCount = textViewLayout.getLineCount();
+            boolean textDirection = getDirection();
+            if (textDirection){
+                xOffset = textViewLayout.getLineWidth(lineCount - 1);
+            } else {
+                xOffset = textViewLayout.getWidth() - textViewLayout.getLineWidth(lineCount - 1);
+            }
+        }
+        return xOffset;
+    }
+
+    private float getCursorYOffset(){
+        float yOffset = 0;
+        if(textViewLayout != null) {
+            int lineCount = textViewLayout.getLineCount();
+            yOffset = textView.getLineHeight() * (lineCount - 1);
+        }
+        return yOffset;
+    }
+
+    /**
+     * Get the text direction.
+     * @return True, left to right; False, right to left
+     */
+    private boolean getDirection(){
+        Bidi bidi = new Bidi(textView.getText().toString(), Bidi.DIRECTION_DEFAULT_LEFT_TO_RIGHT);
+        return bidi.baseIsLeftToRight();
     }
 
     @Override
