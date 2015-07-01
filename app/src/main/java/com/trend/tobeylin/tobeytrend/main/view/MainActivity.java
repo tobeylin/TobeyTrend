@@ -1,4 +1,4 @@
-package com.trend.tobeylin.tobeytrend.main;
+package com.trend.tobeylin.tobeytrend.main.view;
 
 import android.app.ActionBar;
 import android.content.Intent;
@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -27,7 +26,7 @@ import com.trend.tobeylin.tobeytrend.ui.custom.KeywordCard;
 import java.util.List;
 
 
-public class MainActivity extends FragmentActivity implements KeywordGenerator.KeywordGeneratorListener, AdapterView.OnItemSelectedListener, View.OnClickListener, SelectViewDialogFragment.SelectViewDialogListener, KeywordCardAdapter.ViewHolder.OnItemClickListener {
+public class MainActivity extends FragmentActivity implements KeywordGenerator.KeywordGeneratorListener, AdapterView.OnItemSelectedListener, View.OnClickListener, SelectViewDialogFragment.SelectViewDialogListener, KeywordCardAdapter.OnItemClickListener {
 
     public static final String TAG = MainActivity.class.getSimpleName();
 
@@ -122,14 +121,16 @@ public class MainActivity extends FragmentActivity implements KeywordGenerator.K
     }
 
     @Override
-    public void onSyncFinish() {
-
+    public void onSyncSuccess() {
         progressBar.setVisibility(View.INVISIBLE);
         initCountrySpinner();
         keywordCardAdapter = new KeywordCardAdapter(this, keywordGenerator);
         keywordCardAdapter.setOnItemClickListener(this);
-        keywordCardAdapter.setKeywordGenerator(keywordGenerator);
         keywordCardRecycleView.setAdapter(keywordCardAdapter);
+    }
+
+    @Override
+    public void onSyncFail() {
 
     }
 
@@ -150,8 +151,8 @@ public class MainActivity extends FragmentActivity implements KeywordGenerator.K
         FragmentManager fragmentManager = getSupportFragmentManager();
         SelectViewDialogFragment selectViewDialogFragment = new SelectViewDialogFragment();
         Bundle bundle = new Bundle();
-        bundle.putInt(SelectViewDialogFragment.BUNDLE_CURRENT_WIDTH, gridWidth);
-        bundle.putInt(SelectViewDialogFragment.BUNDLE_CURRENT_HEIGHT, gridHeight);
+        bundle.putInt(SelectViewDialogFragment.BUNDLE_CURRENT_COLUMN_COUNT, gridWidth);
+        bundle.putInt(SelectViewDialogFragment.BUNDLE_CURRENT_ROW_COUNT, gridHeight);
         selectViewDialogFragment.setArguments(bundle);
         selectViewDialogFragment.show(fragmentManager, SelectViewDialogFragment.TAG);
 
@@ -198,4 +199,5 @@ public class MainActivity extends FragmentActivity implements KeywordGenerator.K
     public void onKeywordClick(String keyword) {
         openKeywordSearch(keyword);
     }
+
 }

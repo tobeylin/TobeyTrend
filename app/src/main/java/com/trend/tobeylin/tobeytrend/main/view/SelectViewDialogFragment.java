@@ -1,4 +1,4 @@
-package com.trend.tobeylin.tobeytrend.main;
+package com.trend.tobeylin.tobeytrend.main.view;
 
 
 import android.app.AlertDialog;
@@ -20,8 +20,8 @@ import com.trend.tobeylin.tobeytrend.R;
 public class SelectViewDialogFragment extends DialogFragment {
 
     public static final String TAG = SelectViewDialogFragment.class.getSimpleName();
-    public static final String BUNDLE_CURRENT_WIDTH = "BUNDLE_CURRENT_WIDTH";
-    public static final String BUNDLE_CURRENT_HEIGHT = "BUNDLE_CURRENT_HEIGHT";
+    public static final String BUNDLE_CURRENT_COLUMN_COUNT = "BUNDLE_CURRENT_COLUMN_COUNT";
+    public static final String BUNDLE_CURRENT_ROW_COUNT = "BUNDLE_CURRENT_ROW_COUNT";
 
     private NumberPicker widthNumberPicker = null;
     private NumberPicker heightNumberPicker = null;
@@ -77,8 +77,8 @@ public class SelectViewDialogFragment extends DialogFragment {
     private void getDataFromBundle(){
 
         Bundle bundle = getArguments();
-        oldWidth = bundle.getInt(BUNDLE_CURRENT_WIDTH);
-        oldHeight = bundle.getInt(BUNDLE_CURRENT_HEIGHT);
+        oldWidth = bundle.getInt(BUNDLE_CURRENT_COLUMN_COUNT);
+        oldHeight = bundle.getInt(BUNDLE_CURRENT_ROW_COUNT);
 
     }
 

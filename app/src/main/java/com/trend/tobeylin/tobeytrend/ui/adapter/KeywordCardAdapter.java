@@ -2,6 +2,7 @@ package com.trend.tobeylin.tobeytrend.ui.adapter;
 
 import android.content.Context;
 import android.os.Handler;
+import android.support.v7.internal.view.menu.ListMenuItemView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,9 @@ import com.trend.tobeylin.tobeytrend.BackgroundColor;
 import com.trend.tobeylin.tobeytrend.R;
 import com.trend.tobeylin.tobeytrend.data.generator.KeywordGenerator;
 import com.trend.tobeylin.tobeytrend.ui.custom.KeywordCard;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by tobeylin on 15/6/23.
@@ -25,13 +29,33 @@ public class KeywordCardAdapter extends RecyclerView.Adapter<KeywordCardAdapter.
     private int gridHeightCount = DEFAULT_GRID_HEIGHT_COUNT;
     private long show_keyword_duration = DEFAULT_SHOW_KEYWORD_DURATION;
     private KeywordGenerator keywordGenerator;
+    private List<String> keywords;
     private Context context;
-    private ViewHolder.OnItemClickListener itemClickListener = null;
+    private OnItemClickListener itemClickListener = null;
+    private int keywordIndex = 0;
 
+    public interface OnItemClickListener{
+
+        void onItemClick(KeywordCard keywordCard);
+        void onKeywordClick(String keyword);
+
+    }
+
+    public KeywordCardAdapter(Context context, List<String> keywords){
+        this.context = context;
+        this.keywords = keywords;
+    }
 
     public KeywordCardAdapter(Context context, KeywordGenerator keywordGenerator){
         this.context = context;
         this.keywordGenerator = keywordGenerator;
+    }
+
+    public KeywordCardAdapter(Context context, List<String> keywords, int widthCount, int heightCount){
+        this.context = context;
+        this.keywords = keywords;
+        this.gridWidthCount = widthCount;
+        this.gridHeightCount = heightCount;
     }
 
     public KeywordCardAdapter(Context context, KeywordGenerator keywordGenerator, int widthCount, int heightCount){
@@ -45,7 +69,7 @@ public class KeywordCardAdapter extends RecyclerView.Adapter<KeywordCardAdapter.
         this.keywordGenerator = keywordGenerator;
     }
 
-    public void setOnItemClickListener(ViewHolder.OnItemClickListener listener){
+    public void setOnItemClickListener(OnItemClickListener listener){
         this.itemClickListener = listener;
     }
 
@@ -96,22 +120,7 @@ public class KeywordCardAdapter extends RecyclerView.Adapter<KeywordCardAdapter.
     }
 
     private int getItemHeight(ViewGroup parent){
-
         return parent.getMeasuredHeight() / gridHeightCount;
-
-    }
-
-    private void updateKeywordCard(ViewHolder viewHolder){
-
-        viewHolder.keywordCard.setKeyword(keywordGenerator.getRandomKeyword());
-
-    }
-
-    @Override
-    public void onBindViewHolder(ViewHolder viewHolder, int i) {
-
-        updateKeywordCard(viewHolder);
-
     }
 
     private float getTextSize(){
@@ -132,8 +141,29 @@ public class KeywordCardAdapter extends RecyclerView.Adapter<KeywordCardAdapter.
     }
 
     @Override
+    public void onBindViewHolder(ViewHolder viewHolder, int i) {
+        updateKeywordCard(viewHolder);
+    }
+
+    private void updateKeywordCard(ViewHolder viewHolder){
+        viewHolder.keywordCard.setKeyword(keywordGenerator.getRandomKeyword());
+    }
+
+    @Override
     public int getItemCount() {
         return gridWidthCount * gridHeightCount;
+    }
+
+    private void shuffleKeywords() {
+        Collections.shuffle(keywords);
+    }
+
+    private String getKeyword(){
+        if (keywordIndex == keywords.size()) {
+            //TODO: notify keyword
+            keywordIndex = 0;
+        }
+        return keywords.get(keywordIndex++);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -145,24 +175,6 @@ public class KeywordCardAdapter extends RecyclerView.Adapter<KeywordCardAdapter.
             super(keywordCardView);
             this.view = keywordCardView;
             this.keywordCard = (KeywordCard) keywordCardView.findViewById(R.id.item_keywordCard);
-        }
-
-        public interface OnItemClickListener{
-
-            void onItemClick(KeywordCard keywordCard);
-            void onKeywordClick(String keyword);
-
-        }
-
-        public void setOnItemClickListener(final OnItemClickListener listener){
-
-            keywordCard.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onItemClick((KeywordCard) v);
-                }
-            });
-
         }
 
     }

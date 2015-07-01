@@ -10,6 +10,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.trend.tobeylin.tobeytrend.Country;
 import com.trend.tobeylin.tobeytrend.entity.RegionTopSearchEntity;
 
@@ -34,9 +35,8 @@ public class KeywordGenerator {
 
 
     public interface KeywordGeneratorListener {
-
-        void onSyncFinish();
-
+        void onSyncSuccess();
+        void onSyncFail();
     }
 
     private KeywordGenerator(Context context) {
@@ -73,6 +73,12 @@ public class KeywordGenerator {
 
     }
 
+    public Country getCountry(){
+
+        return country;
+
+    }
+
     public void sync() {
 
         StringRequest getTopSearchRequest = new StringRequest(Request.Method.GET, TOP_SEARCH_REQUEST_URL, new Response.Listener<String>() {
@@ -83,20 +89,26 @@ public class KeywordGenerator {
 
                 response = replaceNumber(response);
                 Gson gson = new Gson();
-                topSearchEntity = gson.fromJson(response, RegionTopSearchEntity.class);
-                keywords = getShuffleKeywords();
+                try {
+                    topSearchEntity = gson.fromJson(response, RegionTopSearchEntity.class);
+                    //keywords = getShuffleKeywords();
 
-                if (listener != null) {
-                    listener.onSyncFinish();
+                    if (listener != null) {
+                        listener.onSyncSuccess();
+                    }
+                } catch (JsonSyntaxException e){
+                    if (listener != null) {
+                        listener.onSyncFail();
+                    }
                 }
-
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
                 Log.e(TAG, "Error");
-
+                if (listener != null) {
+                    listener.onSyncFail();
+                }
             }
         });
         requestQueue.add(getTopSearchRequest);

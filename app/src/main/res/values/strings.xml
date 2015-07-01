@@ -61,5 +61,6 @@
     <string name="action_VN">Vietnam</string>
     <string name="title_activity_test">TestActivity</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_home">HomeActivity</string>
 
 </resources>
