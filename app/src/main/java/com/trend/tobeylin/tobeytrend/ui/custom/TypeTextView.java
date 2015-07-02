@@ -4,9 +4,9 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.CountDownTimer;
 import android.text.Layout;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,11 +42,10 @@ public class TypeTextView extends RelativeLayout {
     private Layout textViewLayout;
     private View textCursorView;
     private String fullText = "";
-    private Timer typeTimer = null;
-    private Timer cursorBlinkTimer = null;
+    private TypeTimer typeTimer = null;
+    private CursorBlinkTimer cursorBlinkTimer = null;
     private OnTypeListener typeListener = null;
 
-    private boolean isCursorVisible = true;
     private int cursorWidth = DEFAULT_CURSOR_WIDTH;
     private int cursorColor = DEFAULT_CURSOR_COLOR;
     private int textColor = DEFAULT_TEXT_COLOR;
@@ -118,28 +117,23 @@ public class TypeTextView extends RelativeLayout {
         textView.setTextSize(unit, size);
     }
 
-    public void setCursorVisibility(boolean isVisible){
-        isCursorVisible = isVisible;
-    }
-
     private void startCursorBlink(){
         prepareCursorTimer();
         textViewLayout = textView.getLayout();
-        cursorBlinkTimer.schedule(new CursorBlinkTimerTask(), TEXT_CURSOR_BLINK_DELAY_TIME, DEFAULT_TEXT_CURSOR_BLINK_SPEED);
-    }
-
-    private void cancelCursorBlink(){
-        if(cursorBlinkTimer != null) {
-            cursorBlinkTimer.cancel();
-        }
-        hideTextCursor();
+        cursorBlinkTimer.startBlink();
     }
 
     private void prepareCursorTimer(){
+        resetCursor();
+        cursorBlinkTimer = new CursorBlinkTimer(DEFAULT_TEXT_CURSOR_BLINK_SPEED);
+    }
+
+    private void resetCursor(){
         if(cursorBlinkTimer != null) {
             cursorBlinkTimer.cancel();
+            cursorBlinkTimer.purge();
         }
-        cursorBlinkTimer = new Timer();
+        hideTextCursor();
     }
 
     public String getCurrentText(){
@@ -150,53 +144,70 @@ public class TypeTextView extends RelativeLayout {
         textView.setText("");
     }
 
-    public String getTypeText(){
-        return fullText;
-    }
-
-    public void startTypeText(String text){
-        cancelCursorBlink();
+    public void startTypeText(String text) {
+        resetCursor();
         clearText();
         fullText = text;
         prepareTypeTimer();
-        invalidate();
-        typeTimer.schedule(new TypeTimerTask(), TYPE_DELAY_TIME, DEFAULT_TYPE_SPEED);
-        if(typeListener != null) {
-            typeListener.onTypeStart();
-        }
+        typeTimer.start();
     }
 
-    private void prepareTypeTimer(){
-        cancelTypeText();
-        typeTimer = new Timer();
+    public void prepareTypeTimer(){
+        resetTypeTimer();
+        typeTimer = new TypeTimer(fullText.length(), DEFAULT_TYPE_SPEED);
+
     }
 
-    public void cancelTypeText(){
+    private void resetTypeTimer(){
         if(typeTimer != null){
             typeTimer.cancel();
         }
     }
 
-    private class TypeTimerTask extends TimerTask {
+    private class TypeTimer extends CountDownTimer {
+
+        public TypeTimer(long typeCount, long typeSpeed){
+            super((typeCount + 1) * typeSpeed, typeSpeed);
+        }
+
         @Override
-        public void run() {
-            post(new Runnable() {
-                @Override
-                public void run() {
-                    String currentText = getCurrentText();
-                    int currentTextLength = currentText.length();
-                    if(currentText.length() < fullText.length()) {
-                        String appendText = fullText.substring(currentTextLength, currentTextLength + 1);
-                        textView.append(appendText);
-                    } else {
-                        if(typeListener != null){
-                            typeListener.onTypeFinish();
-                        }
-                        typeTimer.cancel();
-                        startCursorBlink();
-                    }
-                }
-            });
+        public void onTick(long millisUntilFinished) {
+            String currentText = getCurrentText();
+            int currentTextLength = currentText.length();
+            if(currentText.length() < fullText.length()) {
+                String appendText = fullText.substring(currentTextLength, currentTextLength + 1);
+                textView.append(appendText);
+            }
+        }
+
+        @Override
+        public void onFinish() {
+            startCursorBlink();
+            if(typeListener != null){
+                typeListener.onTypeFinish();
+            }
+        }
+    }
+
+    private class CursorBlinkTimer extends Timer {
+
+        private CursorBlinkTimerTask cursorBlinkTimerTask = null;
+        private long cursorBlinkSpeed;
+
+        public CursorBlinkTimer(long cursorBlinkSpeed){
+            super();
+            cursorBlinkTimerTask = new CursorBlinkTimerTask();
+            this.cursorBlinkSpeed = cursorBlinkSpeed;
+        }
+
+        public void startBlink(){
+            schedule(cursorBlinkTimerTask, 0, cursorBlinkSpeed);
+        }
+
+        @Override
+        public void cancel() {
+            cursorBlinkTimerTask = null;
+            super.cancel();
         }
     }
 
@@ -281,8 +292,9 @@ public class TypeTextView extends RelativeLayout {
     protected void onWindowVisibilityChanged(int visibility) {
         super.onWindowVisibilityChanged(visibility);
         if(VISIBLE != visibility){
-            cancelTypeText();
-            cancelCursorBlink();
+            resetTypeTimer();
+            resetCursor();
         }
     }
+
 }
