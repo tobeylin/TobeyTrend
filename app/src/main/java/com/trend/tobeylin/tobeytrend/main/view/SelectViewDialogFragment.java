@@ -23,14 +23,14 @@ public class SelectViewDialogFragment extends DialogFragment {
     public static final String BUNDLE_CURRENT_COLUMN_COUNT = "BUNDLE_CURRENT_COLUMN_COUNT";
     public static final String BUNDLE_CURRENT_ROW_COUNT = "BUNDLE_CURRENT_ROW_COUNT";
 
-    private NumberPicker widthNumberPicker = null;
-    private NumberPicker heightNumberPicker = null;
-    private int oldWidth = 1;
-    private int oldHeight = 1;
+    private NumberPicker columnNumberPicker = null;
+    private NumberPicker rowNumberPicker = null;
+    private int oldColumnCount = 1;
+    private int oldRowCount = 1;
 
     public interface SelectViewDialogListener{
 
-        void onConfirmClick(int oldWidth, int oldHeight, int newWidth, int newHeight);
+        void onConfirmClick(int oldColumnCount, int oldRowCount, int newColumnCount, int newRowCount);
         void onCancelClick();
 
     }
@@ -46,14 +46,14 @@ public class SelectViewDialogFragment extends DialogFragment {
         getDataFromBundle();
 
         View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_select_view_dialog, null, false);
-        widthNumberPicker = (NumberPicker) dialogView.findViewById(R.id.selectViewDialog_widthNumberPicker);
-        widthNumberPicker.setMinValue(getResources().getInteger(R.integer.select_view_min_width));
-        widthNumberPicker.setMaxValue(getResources().getInteger(R.integer.select_view_max_width));
-        widthNumberPicker.setValue(oldWidth);
-        heightNumberPicker = (NumberPicker) dialogView.findViewById(R.id.selectViewDialog_heightNumberPicker);
-        heightNumberPicker.setMinValue(getResources().getInteger(R.integer.select_view_min_height));
-        heightNumberPicker.setMaxValue(getResources().getInteger(R.integer.select_view_max_height));
-        heightNumberPicker.setValue(oldHeight);
+        columnNumberPicker = (NumberPicker) dialogView.findViewById(R.id.selectViewDialog_widthNumberPicker);
+        columnNumberPicker.setMinValue(getResources().getInteger(R.integer.select_view_min_column_count));
+        columnNumberPicker.setMaxValue(getResources().getInteger(R.integer.select_view_max_column_count));
+        columnNumberPicker.setValue(oldColumnCount);
+        rowNumberPicker = (NumberPicker) dialogView.findViewById(R.id.selectViewDialog_heightNumberPicker);
+        rowNumberPicker.setMinValue(getResources().getInteger(R.integer.select_view_min_row_count));
+        rowNumberPicker.setMaxValue(getResources().getInteger(R.integer.select_view_max_row_count));
+        rowNumberPicker.setValue(oldRowCount);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(getString(R.string.select_view_dialog_title));
@@ -77,18 +77,18 @@ public class SelectViewDialogFragment extends DialogFragment {
     private void getDataFromBundle(){
 
         Bundle bundle = getArguments();
-        oldWidth = bundle.getInt(BUNDLE_CURRENT_COLUMN_COUNT);
-        oldHeight = bundle.getInt(BUNDLE_CURRENT_ROW_COUNT);
+        oldColumnCount = bundle.getInt(BUNDLE_CURRENT_COLUMN_COUNT);
+        oldRowCount = bundle.getInt(BUNDLE_CURRENT_ROW_COUNT);
 
     }
 
     private void confirmAction(){
 
-        int newWidth = widthNumberPicker.getValue();
-        int newHeight = heightNumberPicker.getValue();
+        int newWidth = columnNumberPicker.getValue();
+        int newHeight = rowNumberPicker.getValue();
         SelectViewDialogListener listener = (SelectViewDialogListener) getActivity();
         if(listener != null) {
-            listener.onConfirmClick(oldWidth, oldHeight, newWidth, newHeight);
+            listener.onConfirmClick(oldColumnCount, oldRowCount, newWidth, newHeight);
         }
 
     }

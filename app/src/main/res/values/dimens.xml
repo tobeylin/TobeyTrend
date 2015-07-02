@@ -15,9 +15,9 @@
     <dimen name="keyword_text_size_3">8sp</dimen>
     <dimen name="keyword_text_size_4">3sp</dimen>
 
-    <integer name="select_view_min_width">1</integer>
-    <integer name="select_view_max_width">5</integer>
-    <integer name="select_view_min_height">1</integer>
-    <integer name="select_view_max_height">5</integer>
+    <integer name="select_view_min_column_count">1</integer>
+    <integer name="select_view_max_column_count">5</integer>
+    <integer name="select_view_min_row_count">1</integer>
+    <integer name="select_view_max_row_count">5</integer>
     <integer name="keyword_card_anim_duration">350</integer>
 </resources>

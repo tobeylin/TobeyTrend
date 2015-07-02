@@ -154,9 +154,9 @@ public class HomeActivity extends FragmentActivity implements HomeView,
     }
 
     @Override
-    public void onConfirmClick(int oldWidth, int oldHeight, int newWidth, int newHeight) {
-        if(oldWidth != newWidth || oldHeight != newHeight) {
-            homeAgent.updateGrid(newWidth, newHeight);
+    public void onConfirmClick(int oldColumnCount, int oldRowCount, int newColumnCount, int newRowCount) {
+        if(oldColumnCount != newColumnCount || oldRowCount != newRowCount) {
+            homeAgent.updateGrid(newColumnCount, newRowCount);
         }
     }
 
