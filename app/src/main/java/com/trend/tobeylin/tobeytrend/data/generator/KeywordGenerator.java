@@ -14,7 +14,6 @@ import com.google.gson.JsonSyntaxException;
 import com.trend.tobeylin.tobeytrend.Country;
 import com.trend.tobeylin.tobeytrend.entity.RegionTopSearchEntity;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -26,13 +25,10 @@ public class KeywordGenerator {
     private static final String TOP_SEARCH_REQUEST_URL = "http://hawttrends.appspot.com/api/terms/";
 
     private static KeywordGenerator instance = null;
-    private List<String> keywords = null;
     private KeywordGeneratorListener listener = null;
     private RegionTopSearchEntity topSearchEntity = null;
     private RequestQueue requestQueue = null;
     private Country country = Country.All;
-    private int keywordPointer = 0;
-
 
     public interface KeywordGeneratorListener {
         void onSyncSuccess();
@@ -67,10 +63,7 @@ public class KeywordGenerator {
     }
 
     public void setCountry(Country country) {
-
         this.country = country;
-        updateKeywords();
-
     }
 
     public Country getCountry(){
@@ -128,21 +121,6 @@ public class KeywordGenerator {
             keywords = topSearchEntity.getCountryKeywords(country.getSimpleName());
         }
         return keywords;
-
-    }
-
-    private List<String> getShuffleKeywords() {
-
-        List<String> keywords = getKeywords();
-        Collections.shuffle(keywords);
-        return keywords;
-
-    }
-
-    private void updateKeywords() {
-
-        keywordPointer = 0;
-        keywords = getShuffleKeywords();
 
     }
 
