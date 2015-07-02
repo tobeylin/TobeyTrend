@@ -37,7 +37,7 @@ public class KeywordGenerator {
 
     private KeywordGenerator(Context context) {
 
-        requestQueue = Volley.newRequestQueue(context);
+        requestQueue = Volley.newRequestQueue(context.getApplicationContext());
 
     }
 
