@@ -5,8 +5,8 @@
     <string name="main_show_region">Showing the latest hot searches in %s.</string>
 
     <string name="select_view_dialog_title">Select View</string>
-    <string name="select_view_dialog_width">Width</string>
-    <string name="select_view_dialog_height">Height</string>
+    <string name="select_view_dialog_width">Column</string>
+    <string name="select_view_dialog_height">Row</string>
     <string name="select_view_confirm_button">Confirm</string>
     <string name="select_view_cancel_button">Cancel</string>
 
@@ -59,8 +59,6 @@
     <string name="action_GB">United Kingdom</string>
     <string name="action_US">United States</string>
     <string name="action_VN">Vietnam</string>
-    <string name="title_activity_test">TestActivity</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_home">HomeActivity</string>
 
 </resources>

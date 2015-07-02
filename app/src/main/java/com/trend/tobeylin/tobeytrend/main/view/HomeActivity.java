@@ -25,8 +25,10 @@ import com.trend.tobeylin.tobeytrend.ui.custom.KeywordCard;
 
 import java.util.List;
 
-public class HomeActivity extends FragmentActivity implements HomeView, View.OnClickListener, AdapterView.OnItemSelectedListener,
-        KeywordCardAdapter.OnItemClickListener {
+public class HomeActivity extends FragmentActivity implements HomeView,
+        View.OnClickListener,
+        AdapterView.OnItemSelectedListener,
+        KeywordCardAdapter.OnItemClickListener, SelectViewDialogFragment.SelectViewDialogListener {
 
     public static final String TAG = HomeActivity.class.getSimpleName();
 
@@ -48,14 +50,12 @@ public class HomeActivity extends FragmentActivity implements HomeView, View.OnC
     }
 
     public void initLayout() {
-        //        getActionBar().setTitle("")
         keywordCardRecycleView = (RecyclerView) findViewById(R.id.home_keywordCardRecycleView);
         keywordCardRecycleView.setHasFixedSize(true);
         keywordCardLayoutManager = new KeywordCardLayoutManager(this);
         keywordCardRecycleView.setLayoutManager(keywordCardLayoutManager);
         progressBar = (ProgressBar) findViewById(R.id.home_progressBar);
         showCountryTextView = (TextView) findViewById(R.id.home_showTextView);
-        //        setShowCountry(country.getFullName());
     }
 
     @Override
@@ -85,7 +85,7 @@ public class HomeActivity extends FragmentActivity implements HomeView, View.OnC
     }
 
     @Override
-    public void updateGridSize(List<String> newKeywords, int newColumnCount, int newRowCount) {
+    public void updateKeywordGrid(List<String> newKeywords, int newColumnCount, int newRowCount) {
         keywordCardLayoutManager.setHeightCount(newRowCount);
         keywordCardLayoutManager.setWidthCount(newColumnCount);
         keywordCardAdapter = new KeywordCardAdapter(this, newKeywords, newColumnCount, newRowCount);
@@ -94,19 +94,20 @@ public class HomeActivity extends FragmentActivity implements HomeView, View.OnC
     }
 
     @Override
-    public void showCountrySpinner() {
-
+    public void showActionbar() {
         View actionBarView = LayoutInflater.from(this).inflate(R.layout.actionbar, null, false);
         actionBarView.setLayoutParams(new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT));
+
         ImageView gridImageView = (ImageView) actionBarView.findViewById(R.id.actionbar_gridImageView);
         gridImageView.setOnClickListener(this);
+
         Spinner countrySpinner = (Spinner) actionBarView.findViewById(R.id.actionbar_selectCountrySpinner);
         CountrySpinnerAdapter countrySpinnerAdapter = new CountrySpinnerAdapter(Country.getAllCountriesFullName());
         countrySpinner.setAdapter(countrySpinnerAdapter);
         countrySpinner.setOnItemSelectedListener(this);
+
         getActionBar().setDisplayShowCustomEnabled(true);
         getActionBar().setCustomView(actionBarView);
-
     }
 
     @Override
@@ -119,7 +120,7 @@ public class HomeActivity extends FragmentActivity implements HomeView, View.OnC
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.actionbar_gridImageView:
                 homeAgent.clickGridView();
                 break;
@@ -130,6 +131,10 @@ public class HomeActivity extends FragmentActivity implements HomeView, View.OnC
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+        List<String> countries = Country.getAllCountriesFullName();
+        String selectCountryFullName = countries.get(position);
+        homeAgent.selectCountry(selectCountryFullName);
 
     }
 
@@ -146,5 +151,17 @@ public class HomeActivity extends FragmentActivity implements HomeView, View.OnC
     @Override
     public void onKeywordClick(String keyword) {
         homeAgent.clickKeyword(keyword);
+    }
+
+    @Override
+    public void onConfirmClick(int oldWidth, int oldHeight, int newWidth, int newHeight) {
+        if(oldWidth != newWidth || oldHeight != newHeight) {
+            homeAgent.updateGrid(newWidth, newHeight);
+        }
+    }
+
+    @Override
+    public void onCancelClick() {
+
     }
 }

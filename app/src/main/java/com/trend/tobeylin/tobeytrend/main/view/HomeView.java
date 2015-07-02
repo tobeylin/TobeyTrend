@@ -11,8 +11,8 @@ public interface HomeView {
     public void showSelectViewDialog(int columnCount, int rowCount);
     public void showProgress();
     public void hideProgress();
-    public void updateGridSize(List<String> newKeywords, int newColumnCount, int newRowCount);
-    public void showCountrySpinner();
+    public void updateKeywordGrid(List<String> newKeywords, int newColumnCount, int newRowCount);
+    public void showActionbar();
     public void showKeywordSearchPage(String keyword);
 
 }

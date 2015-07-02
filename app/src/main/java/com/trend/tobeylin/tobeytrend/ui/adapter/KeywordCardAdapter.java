@@ -2,7 +2,6 @@ package com.trend.tobeylin.tobeytrend.ui.adapter;
 
 import android.content.Context;
 import android.os.Handler;
-import android.support.v7.internal.view.menu.ListMenuItemView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,32 +40,11 @@ public class KeywordCardAdapter extends RecyclerView.Adapter<KeywordCardAdapter.
 
     }
 
-    public KeywordCardAdapter(Context context, List<String> keywords){
-        this.context = context;
-        this.keywords = keywords;
-    }
-
-    public KeywordCardAdapter(Context context, KeywordGenerator keywordGenerator){
-        this.context = context;
-        this.keywordGenerator = keywordGenerator;
-    }
-
     public KeywordCardAdapter(Context context, List<String> keywords, int widthCount, int heightCount){
         this.context = context;
         this.keywords = keywords;
         this.gridWidthCount = widthCount;
         this.gridHeightCount = heightCount;
-    }
-
-    public KeywordCardAdapter(Context context, KeywordGenerator keywordGenerator, int widthCount, int heightCount){
-        this.context = context;
-        this.keywordGenerator = keywordGenerator;
-        this.gridWidthCount = widthCount;
-        this.gridHeightCount = heightCount;
-    }
-
-    public void setKeywordGenerator(KeywordGenerator keywordGenerator){
-        this.keywordGenerator = keywordGenerator;
     }
 
     public void setOnItemClickListener(OnItemClickListener listener){
@@ -146,7 +124,7 @@ public class KeywordCardAdapter extends RecyclerView.Adapter<KeywordCardAdapter.
     }
 
     private void updateKeywordCard(ViewHolder viewHolder){
-        viewHolder.keywordCard.setKeyword(keywordGenerator.getRandomKeyword());
+        viewHolder.keywordCard.setKeyword(getKeyword());
     }
 
     @Override
@@ -160,7 +138,7 @@ public class KeywordCardAdapter extends RecyclerView.Adapter<KeywordCardAdapter.
 
     private String getKeyword(){
         if (keywordIndex == keywords.size()) {
-            //TODO: notify keyword
+            shuffleKeywords();
             keywordIndex = 0;
         }
         return keywords.get(keywordIndex++);

@@ -90,7 +90,7 @@ public enum Country {
     public static Country getCountryByFullName(String fullName) {
 
         Country[] countries = Country.values();
-        Country result = Country.TW;
+        Country result = Country.All;
 
         for (int i = 0; i < countries.length; ++i) {
             if(countries[i].getFullName().equals(fullName)) {

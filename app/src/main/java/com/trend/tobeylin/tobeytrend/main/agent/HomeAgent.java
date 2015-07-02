@@ -7,6 +7,8 @@ import com.trend.tobeylin.tobeytrend.Country;
 import com.trend.tobeylin.tobeytrend.data.generator.KeywordGenerator;
 import com.trend.tobeylin.tobeytrend.main.view.HomeView;
 
+import java.util.List;
+
 /**
  * Created by tobeylin on 15/7/1.
  */
@@ -22,7 +24,6 @@ public class HomeAgent implements KeywordGenerator.KeywordGeneratorListener{
     public HomeAgent(Context context, HomeView homeView){
         this.homeView = homeView;
         keywordGenerator = KeywordGenerator.getInstance(context);
-        keywordGenerator.setCountry(Country.TW);
         keywordGenerator.setListener(this);
         keywordGenerator.sync();
         homeView.showCountry(keywordGenerator.getCountry().getFullName());
@@ -31,9 +32,9 @@ public class HomeAgent implements KeywordGenerator.KeywordGeneratorListener{
     @Override
     public void onSyncSuccess() {
         homeView.hideProgress();
-        homeView.showCountrySpinner();
+        homeView.showActionbar();
         Log.i(TAG, "Sync Success");
-        homeView.updateGridSize(keywordGenerator.getKeywords(), columnCount, rowCount);
+        homeView.updateKeywordGrid(keywordGenerator.getKeywords(), columnCount, rowCount);
     }
 
     @Override
@@ -49,8 +50,19 @@ public class HomeAgent implements KeywordGenerator.KeywordGeneratorListener{
         homeView.showKeywordSearchPage(keyword);
     }
 
-    public void selectCountry(){
+    public void selectCountry(String countryName){
+        Country country = Country.getCountryByFullName(countryName);
+        keywordGenerator.setCountry(country);
+        List<String> keywords = keywordGenerator.getKeywords();
+        homeView.updateKeywordGrid(keywords, columnCount, rowCount);
+        homeView.showCountry(country.getFullName());
+    }
 
+    public void updateGrid(int newColumnCount, int newRowCount){
+        columnCount = (newColumnCount < 1)? 1: newColumnCount;
+        rowCount = (newRowCount < 1)? 1: newRowCount;
+        List<String> keywords = keywordGenerator.getKeywords();
+        homeView.updateKeywordGrid(keywords, columnCount, rowCount);
     }
 
 }
