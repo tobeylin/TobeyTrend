@@ -87,11 +87,9 @@ public class KeywordGenerator {
 
                 Log.i(TAG, "response = " + response);
 
-                response = replaceNumber(response);
                 Gson gson = new Gson();
                 try {
                     topSearchEntity = gson.fromJson(response, RegionTopSearchEntity.class);
-                    //keywords = getShuffleKeywords();
 
                     if (listener != null) {
                         listener.onSyncSuccess();
@@ -112,21 +110,6 @@ public class KeywordGenerator {
             }
         });
         requestQueue.add(getTopSearchRequest);
-
-    }
-
-    private String replaceNumber(String text) {
-
-        Country[] countries = Country.values();
-
-        for (int i = 0; i < countries.length; ++i) {
-            String countryCode = countries[i].getCode();
-            String countryName = countries[i].getSimpleName();
-            String pattern = "\"" + countryCode + "\"";
-            text = text.replaceFirst(pattern, countryName);
-        }
-
-        return text;
 
     }
 
@@ -154,16 +137,6 @@ public class KeywordGenerator {
         Collections.shuffle(keywords);
         return keywords;
 
-    }
-
-    public String getRandomKeyword() {
-
-        if (keywordPointer == keywords.size()) {
-            updateKeywords();
-            keywordPointer = 0;
-        }
-
-        return keywords.get(keywordPointer++);
     }
 
     private void updateKeywords() {
