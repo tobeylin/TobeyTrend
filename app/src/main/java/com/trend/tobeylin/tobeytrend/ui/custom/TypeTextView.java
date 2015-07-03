@@ -13,6 +13,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -25,10 +26,10 @@ import java.util.TimerTask;
 /**
  * Created by tobeylin on 15/6/30.
  */
-public class TypeTextView extends RelativeLayout {
+public class TypeTextView extends RelativeLayout implements View.OnLayoutChangeListener {
 
     public static final String TAG = TypeTextView.class.getSimpleName();
-    private static final int DEFAULT_CURSOR_WIDTH = 1;
+    private static final int DEFAULT_CURSOR_WIDTH = 3;
     private static final int DEFAULT_TEXT_COLOR = Color.BLACK;
     private static final float DEFAULT_TEXT_SIZE = 12;
     private static final int DEFAULT_TEXT_SHADOW_RADIUS = 1;
@@ -60,7 +61,6 @@ public class TypeTextView extends RelativeLayout {
 
     public interface OnTypeListener {
         void onTypeStart();
-
         void onTypeFinish();
     }
 
@@ -104,6 +104,7 @@ public class TypeTextView extends RelativeLayout {
         textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
         textView.setTextColor(textColor);
         textView.setShadowLayer(textShadowRadius, textShadowDx, textShadowDy, textShadowColor);
+        textView.addOnLayoutChangeListener(this);
         textCursorView = findViewById(R.id.typeTextView_textCursorView);
         textCursorView.setBackgroundColor(cursorColor);
         textCursorView.setVisibility(View.GONE);
@@ -123,7 +124,6 @@ public class TypeTextView extends RelativeLayout {
 
     private void startCursorBlink() {
         prepareCursorTimer();
-        textViewLayout = textView.getLayout();
         cursorBlinkTimer.startBlink();
     }
 
@@ -158,6 +158,7 @@ public class TypeTextView extends RelativeLayout {
 
     public void prepareTypeTimer() {
         resetTypeTimer();
+        textView.addOnLayoutChangeListener(this);
         typeTimer = new TypeTimer(DEFAULT_TYPE_SPEED);
     }
 
@@ -197,11 +198,31 @@ public class TypeTextView extends RelativeLayout {
                             }
                             typeTimer.cancel();
                             startCursorBlink();
+                            textView.removeOnLayoutChangeListener(TypeTextView.this);
                         }
                     }
                 });
             }
         }
+    }
+
+    @Override
+    public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+
+//        post(new Runnable() {
+//            @Override
+//            public void run() {
+//                showTextCursor();
+//            }
+//        });
+//        if (!fullText.isEmpty() && getCurrentText().length() == fullText.length()){
+//            if(typeListener != null){
+//                typeListener.onTypeFinish();
+//            }
+//            typeTimer.cancel();
+//            startCursorBlink();
+//            textView.removeOnLayoutChangeListener(TypeTextView.this);
+//        }
 
     }
 
@@ -222,7 +243,8 @@ public class TypeTextView extends RelativeLayout {
 
         @Override
         public void cancel() {
-            cursorBlinkTimerTask = null;
+            cursorBlinkTimerTask.cancel();
+            //cursorBlinkTimerTask = null;
             super.cancel();
         }
     }
@@ -247,7 +269,7 @@ public class TypeTextView extends RelativeLayout {
                 break;
             case View.GONE:
             case View.INVISIBLE:
-                showTextCursor();
+                textCursorView.setVisibility(View.VISIBLE);
                 break;
             default:
         }
@@ -258,6 +280,7 @@ public class TypeTextView extends RelativeLayout {
     }
 
     private void showTextCursor() {
+        textCursorView.setVisibility(View.INVISIBLE);
         LayoutParams cursorLayoutParams = getCursorLayoutParams();
         textCursorView.setLayoutParams(cursorLayoutParams);
         textCursorView.setVisibility(View.VISIBLE);
@@ -274,23 +297,29 @@ public class TypeTextView extends RelativeLayout {
 
     private float getCursorXOffset() {
         float xOffset = 0;
+        textViewLayout = textView.getLayout();
         if (textViewLayout != null) {
-            int lineCount = textViewLayout.getLineCount();
+            int lineCount = textView.getLineCount();
             boolean textDirection = getDirection();
             if (textDirection) {
                 xOffset = textViewLayout.getLineWidth(lineCount - 1);
             } else {
                 xOffset = textViewLayout.getWidth() - textViewLayout.getLineWidth(lineCount - 1);
             }
+        } else {
+            Log.w(TAG, "textViewLayout is null");
         }
         return xOffset;
     }
 
     private float getCursorYOffset() {
         float yOffset = 0;
+        textViewLayout = textView.getLayout();
         if (textViewLayout != null) {
             int lineCount = textViewLayout.getLineCount();
             yOffset = textView.getLineHeight() * (lineCount - 1);
+        } else {
+            Log.w(TAG, "textViewLayout is null");
         }
         return yOffset;
     }
