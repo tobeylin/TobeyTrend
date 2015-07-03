@@ -5,8 +5,11 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Layout;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,6 +60,7 @@ public class TypeTextView extends RelativeLayout {
 
     public interface OnTypeListener {
         void onTypeStart();
+
         void onTypeFinish();
     }
 
@@ -77,9 +81,9 @@ public class TypeTextView extends RelativeLayout {
         init(context);
     }
 
-    private void initAttrs(Context context, AttributeSet attrs){
+    private void initAttrs(Context context, AttributeSet attrs) {
         TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.TypeTextView, 0, 0);
-        try{
+        try {
             textSize = a.getDimension(R.styleable.TypeTextView_textSize, DEFAULT_TEXT_SIZE);
             textColor = a.getColor(R.styleable.TypeTextView_textColor, DEFAULT_TEXT_COLOR);
             cursorColor = a.getColor(R.styleable.TypeTextView_cursorColor, DEFAULT_CURSOR_COLOR);
@@ -92,7 +96,7 @@ public class TypeTextView extends RelativeLayout {
         }
     }
 
-    private void init(Context context){
+    private void init(Context context) {
         LayoutInflater layoutInflater = LayoutInflater.from(context);
         layoutInflater.inflate(R.layout.type_text_view, this, true);
         textView = (TextView) findViewById(R.id.typeTextView_textView);
@@ -105,42 +109,42 @@ public class TypeTextView extends RelativeLayout {
         textCursorView.setVisibility(View.GONE);
     }
 
-    public void setOnTypeListener(OnTypeListener listener){
+    public void setOnTypeListener(OnTypeListener listener) {
         typeListener = listener;
     }
 
-    public void removeOnTypeListener(){
+    public void removeOnTypeListener() {
         typeListener = null;
     }
 
-    public void setTextSize(int unit, float size){
+    public void setTextSize(int unit, float size) {
         textView.setTextSize(unit, size);
     }
 
-    private void startCursorBlink(){
+    private void startCursorBlink() {
         prepareCursorTimer();
         textViewLayout = textView.getLayout();
         cursorBlinkTimer.startBlink();
     }
 
-    private void prepareCursorTimer(){
+    private void prepareCursorTimer() {
         resetCursor();
         cursorBlinkTimer = new CursorBlinkTimer(DEFAULT_TEXT_CURSOR_BLINK_SPEED);
     }
 
-    private void resetCursor(){
-        if(cursorBlinkTimer != null) {
+    private void resetCursor() {
+        if (cursorBlinkTimer != null) {
             cursorBlinkTimer.cancel();
             cursorBlinkTimer.purge();
         }
         hideTextCursor();
     }
 
-    public String getCurrentText(){
+    public String getCurrentText() {
         return textView.getText().toString();
     }
 
-    public void clearText(){
+    public void clearText() {
         textView.setText("");
     }
 
@@ -149,44 +153,56 @@ public class TypeTextView extends RelativeLayout {
         clearText();
         fullText = text;
         prepareTypeTimer();
-        typeTimer.start();
+        typeTimer.startTyping();
     }
 
-    public void prepareTypeTimer(){
+    public void prepareTypeTimer() {
         resetTypeTimer();
-        typeTimer = new TypeTimer(fullText.length(), DEFAULT_TYPE_SPEED);
-
+        typeTimer = new TypeTimer(DEFAULT_TYPE_SPEED);
     }
 
-    private void resetTypeTimer(){
-        if(typeTimer != null){
+    private void resetTypeTimer() {
+        if (typeTimer != null) {
             typeTimer.cancel();
+            typeTimer.purge();
         }
     }
 
-    private class TypeTimer extends CountDownTimer {
+    private class TypeTimer extends Timer {
 
-        public TypeTimer(long typeCount, long typeSpeed){
-            super((typeCount + 1) * typeSpeed, typeSpeed);
+        private long typeSpeed;
+
+        public TypeTimer(long typeSpeed) {
+            this.typeSpeed = typeSpeed;
         }
 
-        @Override
-        public void onTick(long millisUntilFinished) {
-            String currentText = getCurrentText();
-            int currentTextLength = currentText.length();
-            if(currentText.length() < fullText.length()) {
-                String appendText = fullText.substring(currentTextLength, currentTextLength + 1);
-                textView.append(appendText);
+        private void startTyping() {
+            schedule(new TypeTimerTask(), 0, typeSpeed);
+        }
+
+        private class TypeTimerTask extends TimerTask {
+            @Override
+            public void run() {
+                post(new Runnable() {
+                    @Override
+                    public void run() {
+                        String currentText = getCurrentText();
+                        int currentTextLength = currentText.length();
+                        if(currentText.length() < fullText.length()) {
+                            String appendText = fullText.substring(currentTextLength, currentTextLength + 1);
+                            textView.append(appendText);
+                        } else {
+                            if(typeListener != null){
+                                typeListener.onTypeFinish();
+                            }
+                            typeTimer.cancel();
+                            startCursorBlink();
+                        }
+                    }
+                });
             }
         }
 
-        @Override
-        public void onFinish() {
-            startCursorBlink();
-            if(typeListener != null){
-                typeListener.onTypeFinish();
-            }
-        }
     }
 
     private class CursorBlinkTimer extends Timer {
@@ -194,13 +210,13 @@ public class TypeTextView extends RelativeLayout {
         private CursorBlinkTimerTask cursorBlinkTimerTask = null;
         private long cursorBlinkSpeed;
 
-        public CursorBlinkTimer(long cursorBlinkSpeed){
+        public CursorBlinkTimer(long cursorBlinkSpeed) {
             super();
             cursorBlinkTimerTask = new CursorBlinkTimerTask();
             this.cursorBlinkSpeed = cursorBlinkSpeed;
         }
 
-        public void startBlink(){
+        public void startBlink() {
             schedule(cursorBlinkTimerTask, 0, cursorBlinkSpeed);
         }
 
@@ -223,9 +239,9 @@ public class TypeTextView extends RelativeLayout {
         }
     }
 
-    private void toggleTextCursor(){
+    private void toggleTextCursor() {
         int cursorVisibility = textCursorView.getVisibility();
-        switch (cursorVisibility){
+        switch (cursorVisibility) {
             case View.VISIBLE:
                 hideTextCursor();
                 break;
@@ -237,7 +253,7 @@ public class TypeTextView extends RelativeLayout {
         }
     }
 
-    private void hideTextCursor(){
+    private void hideTextCursor() {
         textCursorView.setVisibility(View.GONE);
     }
 
@@ -247,7 +263,7 @@ public class TypeTextView extends RelativeLayout {
         textCursorView.setVisibility(View.VISIBLE);
     }
 
-    private LayoutParams getCursorLayoutParams(){
+    private LayoutParams getCursorLayoutParams() {
         float xOffset = getCursorXOffset();
         float yOffset = getCursorYOffset();
         int cursorHeight = textView.getLineHeight();
@@ -256,12 +272,12 @@ public class TypeTextView extends RelativeLayout {
         return cursorLayoutParams;
     }
 
-    private float getCursorXOffset(){
+    private float getCursorXOffset() {
         float xOffset = 0;
-        if(textViewLayout != null) {
+        if (textViewLayout != null) {
             int lineCount = textViewLayout.getLineCount();
             boolean textDirection = getDirection();
-            if (textDirection){
+            if (textDirection) {
                 xOffset = textViewLayout.getLineWidth(lineCount - 1);
             } else {
                 xOffset = textViewLayout.getWidth() - textViewLayout.getLineWidth(lineCount - 1);
@@ -270,9 +286,9 @@ public class TypeTextView extends RelativeLayout {
         return xOffset;
     }
 
-    private float getCursorYOffset(){
+    private float getCursorYOffset() {
         float yOffset = 0;
-        if(textViewLayout != null) {
+        if (textViewLayout != null) {
             int lineCount = textViewLayout.getLineCount();
             yOffset = textView.getLineHeight() * (lineCount - 1);
         }
@@ -281,9 +297,10 @@ public class TypeTextView extends RelativeLayout {
 
     /**
      * Get the text direction.
+     *
      * @return True, left to right; False, right to left
      */
-    private boolean getDirection(){
+    private boolean getDirection() {
         Bidi bidi = new Bidi(textView.getText().toString(), Bidi.DIRECTION_DEFAULT_LEFT_TO_RIGHT);
         return bidi.baseIsLeftToRight();
     }
@@ -291,7 +308,7 @@ public class TypeTextView extends RelativeLayout {
     @Override
     protected void onWindowVisibilityChanged(int visibility) {
         super.onWindowVisibilityChanged(visibility);
-        if(VISIBLE != visibility){
+        if (VISIBLE != visibility) {
             resetTypeTimer();
             resetCursor();
         }
