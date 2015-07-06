@@ -48,6 +48,7 @@ public class TypeTextView extends RelativeLayout implements View.OnLayoutChangeL
     private String fullText = "";
     private TypeTimer typeTimer = null;
     private CursorBlinkTimer cursorBlinkTimer = null;
+    private boolean updateCursor = false;
     private OnTypeListener typeListener = null;
 
     private int cursorWidth = DEFAULT_CURSOR_WIDTH;
@@ -104,7 +105,6 @@ public class TypeTextView extends RelativeLayout implements View.OnLayoutChangeL
         textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
         textView.setTextColor(textColor);
         textView.setShadowLayer(textShadowRadius, textShadowDx, textShadowDy, textShadowColor);
-        textView.addOnLayoutChangeListener(this);
         textCursorView = findViewById(R.id.typeTextView_textCursorView);
         textCursorView.setBackgroundColor(cursorColor);
         textCursorView.setVisibility(View.GONE);
@@ -120,6 +120,14 @@ public class TypeTextView extends RelativeLayout implements View.OnLayoutChangeL
 
     public void setTextSize(int unit, float size) {
         textView.setTextSize(unit, size);
+    }
+
+    public String getCurrentText() {
+        return textView.getText().toString();
+    }
+
+    public void clearText() {
+        textView.setText("");
     }
 
     private void startCursorBlink() {
@@ -140,20 +148,21 @@ public class TypeTextView extends RelativeLayout implements View.OnLayoutChangeL
         hideTextCursor();
     }
 
-    public String getCurrentText() {
-        return textView.getText().toString();
-    }
-
-    public void clearText() {
-        textView.setText("");
-    }
-
     public void startTypeText(String text) {
-        resetCursor();
-        clearText();
+
         fullText = text;
+
+        //Prepare cursor
+        resetCursor();
+
+        //Prepare text view
+        clearText();
+        textView.addOnLayoutChangeListener(this);
+
+        //Handle Type
         prepareTypeTimer();
         typeTimer.startTyping();
+
     }
 
     public void prepareTypeTimer() {
@@ -192,13 +201,15 @@ public class TypeTextView extends RelativeLayout implements View.OnLayoutChangeL
                         if(currentText.length() < fullText.length()) {
                             String appendText = fullText.substring(currentTextLength, currentTextLength + 1);
                             textView.append(appendText);
+                            updateCursor = true;
                         } else {
+                            typeTimer.cancel();
+                            typeTimer.purge();
+                            startCursorBlink();
+                            textView.removeOnLayoutChangeListener(TypeTextView.this);
                             if(typeListener != null){
                                 typeListener.onTypeFinish();
                             }
-                            typeTimer.cancel();
-                            startCursorBlink();
-                            textView.removeOnLayoutChangeListener(TypeTextView.this);
                         }
                     }
                 });
@@ -208,22 +219,16 @@ public class TypeTextView extends RelativeLayout implements View.OnLayoutChangeL
 
     @Override
     public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-
-//        post(new Runnable() {
-//            @Override
-//            public void run() {
-//                showTextCursor();
-//            }
-//        });
-//        if (!fullText.isEmpty() && getCurrentText().length() == fullText.length()){
-//            if(typeListener != null){
-//                typeListener.onTypeFinish();
-//            }
-//            typeTimer.cancel();
-//            startCursorBlink();
-//            textView.removeOnLayoutChangeListener(TypeTextView.this);
-//        }
-
+        if(updateCursor) {
+            textViewLayout = textView.getLayout();
+            post(new Runnable() {
+                @Override
+                public void run() {
+                    showTextCursor();
+                }
+            });
+            updateCursor = false;
+        }
     }
 
     private class CursorBlinkTimer extends Timer {
@@ -238,13 +243,13 @@ public class TypeTextView extends RelativeLayout implements View.OnLayoutChangeL
         }
 
         public void startBlink() {
+            showTextCursor();
             schedule(cursorBlinkTimerTask, 0, cursorBlinkSpeed);
         }
 
         @Override
         public void cancel() {
             cursorBlinkTimerTask.cancel();
-            //cursorBlinkTimerTask = null;
             super.cancel();
         }
     }
@@ -280,7 +285,6 @@ public class TypeTextView extends RelativeLayout implements View.OnLayoutChangeL
     }
 
     private void showTextCursor() {
-        textCursorView.setVisibility(View.INVISIBLE);
         LayoutParams cursorLayoutParams = getCursorLayoutParams();
         textCursorView.setLayoutParams(cursorLayoutParams);
         textCursorView.setVisibility(View.VISIBLE);
@@ -297,7 +301,6 @@ public class TypeTextView extends RelativeLayout implements View.OnLayoutChangeL
 
     private float getCursorXOffset() {
         float xOffset = 0;
-        textViewLayout = textView.getLayout();
         if (textViewLayout != null) {
             int lineCount = textView.getLineCount();
             boolean textDirection = getDirection();
@@ -314,7 +317,6 @@ public class TypeTextView extends RelativeLayout implements View.OnLayoutChangeL
 
     private float getCursorYOffset() {
         float yOffset = 0;
-        textViewLayout = textView.getLayout();
         if (textViewLayout != null) {
             int lineCount = textViewLayout.getLineCount();
             yOffset = textView.getLineHeight() * (lineCount - 1);
@@ -339,7 +341,12 @@ public class TypeTextView extends RelativeLayout implements View.OnLayoutChangeL
         super.onWindowVisibilityChanged(visibility);
         if (VISIBLE != visibility) {
             resetTypeTimer();
-            resetCursor();
+            post(new Runnable() {
+                @Override
+                public void run() {
+                    resetCursor();
+                }
+            });
         }
     }
 
