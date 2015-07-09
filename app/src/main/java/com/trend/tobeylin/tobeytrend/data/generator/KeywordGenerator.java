@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.trend.tobeylin.tobeytrend.Region;
 import com.trend.tobeylin.tobeytrend.VolleyRequestQueue;
+import com.trend.tobeylin.tobeytrend.data.generator.api.KeywordApiService;
 import com.trend.tobeylin.tobeytrend.entity.RegionTopSearchEntity;
 
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.List;
 /**
  * Created by tobeylin on 15/6/15.
  */
-public class KeywordGenerator {
+public class KeywordGenerator implements KeywordApiService.ApiCallback{
 
     public static final String TAG = KeywordGenerator.class.getSimpleName();
     private static final String TOP_SEARCH_REQUEST_URL = "http://hawttrends.appspot.com/api/terms/";
@@ -26,6 +27,7 @@ public class KeywordGenerator {
     private RegionTopSearchEntity topSearchEntity = null;
     private String country = Region.getDefaultCountry();
     private VolleyRequestQueue requestQueue = null;
+    private KeywordApiService keywordApiService = null;
 
     public interface KeywordGeneratorSyncListener {
         void onSyncSuccess(RegionTopSearchEntity keywordResponseEntity);
@@ -33,7 +35,7 @@ public class KeywordGenerator {
     }
 
     private KeywordGenerator(Context context) {
-        requestQueue = VolleyRequestQueue.getInstance(context);
+        keywordApiService = new KeywordApiService(context, this);
     }
 
     public static KeywordGenerator getInstance(Context context) {
@@ -74,13 +76,28 @@ public class KeywordGenerator {
         return country;
 
     }
-    String res = "";
 
-    public String getRes(){
-        return res;
+    public void sync(){
+        keywordApiService.start();
     }
 
-    public void sync() {
+    @Override
+    public void onSuccess() {
+        topSearchEntity = keywordApiService.getTopSearchEntity();
+        if (listener != null) {
+            listener.onSyncSuccess(topSearchEntity);
+        }
+    }
+
+    @Override
+    public void onFail() {
+        Log.e(TAG, "Error");
+        if (listener != null) {
+            listener.onSyncFail();
+        }
+    }
+
+    public void sync2() {
 
         Response.Listener successListener = new Response.Listener<String>() {
             @Override

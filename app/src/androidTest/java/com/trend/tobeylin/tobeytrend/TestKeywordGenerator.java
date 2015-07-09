@@ -80,5 +80,4 @@ public class TestKeywordGenerator extends InstrumentationTestCase{
         verify(listener).onSyncSuccess(Matchers.isNotNull(RegionTopSearchEntity.class));
     }
 
-
 }
