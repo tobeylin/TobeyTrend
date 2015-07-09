@@ -3,13 +3,11 @@ package com.trend.tobeylin.tobeytrend.data.generator;
 import android.content.Context;
 import android.util.Log;
 
-import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.trend.tobeylin.tobeytrend.Country;
+import com.trend.tobeylin.tobeytrend.Region;
 import com.trend.tobeylin.tobeytrend.VolleyRequestQueue;
 import com.trend.tobeylin.tobeytrend.entity.RegionTopSearchEntity;
 
@@ -26,11 +24,11 @@ public class KeywordGenerator {
     private static KeywordGenerator instance = null;
     private KeywordGeneratorSyncListener listener = null;
     private RegionTopSearchEntity topSearchEntity = null;
-    private Country country = Country.All;
+    private String country = Region.getDefaultCountry();
     private VolleyRequestQueue requestQueue = null;
 
     public interface KeywordGeneratorSyncListener {
-        void onSyncSuccess();
+        void onSyncSuccess(RegionTopSearchEntity keywordResponseEntity);
         void onSyncFail();
     }
 
@@ -51,6 +49,10 @@ public class KeywordGenerator {
         this.requestQueue = volleyRequestQueue;
     }
 
+    public void setTopSearchEntity(RegionTopSearchEntity topSearchEntity){
+        this.topSearchEntity = topSearchEntity;
+    }
+
     public void setListener(KeywordGeneratorSyncListener listener) {
 
         this.listener = listener;
@@ -63,14 +65,19 @@ public class KeywordGenerator {
 
     }
 
-    public void setCountry(Country country) {
+    public void setCountry(String country) {
         this.country = country;
     }
 
-    public Country getCountry(){
+    public String getCountry(){
 
         return country;
 
+    }
+    String res = "";
+
+    public String getRes(){
+        return res;
     }
 
     public void sync() {
@@ -79,14 +86,13 @@ public class KeywordGenerator {
             @Override
             public void onResponse(String response) {
 
-                Log.i(TAG, "response = " + response);
-
                 Gson gson = new Gson();
                 try {
+
                     topSearchEntity = gson.fromJson(response, RegionTopSearchEntity.class);
 
                     if (listener != null) {
-                        listener.onSyncSuccess();
+                        listener.onSyncSuccess(topSearchEntity);
                     }
                 } catch (JsonSyntaxException e){
                     if (listener != null) {
@@ -118,13 +124,13 @@ public class KeywordGenerator {
 
     }
 
-    public List<String> getKeywords(Country country) {
+    public List<String> getKeywords(String country) {
 
         List<String> keywords;
-        if (country == Country.All) {
+        if (Region.isAllRegion(country)) {
             keywords = topSearchEntity.getAllCountryKeywords();
         } else {
-            keywords = topSearchEntity.getCountryKeywords(country.getSimpleName());
+            keywords = topSearchEntity.getCountryKeywords(Region.getCountryShortName(country));
         }
         return keywords;
 

@@ -15,7 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.trend.tobeylin.tobeytrend.Country;
+import com.trend.tobeylin.tobeytrend.Region;
 import com.trend.tobeylin.tobeytrend.R;
 import com.trend.tobeylin.tobeytrend.main.agent.HomeAgent;
 import com.trend.tobeylin.tobeytrend.ui.adapter.CountrySpinnerAdapter;
@@ -102,7 +102,7 @@ public class HomeActivity extends FragmentActivity implements HomeView,
         gridImageView.setOnClickListener(this);
 
         Spinner countrySpinner = (Spinner) actionBarView.findViewById(R.id.actionbar_selectCountrySpinner);
-        CountrySpinnerAdapter countrySpinnerAdapter = new CountrySpinnerAdapter(Country.getAllCountriesFullName());
+        CountrySpinnerAdapter countrySpinnerAdapter = new CountrySpinnerAdapter(Region.getAllCountriesFullName());
         countrySpinner.setAdapter(countrySpinnerAdapter);
         countrySpinner.setOnItemSelectedListener(this);
 
@@ -132,7 +132,7 @@ public class HomeActivity extends FragmentActivity implements HomeView,
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-        List<String> countries = Country.getAllCountriesFullName();
+        List<String> countries = Region.getAllCountriesFullName();
         String selectCountryFullName = countries.get(position);
         homeAgent.selectCountry(selectCountryFullName);
 

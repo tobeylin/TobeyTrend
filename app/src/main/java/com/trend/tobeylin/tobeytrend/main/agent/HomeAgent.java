@@ -3,8 +3,9 @@ package com.trend.tobeylin.tobeytrend.main.agent;
 import android.content.Context;
 import android.util.Log;
 
-import com.trend.tobeylin.tobeytrend.Country;
+import com.trend.tobeylin.tobeytrend.Region;
 import com.trend.tobeylin.tobeytrend.data.generator.KeywordGenerator;
+import com.trend.tobeylin.tobeytrend.entity.RegionTopSearchEntity;
 import com.trend.tobeylin.tobeytrend.main.view.HomeView;
 
 import java.util.List;
@@ -26,11 +27,11 @@ public class HomeAgent implements KeywordGenerator.KeywordGeneratorSyncListener 
         keywordGenerator = KeywordGenerator.getInstance(context);
         keywordGenerator.setListener(this);
         keywordGenerator.sync();
-        homeView.showCountry(keywordGenerator.getCountry().getFullName());
+        homeView.showCountry(keywordGenerator.getCountry());
     }
 
     @Override
-    public void onSyncSuccess() {
+    public void onSyncSuccess(RegionTopSearchEntity keywordResponseEntity) {
         homeView.hideProgress();
         homeView.showActionbar();
         Log.i(TAG, "Sync Success");
@@ -51,11 +52,10 @@ public class HomeAgent implements KeywordGenerator.KeywordGeneratorSyncListener 
     }
 
     public void selectCountry(String countryName){
-        Country country = Country.getCountryByFullName(countryName);
-        keywordGenerator.setCountry(country);
+        keywordGenerator.setCountry(countryName);
         List<String> keywords = keywordGenerator.getKeywords();
         homeView.updateKeywordGrid(keywords, columnCount, rowCount);
-        homeView.showCountry(country.getFullName());
+        homeView.showCountry(countryName);
     }
 
     public void updateGrid(int newColumnCount, int newRowCount){
