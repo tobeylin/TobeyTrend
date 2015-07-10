@@ -48,6 +48,10 @@ public class KeywordGenerator {
 
     }
 
+    public void setTopSearchEntity(RegionTopSearchEntity topSearchEntity) {
+        this.topSearchEntity = topSearchEntity;
+    }
+
     public void setCountry(String country) {
         this.country = country;
     }

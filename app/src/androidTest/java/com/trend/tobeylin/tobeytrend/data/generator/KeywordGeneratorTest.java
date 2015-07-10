@@ -7,17 +7,20 @@ import com.trend.tobeylin.tobeytrend.entity.RegionTopSearchEntity;
 
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
+import java.util.List;
+
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by tobeylin on 15/7/10.
@@ -88,7 +91,36 @@ public class KeywordGeneratorTest extends AndroidTestCase {
 
     }
 
-    public void testGetKeywords(){
+    public void testGetKeywords_withCountryName(){
+
+        RegionTopSearchEntity mockTopSearchEntity = mock(RegionTopSearchEntity.class);
+        int countryKeywordCount = 20;
+        List mockCountryList = mock(List.class);
+        when(mockCountryList.size()).thenReturn(countryKeywordCount);
+        doReturn(mockCountryList).when(mockTopSearchEntity).getCountryKeywords(anyString());
+        keywordApiService = mock(KeywordApiService.class);
+        keywordGenerator = new KeywordGenerator(keywordApiService);
+        keywordGenerator.setTopSearchEntity(mockTopSearchEntity);
+
+        String validCountryName = "TW";
+        assertEquals(20, keywordGenerator.getKeywords(validCountryName).size());
+
+    }
+
+    public void testGetKeywords_withAllRegion(){
+
+        RegionTopSearchEntity mockTopSearchEntity = mock(RegionTopSearchEntity.class);
+        int countryKeywordCount = 20;
+        int countryCount = 47;
+        List mockAllCountryList = mock(List.class);
+        when(mockAllCountryList.size()).thenReturn(countryKeywordCount * countryCount);
+        doReturn(mockAllCountryList).when(mockTopSearchEntity).getCountryKeywords(anyString());
+        keywordApiService = mock(KeywordApiService.class);
+        keywordGenerator = new KeywordGenerator(keywordApiService);
+        keywordGenerator.setTopSearchEntity(mockTopSearchEntity);
+
+        String allRegion = "all";
+        assertEquals(countryKeywordCount * countryCount, keywordGenerator.getKeywords(allRegion).size());
 
     }
 
