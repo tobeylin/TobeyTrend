@@ -41,7 +41,7 @@ public class RegionTopSearchEntity implements Serializable {
 
     @SerializedName("13")
     public String[] CA = new String[20];
-    
+
     @SerializedName("38")
     public String[] CL = new String[20];
 
@@ -50,10 +50,10 @@ public class RegionTopSearchEntity implements Serializable {
 
     @SerializedName("23")
     public String[] KR = new String[20];
-    
+
     @SerializedName("49")
     public String[] DK = new String[20];
-    
+
     @SerializedName("29")
     public String[] EG = new String[20];
 
@@ -156,42 +156,45 @@ public class RegionTopSearchEntity implements Serializable {
     @SerializedName("28")
     public String[] VN = new String[20];
 
-    public List<String> getCountryKeywords(String countryName){
+    public RegionTopSearchEntity() {
+    }
+
+    public List<String> getCountryKeywords(String countryShortName) {
 
         Object keywords = null;
+        List<String> keywordsList;
+
         try {
-
-            Field countryField = RegionTopSearchEntity.class.getDeclaredField(countryName);
+            Field countryField = RegionTopSearchEntity.class.getDeclaredField(countryShortName);
             keywords = countryField.get(this);
-
-
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
+        } finally {
+            if (keywords != null) {
+                keywordsList = Arrays.asList((String[]) keywords);
+            } else {
+                keywordsList = new ArrayList<>();
+            }
         }
-
-        return Arrays.asList((String[])keywords);
+        return keywordsList;
 
     }
 
-    public List<String> getAllCountryKeywords(){
+    public List<String> getAllCountryKeywords() {
 
-        List<String> allKeywords = new ArrayList<>();
+        List<String> keywords = new ArrayList<>();
 
-        try {
-            Field[] countryFields = RegionTopSearchEntity.class.getDeclaredFields();
-            for (Field countryFiled : countryFields) {
-                if(!countryFiled.getName().equals("serialVersionUID")) {
-                    String[] countryKeywords = (String[]) countryFiled.get(this);
-                    allKeywords.addAll(Arrays.asList(countryKeywords));
-                }
+        Field[] countryFields = RegionTopSearchEntity.class.getDeclaredFields();
+        for (Field countryFiled : countryFields) {
+            if (!countryFiled.getName().equals("serialVersionUID")) {
+                List<String> countryKeywords = getCountryKeywords(countryFiled.getName());
+                keywords.addAll(countryKeywords);
             }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
         }
 
-        return allKeywords;
+        return keywords;
 
     }
 
