@@ -2,6 +2,7 @@ package com.trend.tobeylin.tobeytrend;
 
 import android.content.Context;
 
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -27,17 +28,42 @@ public class VolleyRequestQueue {
         return instance;
     }
 
+    public VolleyRequestQueue(RequestQueue requestQueue){
+        this.requestQueue = requestQueue;
+    }
+
     public RequestQueue getQueue(){
         return requestQueue;
     }
 
+    public boolean r = false;
     public void sendGetRequest(String url, Response.Listener successListener, Response.ErrorListener errorListener){
-        requestQueue.add(new StringRequest(Request.Method.GET, url, successListener, errorListener));
+        r = true;
+        requestQueue.add(new MyRequest(Request.Method.GET, url, successListener, errorListener));
     }
 
     public void add(StringRequest request) {
         if(request != null){
             requestQueue.add(request);
+        }
+    }
+
+    private class MyRequest extends StringRequest {
+
+        public MyRequest(int method, String url, Response.Listener<String> listener, Response.ErrorListener errorListener) {
+            super(method, url, listener, errorListener);
+        }
+
+        public MyRequest(String url, Response.Listener<String> listener, Response.ErrorListener errorListener) {
+            super(url, listener, errorListener);
+        }
+
+        @Override
+        protected Response<String> parseNetworkResponse(NetworkResponse response) {
+
+            String data = new String(response.data);
+
+            return super.parseNetworkResponse(response);
         }
     }
 

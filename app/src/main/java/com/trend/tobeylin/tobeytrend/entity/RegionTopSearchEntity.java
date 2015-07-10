@@ -16,145 +16,145 @@ public class RegionTopSearchEntity implements Serializable {
     private static final long serialVersionUID = 5033680397645094936L;
 
     @SerializedName("40")
-    String[] ZA = new String[20];
+    public String[] ZA = new String[20];
 
     @SerializedName("15")
-    String[] DE = new String[20];
+    public String[] DE = new String[20];
 
     @SerializedName("36")
-    String[] SA = new String[20];
+    public String[] SA = new String[20];
 
     @SerializedName("30")
-    String[] AR = new String[20];
+    public String[] AR = new String[20];
 
     @SerializedName("8")
-    String[] AU = new String[20];
+    public String[] AU = new String[20];
 
     @SerializedName("44")
-    String[] AT = new String[20];
+    public String[] AT = new String[20];
 
     @SerializedName("41")
-    String[] BE = new String[20];
+    public String[] BE = new String[20];
 
     @SerializedName("18")
-    String[] BR = new String[20];
+    public String[] BR = new String[20];
 
     @SerializedName("13")
-    String[] CA = new String[20];
+    public String[] CA = new String[20];
     
     @SerializedName("38")
-    String[] CL = new String[20];
+    public String[] CL = new String[20];
 
     @SerializedName("32")
-    String[] CO = new String[20];
+    public String[] CO = new String[20];
 
     @SerializedName("23")
-    String[] KR = new String[20];
+    public String[] KR = new String[20];
     
     @SerializedName("49")
-    String[] DK = new String[20];
+    public String[] DK = new String[20];
     
     @SerializedName("29")
-    String[] EG = new String[20];
+    public String[] EG = new String[20];
 
     @SerializedName("26")
-    String[] ES = new String[20];
+    public String[] ES = new String[20];
 
     @SerializedName("1")
-    String[] US = new String[20];
+    public String[] US = new String[20];
 
     @SerializedName("50")
-    String[] FI = new String[20];
+    public String[] FI = new String[20];
 
     @SerializedName("16")
-    String[] FR = new String[20];
+    public String[] FR = new String[20];
 
     @SerializedName("48")
-    String[] GR = new String[20];
+    public String[] GR = new String[20];
 
     @SerializedName("10")
-    String[] HK = new String[20];
+    public String[] HK = new String[20];
 
     @SerializedName("45")
-    String[] HU = new String[20];
+    public String[] HU = new String[20];
 
     @SerializedName("3")
-    String[] IN = new String[20];
+    public String[] IN = new String[20];
 
     @SerializedName("19")
-    String[] ID = new String[20];
+    public String[] ID = new String[20];
 
     @SerializedName("6")
-    String[] IL = new String[20];
+    public String[] IL = new String[20];
 
     @SerializedName("27")
-    String[] IT = new String[20];
+    public String[] IT = new String[20];
 
     @SerializedName("4")
-    String[] JP = new String[20];
+    public String[] JP = new String[20];
 
     @SerializedName("37")
-    String[] KE = new String[20];
+    public String[] KE = new String[20];
 
     @SerializedName("34")
-    String[] MY = new String[20];
+    public String[] MY = new String[20];
 
     @SerializedName("21")
-    String[] MX = new String[20];
+    public String[] MX = new String[20];
 
     @SerializedName("52")
-    String[] NG = new String[20];
+    public String[] NG = new String[20];
 
     @SerializedName("51")
-    String[] NO = new String[20];
+    public String[] NO = new String[20];
 
     @SerializedName("17")
-    String[] NL = new String[20];
+    public String[] NL = new String[20];
 
     @SerializedName("25")
-    String[] PH = new String[20];
+    public String[] PH = new String[20];
 
     @SerializedName("31")
-    String[] PL = new String[20];
+    public String[] PL = new String[20];
 
     @SerializedName("47")
-    String[] PT = new String[20];
+    public String[] PT = new String[20];
 
     @SerializedName("43")
-    String[] CZ = new String[20];
+    public String[] CZ = new String[20];
 
     @SerializedName("39")
-    String[] RO = new String[20];
+    public String[] RO = new String[20];
 
     @SerializedName("9")
-    String[] GB = new String[20];
+    public String[] GB = new String[20];
 
     @SerializedName("14")
-    String[] RU = new String[20];
+    public String[] RU = new String[20];
 
     @SerializedName("5")
-    String[] SG = new String[20];
+    public String[] SG = new String[20];
 
     @SerializedName("42")
-    String[] SE = new String[20];
+    public String[] SE = new String[20];
 
     @SerializedName("46")
-    String[] CH = new String[20];
+    public String[] CH = new String[20];
 
     @SerializedName("12")
-    String[] TW = new String[20];
+    public String[] TW = new String[20];
 
     @SerializedName("33")
-    String[] TH = new String[20];
+    public String[] TH = new String[20];
 
     @SerializedName("24")
-    String[] TR = new String[20];
+    public String[] TR = new String[20];
 
     @SerializedName("35")
-    String[] UA = new String[20];
+    public String[] UA = new String[20];
 
     @SerializedName("28")
-    String[] VN = new String[20];
+    public String[] VN = new String[20];
 
     public List<String> getCountryKeywords(String countryName){
 

@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.trend.tobeylin.tobeytrend.Region;
 import com.trend.tobeylin.tobeytrend.data.generator.KeywordGenerator;
+import com.trend.tobeylin.tobeytrend.data.generator.api.KeywordApiService;
 import com.trend.tobeylin.tobeytrend.entity.RegionTopSearchEntity;
 import com.trend.tobeylin.tobeytrend.main.view.HomeView;
 
@@ -24,7 +25,7 @@ public class HomeAgent implements KeywordGenerator.KeywordGeneratorSyncListener 
 
     public HomeAgent(Context context, HomeView homeView){
         this.homeView = homeView;
-        keywordGenerator = KeywordGenerator.getInstance(context);
+        keywordGenerator = new KeywordGenerator(new KeywordApiService(context));
         keywordGenerator.setListener(this);
         keywordGenerator.sync();
         homeView.showCountry(keywordGenerator.getCountry());

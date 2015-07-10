@@ -17,42 +17,23 @@ import java.util.List;
 /**
  * Created by tobeylin on 15/6/15.
  */
-public class KeywordGenerator implements KeywordApiService.ApiCallback{
+public class KeywordGenerator {
 
     public static final String TAG = KeywordGenerator.class.getSimpleName();
-    private static final String TOP_SEARCH_REQUEST_URL = "http://hawttrends.appspot.com/api/terms/";
 
-    private static KeywordGenerator instance = null;
     private KeywordGeneratorSyncListener listener = null;
     private RegionTopSearchEntity topSearchEntity = null;
     private String country = Region.getDefaultCountry();
-    private VolleyRequestQueue requestQueue = null;
     private KeywordApiService keywordApiService = null;
+    private boolean isSync = false;
 
     public interface KeywordGeneratorSyncListener {
         void onSyncSuccess(RegionTopSearchEntity keywordResponseEntity);
         void onSyncFail();
     }
 
-    private KeywordGenerator(Context context) {
-        keywordApiService = new KeywordApiService(context, this);
-    }
-
-    public static KeywordGenerator getInstance(Context context) {
-
-        if (instance == null) {
-            instance = new KeywordGenerator(context);
-        }
-        return instance;
-
-    }
-
-    public void setVolleyRequestQueue(VolleyRequestQueue volleyRequestQueue){
-        this.requestQueue = volleyRequestQueue;
-    }
-
-    public void setTopSearchEntity(RegionTopSearchEntity topSearchEntity){
-        this.topSearchEntity = topSearchEntity;
+    public KeywordGenerator(KeywordApiService keywordApiService) {
+        this.keywordApiService = keywordApiService;
     }
 
     public void setListener(KeywordGeneratorSyncListener listener) {
@@ -78,61 +59,28 @@ public class KeywordGenerator implements KeywordApiService.ApiCallback{
     }
 
     public void sync(){
-        keywordApiService.start();
-    }
-
-    @Override
-    public void onSuccess() {
-        topSearchEntity = keywordApiService.getTopSearchEntity();
-        if (listener != null) {
-            listener.onSyncSuccess(topSearchEntity);
-        }
-    }
-
-    @Override
-    public void onFail() {
-        Log.e(TAG, "Error");
-        if (listener != null) {
-            listener.onSyncFail();
-        }
-    }
-
-    public void sync2() {
-
-        Response.Listener successListener = new Response.Listener<String>() {
+        keywordApiService.start(new KeywordApiService.ApiCallback() {
             @Override
-            public void onResponse(String response) {
-
-                Gson gson = new Gson();
-                try {
-
-                    topSearchEntity = gson.fromJson(response, RegionTopSearchEntity.class);
-
-                    if (listener != null) {
-                        listener.onSyncSuccess(topSearchEntity);
-                    }
-                } catch (JsonSyntaxException e){
-                    if (listener != null) {
-                        listener.onSyncFail();
-                    }
+            public void onSuccess(RegionTopSearchEntity response) {
+                isSync = true;
+                topSearchEntity = response;
+                if (listener != null) {
+                    listener.onSyncSuccess(topSearchEntity);
                 }
             }
-        };
-        Response.ErrorListener errorListener = new Response.ErrorListener() {
+
             @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Error");
+            public void onFail() {
+                isSync = false;
                 if (listener != null) {
                     listener.onSyncFail();
                 }
             }
-        };
-        requestQueue.sendGetRequest(TOP_SEARCH_REQUEST_URL, successListener, errorListener);
-
+        });
     }
 
     public boolean isSync(){
-        return (topSearchEntity != null)? true: false;
+        return isSync;
     }
 
     public List<String> getKeywords() {

@@ -14,46 +14,61 @@ import com.trend.tobeylin.tobeytrend.entity.RegionTopSearchEntity;
 /**
  * Created by tobeylin on 15/7/9.
  */
-public class KeywordApiService implements Response.Listener<String>, Response.ErrorListener {
+public class KeywordApiService {
 
     private static final String TOP_SEARCH_REQUEST_URL = "http://hawttrends.appspot.com/api/terms/";
 
     private VolleyRequestQueue requestQueue = null;
     private RegionTopSearchEntity topSearchEntity = null;
-    private ApiCallback callback = null;
 
     public interface ApiCallback {
-        void onSuccess();
+        void onSuccess(RegionTopSearchEntity topSearchEntity);
         void onFail();
     }
 
-    public KeywordApiService(Context context, ApiCallback callback){
+    public KeywordApiService(Context context){
         requestQueue = VolleyRequestQueue.getInstance(context);
-        this.callback = callback;
+    }
+
+    public KeywordApiService(VolleyRequestQueue volleyRequestQueue){
+        requestQueue = volleyRequestQueue;
+    }
+
+    public void setVolleyRequestQueue(VolleyRequestQueue volleyRequestQueue) {
+        this.requestQueue = volleyRequestQueue;
     }
 
     public RegionTopSearchEntity getTopSearchEntity() {
         return topSearchEntity;
     }
 
-    public void start(){
-        requestQueue.sendGetRequest(TOP_SEARCH_REQUEST_URL, this, this);
+    public void start(final ApiCallback callback){
+
+        Response.Listener<String> successListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    topSearchEntity = parse(response);
+                    callback.onSuccess(topSearchEntity);
+                } catch (JsonSyntaxException e){
+                    callback.onFail();
+                }
+            }
+        };
+        Response.ErrorListener errorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                callback.onFail();
+            }
+        };
+
+        requestQueue.sendGetRequest(TOP_SEARCH_REQUEST_URL, successListener, errorListener);
     }
 
-    @Override
-    public void onResponse(String response) {
+    private RegionTopSearchEntity parse(String data){
         Gson gson = new Gson();
-        try {
-            topSearchEntity = gson.fromJson(response, RegionTopSearchEntity.class);
-            callback.onSuccess();
-        } catch (JsonSyntaxException e){
-            callback.onFail();
-        }
-    }
-
-    @Override
-    public void onErrorResponse(VolleyError error) {
-       callback.onFail();
+        RegionTopSearchEntity resultEntity = gson.fromJson(data, RegionTopSearchEntity.class);
+        return resultEntity;
     }
 
 }
