@@ -13,6 +13,7 @@ import org.mockito.stubbing.Answer;
 
 import java.util.List;
 
+import static com.trend.tobeylin.tobeytrend.data.generator.KeywordGenerator.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doAnswer;
@@ -30,7 +31,6 @@ public class KeywordGeneratorTest extends AndroidTestCase {
 
     private KeywordGenerator keywordGenerator;
     private KeywordApiService keywordApiService;
-
 
     public void setUp() throws Exception {
 
@@ -50,24 +50,30 @@ public class KeywordGeneratorTest extends AndroidTestCase {
             }
         }).when(keywordApiService).start(any(KeywordApiService.ApiCallback.class));
         keywordGenerator = new KeywordGenerator(keywordApiService);
+        KeywordGeneratorSyncListener mockListener = mock(KeywordGeneratorSyncListener.class);
+        keywordGenerator.setListener(mockListener);
 
         keywordGenerator.sync();
 
         verify(keywordApiService, times(1)).start(any(KeywordApiService.ApiCallback.class));
         assertEquals(true, keywordGenerator.isSync());
+        verify(mockListener).onSyncSuccess(any(RegionTopSearchEntity.class));
 
     }
 
     public void testSync_SuccessAndSync_ByCaptor(){
 
+        KeywordGeneratorSyncListener mockListener = mock(KeywordGeneratorSyncListener.class);
         keywordApiService = mock(KeywordApiService.class);
         keywordGenerator = new KeywordGenerator(keywordApiService);
+        keywordGenerator.setListener(mockListener);
         keywordGenerator.sync();
 
         ArgumentCaptor<KeywordApiService.ApiCallback> callbackCaptor = ArgumentCaptor.forClass(KeywordApiService.ApiCallback.class);
         verify(keywordApiService).start(callbackCaptor.capture());
         callbackCaptor.getValue().onSuccess(new RegionTopSearchEntity());
         assertEquals(true, keywordGenerator.isSync());
+        verify(mockListener, times(1)).onSyncSuccess(any(RegionTopSearchEntity.class));
 
     }
 
