@@ -7,12 +7,13 @@ import java.util.List;
  */
 public interface HomeView {
 
-    public void showCountry(String countryName);
-    public void showSelectViewDialog(int columnCount, int rowCount);
-    public void showProgress();
-    public void hideProgress();
-    public void updateKeywordGrid(List<String> newKeywords, int newColumnCount, int newRowCount);
-    public void showActionbar();
-    public void showKeywordSearchPage(String keyword);
+    void showCountry(String countryName);
+    void showSelectViewDialog(int columnCount, int rowCount);
+    void showProgress();
+    void hideProgress();
+    void updateKeywordGrid(List<String> newKeywords, int newColumnCount, int newRowCount);
+    void showGridImageView();
+    void showCountrySpinner();
+    void showKeywordSearchPage(String keyword);
 
 }

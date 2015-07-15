@@ -28,15 +28,16 @@ import java.util.List;
 public class HomeActivity extends FragmentActivity implements HomeView,
         View.OnClickListener,
         AdapterView.OnItemSelectedListener,
-        KeywordCardAdapter.OnItemClickListener, SelectViewDialogFragment.SelectViewDialogListener {
+        KeywordCardAdapter.OnItemClickListener,
+        SelectViewDialogFragment.SelectViewDialogListener {
 
     public static final String TAG = HomeActivity.class.getSimpleName();
 
     private RecyclerView keywordCardRecycleView = null;
-    private KeywordCardLayoutManager keywordCardLayoutManager = null;
     private KeywordCardAdapter keywordCardAdapter = null;
     private ProgressBar progressBar = null;
     private TextView showCountryTextView = null;
+    private Spinner countrySpinner = null;
 
     private HomeAgent homeAgent = null;
 
@@ -46,16 +47,30 @@ public class HomeActivity extends FragmentActivity implements HomeView,
         setContentView(R.layout.activity_home);
 
         initLayout();
-        homeAgent = new HomeAgent(this, this);
+        if(homeAgent == null) {
+            homeAgent = new HomeAgent(this, this);
+        }
+    }
+
+    public void setAgent(HomeAgent homeAgent) {
+        this.homeAgent = homeAgent;
+    }
+
+    public HomeAgent getAgent() {
+        return homeAgent;
     }
 
     public void initLayout() {
         keywordCardRecycleView = (RecyclerView) findViewById(R.id.home_keywordCardRecycleView);
         keywordCardRecycleView.setHasFixedSize(true);
-        keywordCardLayoutManager = new KeywordCardLayoutManager(this);
-        keywordCardRecycleView.setLayoutManager(keywordCardLayoutManager);
+        keywordCardRecycleView.setLayoutManager(new KeywordCardLayoutManager(this));
         progressBar = (ProgressBar) findViewById(R.id.home_progressBar);
         showCountryTextView = (TextView) findViewById(R.id.home_showTextView);
+
+        View actionBarView = LayoutInflater.from(this).inflate(R.layout.actionbar, null, false);
+        actionBarView.setLayoutParams(new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT));
+        getActionBar().setDisplayShowCustomEnabled(true);
+        getActionBar().setCustomView(actionBarView);
     }
 
     @Override
@@ -76,7 +91,7 @@ public class HomeActivity extends FragmentActivity implements HomeView,
 
     @Override
     public void showProgress() {
-        progressBar.setVisibility(View.INVISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -86,6 +101,7 @@ public class HomeActivity extends FragmentActivity implements HomeView,
 
     @Override
     public void updateKeywordGrid(List<String> newKeywords, int newColumnCount, int newRowCount) {
+        KeywordCardLayoutManager keywordCardLayoutManager = (KeywordCardLayoutManager) keywordCardRecycleView.getLayoutManager();
         keywordCardLayoutManager.setHeightCount(newRowCount);
         keywordCardLayoutManager.setWidthCount(newColumnCount);
         keywordCardAdapter = new KeywordCardAdapter(this, newKeywords, newColumnCount, newRowCount);
@@ -94,25 +110,23 @@ public class HomeActivity extends FragmentActivity implements HomeView,
     }
 
     @Override
-    public void showActionbar() {
-        View actionBarView = LayoutInflater.from(this).inflate(R.layout.actionbar, null, false);
-        actionBarView.setLayoutParams(new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT));
-
-        ImageView gridImageView = (ImageView) actionBarView.findViewById(R.id.actionbar_gridImageView);
+    public void showGridImageView(){
+        ImageView gridImageView = (ImageView) getActionBar().getCustomView().findViewById(R.id.actionbar_gridImageView);
+        gridImageView.setVisibility(View.VISIBLE);
         gridImageView.setOnClickListener(this);
-
-        Spinner countrySpinner = (Spinner) actionBarView.findViewById(R.id.actionbar_selectCountrySpinner);
-        CountrySpinnerAdapter countrySpinnerAdapter = new CountrySpinnerAdapter(Region.getAllCountriesFullName());
-        countrySpinner.setAdapter(countrySpinnerAdapter);
-        countrySpinner.setOnItemSelectedListener(this);
-
-        getActionBar().setDisplayShowCustomEnabled(true);
-        getActionBar().setCustomView(actionBarView);
     }
 
     @Override
-    public void showKeywordSearchPage(String keyword) {
-        String url = "http://www.google.com/search?q=" + keyword;
+    public void showCountrySpinner(){
+        countrySpinner = (Spinner) getActionBar().getCustomView().findViewById(R.id.actionbar_selectCountrySpinner);
+        countrySpinner.setVisibility(View.VISIBLE);
+        CountrySpinnerAdapter countrySpinnerAdapter = new CountrySpinnerAdapter(Region.getAllCountriesFullName());
+        countrySpinner.setAdapter(countrySpinnerAdapter);
+        countrySpinner.setOnItemSelectedListener(this);
+    }
+
+    @Override
+    public void showKeywordSearchPage(String url) {
         Intent i = new Intent(Intent.ACTION_VIEW);
         i.setData(Uri.parse(url));
         startActivity(i);
@@ -122,7 +136,7 @@ public class HomeActivity extends FragmentActivity implements HomeView,
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.actionbar_gridImageView:
-                homeAgent.clickGridView();
+                homeAgent.openSelectViewDialog();
                 break;
             default:
 
@@ -131,11 +145,8 @@ public class HomeActivity extends FragmentActivity implements HomeView,
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-        List<String> countries = Region.getAllCountriesFullName();
-        String selectCountryFullName = countries.get(position);
+        String selectCountryFullName = (String) (parent.getAdapter().getItem(position));
         homeAgent.selectCountry(selectCountryFullName);
-
     }
 
     @Override
@@ -155,7 +166,7 @@ public class HomeActivity extends FragmentActivity implements HomeView,
 
     @Override
     public void onConfirmClick(int oldColumnCount, int oldRowCount, int newColumnCount, int newRowCount) {
-        if(oldColumnCount != newColumnCount || oldRowCount != newRowCount) {
+        if (oldColumnCount != newColumnCount || oldRowCount != newRowCount) {
             homeAgent.updateGrid(newColumnCount, newRowCount);
         }
     }

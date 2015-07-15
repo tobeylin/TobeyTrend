@@ -8,6 +8,7 @@ import com.trend.tobeylin.tobeytrend.data.generator.KeywordGenerator;
 import com.trend.tobeylin.tobeytrend.data.generator.api.KeywordApiService;
 import com.trend.tobeylin.tobeytrend.entity.RegionTopSearchEntity;
 import com.trend.tobeylin.tobeytrend.main.view.HomeView;
+import com.trend.tobeylin.tobeytrend.util.UrlUtil;
 
 import java.util.List;
 
@@ -25,6 +26,10 @@ public class HomeAgent implements KeywordGenerator.KeywordGeneratorSyncListener 
 
     public HomeAgent(Context context, HomeView homeView){
         this.homeView = homeView;
+        init(context);
+    }
+
+    public void init(Context context){
         keywordGenerator = new KeywordGenerator(new KeywordApiService(context));
         keywordGenerator.setListener(this);
         keywordGenerator.sync();
@@ -34,7 +39,8 @@ public class HomeAgent implements KeywordGenerator.KeywordGeneratorSyncListener 
     @Override
     public void onSyncSuccess(RegionTopSearchEntity keywordResponseEntity) {
         homeView.hideProgress();
-        homeView.showActionbar();
+        homeView.showGridImageView();
+        homeView.showCountrySpinner();
         Log.i(TAG, "Sync Success");
         homeView.updateKeywordGrid(keywordGenerator.getKeywords(), columnCount, rowCount);
     }
@@ -44,12 +50,13 @@ public class HomeAgent implements KeywordGenerator.KeywordGeneratorSyncListener 
         Log.i(TAG, "Sync Fail");
     }
 
-    public void clickGridView(){
+    public void openSelectViewDialog(){
         homeView.showSelectViewDialog(columnCount, rowCount);
     }
 
     public void clickKeyword(String keyword) {
-        homeView.showKeywordSearchPage(keyword);
+        String url = UrlUtil.getGoogleSearchUrl(keyword);
+        homeView.showKeywordSearchPage(url);
     }
 
     public void selectCountry(String countryName){

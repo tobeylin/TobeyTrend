@@ -21,11 +21,11 @@ import java.util.List;
  */
 public class KeywordCardAdapter extends RecyclerView.Adapter<KeywordCardAdapter.ViewHolder> {
 
-    private final int DEFAULT_GRID_WIDTH_COUNT = 1;
-    private final int DEFAULT_GRID_HEIGHT_COUNT = 1;
+    private final int DEFAULT_GRID_COLUMN_COUNT = 1;
+    private final int DEFAULT_GRID_ROW_COUNT = 1;
     private final long DEFAULT_SHOW_KEYWORD_DURATION = 2000;
-    private int gridWidthCount = DEFAULT_GRID_WIDTH_COUNT;
-    private int gridHeightCount = DEFAULT_GRID_HEIGHT_COUNT;
+    private int gridColumnCount = DEFAULT_GRID_COLUMN_COUNT;
+    private int gridRowCount = DEFAULT_GRID_ROW_COUNT;
     private long show_keyword_duration = DEFAULT_SHOW_KEYWORD_DURATION;
     private KeywordGenerator keywordGenerator;
     private List<String> keywords;
@@ -40,11 +40,19 @@ public class KeywordCardAdapter extends RecyclerView.Adapter<KeywordCardAdapter.
 
     }
 
-    public KeywordCardAdapter(Context context, List<String> keywords, int widthCount, int heightCount){
+    public KeywordCardAdapter(Context context, List<String> keywords, int columnCount, int rowCount){
         this.context = context;
         this.keywords = keywords;
-        this.gridWidthCount = widthCount;
-        this.gridHeightCount = heightCount;
+        this.gridColumnCount = columnCount;
+        this.gridRowCount = rowCount;
+    }
+
+    public int getGridColumnCount() {
+        return gridColumnCount;
+    }
+
+    public int getGridRowCount() {
+        return gridRowCount;
     }
 
     public void setOnItemClickListener(OnItemClickListener listener){
@@ -98,12 +106,12 @@ public class KeywordCardAdapter extends RecyclerView.Adapter<KeywordCardAdapter.
     }
 
     private int getItemHeight(ViewGroup parent){
-        return parent.getMeasuredHeight() / gridHeightCount;
+        return parent.getMeasuredHeight() / gridRowCount;
     }
 
     private float getTextSize(){
 
-        int total = gridWidthCount * gridHeightCount;
+        int total = gridColumnCount * gridRowCount;
         float textSize;
         if (total <= 2){
             textSize = context.getResources().getDimension(R.dimen.keyword_text_size_1);
@@ -129,7 +137,11 @@ public class KeywordCardAdapter extends RecyclerView.Adapter<KeywordCardAdapter.
 
     @Override
     public int getItemCount() {
-        return gridWidthCount * gridHeightCount;
+        return gridColumnCount * gridRowCount;
+    }
+
+    public int getDataCount(){
+        return (keywords != null)? keywords.size(): 0;
     }
 
     private void shuffleKeywords() {

@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.NumberPicker;
 
 import com.trend.tobeylin.tobeytrend.R;
+import com.trend.tobeylin.tobeytrend.main.agent.HomeAgent;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -27,6 +28,7 @@ public class SelectViewDialogFragment extends DialogFragment {
     private NumberPicker rowNumberPicker = null;
     private int oldColumnCount = 1;
     private int oldRowCount = 1;
+    private  SelectViewDialogListener listener = null;
 
     public interface SelectViewDialogListener{
 
@@ -44,6 +46,7 @@ public class SelectViewDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         getDataFromBundle();
+        setListener((SelectViewDialogListener) getActivity());
 
         View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_select_view_dialog, null, false);
         columnNumberPicker = (NumberPicker) dialogView.findViewById(R.id.selectViewDialog_widthNumberPicker);
@@ -82,11 +85,14 @@ public class SelectViewDialogFragment extends DialogFragment {
 
     }
 
+    public void setListener(SelectViewDialogListener listener) {
+        this.listener = listener;
+    }
+
     private void confirmAction(){
 
         int newWidth = columnNumberPicker.getValue();
         int newHeight = rowNumberPicker.getValue();
-        SelectViewDialogListener listener = (SelectViewDialogListener) getActivity();
         if(listener != null) {
             listener.onConfirmClick(oldColumnCount, oldRowCount, newWidth, newHeight);
         }
@@ -94,7 +100,6 @@ public class SelectViewDialogFragment extends DialogFragment {
     }
 
     private void cancelAction(){
-        SelectViewDialogListener listener = (SelectViewDialogListener) getActivity();
         if(listener != null) {
             listener.onCancelClick();
         }
