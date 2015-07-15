@@ -76,6 +76,17 @@ public class HomeActivityTest {
         keywordCardRecycleView = (RecyclerView) homeActivity.findViewById(R.id.home_keywordCardRecycleView);
     }
 
+    public void testOnCreate() {
+
+        //TODO: test activity's life cycle
+        assertNotNull(showCountryTextView);
+        assertNotNull(progressBar);
+        assertNotNull(gridImageView);
+        assertNotNull(countrySpinner);
+        assertNotNull(keywordCardRecycleView);
+
+    }
+
     @Test
     public void testShowCountry() {
 
@@ -139,13 +150,13 @@ public class HomeActivityTest {
     }
 
     @Test
-    public void testUpdateKeywordGrid(){
+    public void testUpdateKeywordGrid() {
         KeywordCardAdapter oldAdapter = (KeywordCardAdapter) keywordCardRecycleView.getAdapter();
-        KeywordCardLayoutManager mockLayoutManager  = mock(KeywordCardLayoutManager.class);
+        KeywordCardLayoutManager mockLayoutManager = mock(KeywordCardLayoutManager.class);
         keywordCardRecycleView.setLayoutManager(mockLayoutManager);
         int testKeywordCount = 10;
         List<String> testKeywordList = new ArrayList<>();
-        for(int i = 0; i < testKeywordCount; ++i){
+        for (int i = 0; i < testKeywordCount; ++i) {
             testKeywordList.add("Keyword_" + i);
         }
         int testColumnCount = 1;
@@ -162,7 +173,7 @@ public class HomeActivityTest {
     }
 
     @Test
-    public void testShowKeywordSearchPage(){
+    public void testShowKeywordSearchPage() {
         String testUrl = "http://www.google.com/search?q=test";
         homeActivity.showKeywordSearchPage(testUrl);
 
@@ -172,7 +183,7 @@ public class HomeActivityTest {
     }
 
     @Test
-    public void testOnClickGridImageView(){
+    public void testOnClickGridImageView() {
         gridImageView.setVisibility(View.VISIBLE);
         gridImageView.setOnClickListener(homeActivity);
         gridImageView.performClick();
@@ -181,7 +192,7 @@ public class HomeActivityTest {
     }
 
     @Test
-    public void testOnCountrySpinnerItemSelected(){
+    public void testOnCountrySpinnerItemSelected() {
         int testDataPosition = 0;
         String[] testData = new String[]{"data_1", "data_2", "data_3"};
         countrySpinner.setVisibility(View.VISIBLE);
@@ -221,7 +232,7 @@ public class HomeActivityTest {
     }
 
     @Test
-    public void testOnSelectViewDialogConfirmClick_withDifferentColumnRow(){
+    public void testOnSelectViewDialogConfirmClick_withDifferentColumnRow() {
 
         SelectViewDialogFragment selectViewDialogFragment = spy(new SelectViewDialogFragment());
         Bundle bundle = new Bundle();
@@ -247,7 +258,7 @@ public class HomeActivityTest {
     }
 
     @Test
-    public void testOnSelectViewDialogConfirmClick_withSameColumnRow(){
+    public void testOnSelectViewDialogConfirmClick_withSameColumnRow() {
 
         SelectViewDialogFragment selectViewDialogFragment = spy(new SelectViewDialogFragment());
         Bundle bundle = new Bundle();
