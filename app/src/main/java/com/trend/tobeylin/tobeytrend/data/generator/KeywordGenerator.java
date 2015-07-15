@@ -1,14 +1,8 @@
 package com.trend.tobeylin.tobeytrend.data.generator;
 
 import android.content.Context;
-import android.util.Log;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import com.trend.tobeylin.tobeytrend.Region;
-import com.trend.tobeylin.tobeytrend.VolleyRequestQueue;
 import com.trend.tobeylin.tobeytrend.data.generator.api.KeywordApiService;
 import com.trend.tobeylin.tobeytrend.entity.RegionTopSearchEntity;
 
@@ -32,20 +26,20 @@ public class KeywordGenerator {
         void onSyncFail();
     }
 
+    public KeywordGenerator(Context context){
+        keywordApiService = new KeywordApiService(context);
+    }
+
     public KeywordGenerator(KeywordApiService keywordApiService) {
         this.keywordApiService = keywordApiService;
     }
 
     public void setListener(KeywordGeneratorSyncListener listener) {
-
         this.listener = listener;
-
     }
 
     public void removeListener() {
-
         this.listener = null;
-
     }
 
     public void setTopSearchEntity(RegionTopSearchEntity topSearchEntity) {

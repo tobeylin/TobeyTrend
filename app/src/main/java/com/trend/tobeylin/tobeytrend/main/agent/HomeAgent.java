@@ -26,12 +26,25 @@ public class HomeAgent implements KeywordGenerator.KeywordGeneratorSyncListener 
 
     public HomeAgent(Context context, HomeView homeView){
         this.homeView = homeView;
-        init(context);
+        keywordGenerator = new KeywordGenerator(context);
+        keywordGenerator.setListener(this);
     }
 
-    public void init(Context context){
-        keywordGenerator = new KeywordGenerator(new KeywordApiService(context));
-        keywordGenerator.setListener(this);
+    public HomeAgent(HomeView homeView, KeywordGenerator keywordGenerator){
+        this.homeView = homeView;
+        this.keywordGenerator = keywordGenerator;
+        this.keywordGenerator.setListener(this);
+    }
+
+    public int getRowCount() {
+        return rowCount;
+    }
+
+    public int getColumnCount() {
+        return columnCount;
+    }
+
+    public void init(){
         keywordGenerator.sync();
         homeView.showCountry(keywordGenerator.getCountry());
     }

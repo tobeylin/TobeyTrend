@@ -29,17 +29,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
-import org.robolectric.internal.Shadow;
 import org.robolectric.shadows.support.v4.SupportFragmentTestUtil;
-import org.robolectric.util.FragmentTestUtil;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -199,7 +195,7 @@ public class HomeActivityTest {
     }
 
     @Test
-    public void testOnKeywordClick(){
+    public void testOnKeywordClick() {
         int testColumnCount = 1;
         int testRowCount = 1;
         List<String> testKeywordList = new ArrayList<>();
