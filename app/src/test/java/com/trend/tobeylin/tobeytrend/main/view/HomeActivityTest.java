@@ -218,7 +218,7 @@ public class HomeActivityTest {
         KeywordCardLayoutManager keywordCardLayoutManager = (KeywordCardLayoutManager) keywordCardRecycleView.getLayoutManager();
         keywordCardLayoutManager.setHeightCount(testColumnCount);
         keywordCardLayoutManager.setWidthCount(testRowCount);
-        KeywordCardAdapter keywordCardAdapter = new KeywordCardAdapter(RuntimeEnvironment.application, testKeywordList, testColumnCount, testRowCount);
+        KeywordCardAdapter keywordCardAdapter = new KeywordCardAdapter(testKeywordList, testColumnCount, testRowCount);
         keywordCardAdapter.setOnItemClickListener(homeActivity);
         keywordCardRecycleView.setAdapter(keywordCardAdapter);
         keywordCardRecycleView.measure(0, 0);

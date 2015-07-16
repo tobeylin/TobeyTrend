@@ -105,7 +105,7 @@ public class HomeActivity extends FragmentActivity implements HomeView,
         KeywordCardLayoutManager keywordCardLayoutManager = (KeywordCardLayoutManager) keywordCardRecycleView.getLayoutManager();
         keywordCardLayoutManager.setHeightCount(newRowCount);
         keywordCardLayoutManager.setWidthCount(newColumnCount);
-        keywordCardAdapter = new KeywordCardAdapter(this, newKeywords, newColumnCount, newRowCount);
+        keywordCardAdapter = new KeywordCardAdapter(newKeywords, newColumnCount, newRowCount);
         keywordCardAdapter.setOnItemClickListener(this);
         keywordCardRecycleView.setAdapter(keywordCardAdapter);
     }

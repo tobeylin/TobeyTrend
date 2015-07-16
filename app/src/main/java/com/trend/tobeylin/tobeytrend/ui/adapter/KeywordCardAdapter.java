@@ -10,7 +10,6 @@ import android.widget.LinearLayout;
 
 import com.trend.tobeylin.tobeytrend.BackgroundColor;
 import com.trend.tobeylin.tobeytrend.R;
-import com.trend.tobeylin.tobeytrend.data.generator.KeywordGenerator;
 import com.trend.tobeylin.tobeytrend.ui.custom.KeywordCard;
 
 import java.util.Collections;
@@ -27,9 +26,7 @@ public class KeywordCardAdapter extends RecyclerView.Adapter<KeywordCardAdapter.
     private int gridColumnCount = DEFAULT_GRID_COLUMN_COUNT;
     private int gridRowCount = DEFAULT_GRID_ROW_COUNT;
     private long show_keyword_duration = DEFAULT_SHOW_KEYWORD_DURATION;
-    private KeywordGenerator keywordGenerator;
     private List<String> keywords;
-    private Context context;
     private OnItemClickListener itemClickListener = null;
     private int keywordIndex = 0;
 
@@ -40,8 +37,7 @@ public class KeywordCardAdapter extends RecyclerView.Adapter<KeywordCardAdapter.
 
     }
 
-    public KeywordCardAdapter(Context context, List<String> keywords, int columnCount, int rowCount){
-        this.context = context;
+    public KeywordCardAdapter(List<String> keywords, int columnCount, int rowCount){
         this.keywords = keywords;
         this.gridColumnCount = columnCount;
         this.gridRowCount = rowCount;
@@ -68,11 +64,14 @@ public class KeywordCardAdapter extends RecyclerView.Adapter<KeywordCardAdapter.
 
         LayoutInflater layoutInflater = LayoutInflater.from(viewGroup.getContext());
         View keywordCardView = layoutInflater.inflate(R.layout.keyword_card_item, viewGroup, false);
+
         final ViewHolder viewHolder = new ViewHolder(keywordCardView);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, getItemHeight(viewGroup));
         keywordCardView.setLayoutParams(layoutParams);
-        viewHolder.keywordCard.setKeywordTextSize(getTextSize());
-        viewHolder.keywordCard.setBackgroundColors(BackgroundColor.getAllColors(context));
+        float keywordTextSize = getKeywordTextSize(viewGroup.getContext(), gridColumnCount, gridRowCount);
+
+        viewHolder.keywordCard.setKeywordTextSize(keywordTextSize);
+        viewHolder.keywordCard.setBackgroundColors(BackgroundColor.getAllColors(viewGroup.getContext()));
         viewHolder.keywordCard.setOnStateChangeListener(new KeywordCard.OnStateChangeListener() {
             @Override
             public void onKeywordTypeStart() {
@@ -109,7 +108,7 @@ public class KeywordCardAdapter extends RecyclerView.Adapter<KeywordCardAdapter.
         return parent.getMeasuredHeight() / gridRowCount;
     }
 
-    private float getTextSize(){
+    public float getKeywordTextSize(Context context, int gridColumnCount, int gridRowCount){
 
         int total = gridColumnCount * gridRowCount;
         float textSize;
@@ -131,7 +130,7 @@ public class KeywordCardAdapter extends RecyclerView.Adapter<KeywordCardAdapter.
         updateKeywordCard(viewHolder);
     }
 
-    private void updateKeywordCard(ViewHolder viewHolder){
+    public void updateKeywordCard(ViewHolder viewHolder){
         viewHolder.keywordCard.setKeyword(getKeyword());
     }
 
@@ -140,15 +139,11 @@ public class KeywordCardAdapter extends RecyclerView.Adapter<KeywordCardAdapter.
         return gridColumnCount * gridRowCount;
     }
 
-    public int getDataCount(){
-        return (keywords != null)? keywords.size(): 0;
-    }
-
     private void shuffleKeywords() {
         Collections.shuffle(keywords);
     }
 
-    private String getKeyword(){
+    protected String getKeyword(){
         if (keywordIndex == keywords.size()) {
             shuffleKeywords();
             keywordIndex = 0;
@@ -158,17 +153,20 @@ public class KeywordCardAdapter extends RecyclerView.Adapter<KeywordCardAdapter.
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        public View view;
+        public View keywordCardView;
         public KeywordCard keywordCard;
 
         public ViewHolder(View keywordCardView){
             super(keywordCardView);
-            this.view = keywordCardView;
+            this.keywordCardView = keywordCardView;
             this.keywordCard = (KeywordCard) keywordCardView.findViewById(R.id.item_keywordCard);
         }
 
+        public ViewHolder(KeywordCard keywordCard){
+            super(keywordCard);
+            this.keywordCard = keywordCard;
+        }
+
     }
-
-
 
 }
