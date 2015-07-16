@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.trend.tobeylin.tobeytrend.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,9 +16,21 @@ import java.util.List;
  */
 public class CountrySpinnerAdapter extends BaseAdapter {
 
-    List<String> countries;
+    private List<String> countries;
 
-    public CountrySpinnerAdapter(List<String> countries){
+    public CountrySpinnerAdapter(List<String> countries) {
+        if(countries == null){
+            this.countries = new ArrayList<>();
+        } else {
+            this.countries = countries;
+        }
+    }
+
+    public List<String> getCountries() {
+        return countries;
+    }
+
+    public void setCountries(List<String> countries) {
         this.countries = countries;
     }
 
@@ -40,7 +53,7 @@ public class CountrySpinnerAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
 
         ViewHolder viewHolder;
-        if(convertView == null) {
+        if (convertView == null) {
             convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.country_spinner_item, parent, false);
             viewHolder = new ViewHolder(convertView);
             convertView.setTag(viewHolder);
@@ -53,7 +66,7 @@ public class CountrySpinnerAdapter extends BaseAdapter {
         return convertView;
     }
 
-    private class ViewHolder {
+    public static class ViewHolder {
 
         public TextView countryNameTextView;
 
