@@ -1,7 +1,5 @@
 package com.trend.tobeylin.tobeytrend.main.agent;
 
-import android.content.Context;
-
 import com.trend.tobeylin.tobeytrend.BuildConfig;
 import com.trend.tobeylin.tobeytrend.data.generator.KeywordGenerator;
 import com.trend.tobeylin.tobeytrend.main.view.HomeView;
@@ -31,9 +29,6 @@ import static org.mockito.Mockito.*;
 public class HomeAgentTest {
 
     private HomeAgent homeAgent;
-
-    @Mock
-    private Context mockContext;
 
     @Mock
     private HomeView mockHomeView;
