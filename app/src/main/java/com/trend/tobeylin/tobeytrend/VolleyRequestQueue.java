@@ -31,8 +31,12 @@ public class VolleyRequestQueue {
         this.requestQueue = requestQueue;
     }
 
-    public void sendGetRequest(String url, Response.Listener successListener, Response.ErrorListener errorListener){
-        requestQueue.add(new StringRequest(Request.Method.GET, url, successListener, errorListener));
+//    public void sendGetRequest(String url, Response.Listener successListener, Response.ErrorListener errorListener){
+//        requestQueue.add(new StringRequest(Request.Method.GET, url, successListener, errorListener));
+//    }
+
+    public void sendRequest(Request request){
+        requestQueue.add(request);
     }
 
 }

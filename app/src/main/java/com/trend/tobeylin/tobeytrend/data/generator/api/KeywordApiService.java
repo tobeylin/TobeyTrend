@@ -4,8 +4,10 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.trend.tobeylin.tobeytrend.VolleyRequestQueue;
@@ -62,7 +64,8 @@ public class KeywordApiService {
             }
         };
 
-        requestQueue.sendGetRequest(TOP_SEARCH_REQUEST_URL, successListener, errorListener);
+        StringRequest request = new StringRequest(Request.Method.GET, TOP_SEARCH_REQUEST_URL, successListener, errorListener);
+        requestQueue.sendRequest(request);
     }
 
     private RegionTopSearchEntity parse(String data){
