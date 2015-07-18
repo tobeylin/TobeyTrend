@@ -1,23 +1,19 @@
 package com.trend.tobeylin.tobeytrend.entity;
 
-import junit.framework.TestCase;
-
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.*;
 
 /**
- * Created by tobeylin on 15/7/10.
+ * Created by tobeylin on 15/7/18.
  */
-@RunWith(MockitoJUnitRunner.class)
-public class RegionTopSearchEntityTest extends TestCase{
+public class RegionTopSearchEntityTest {
 
+    @Test
     public void testGetCountryKeywords_withValidCountryName() throws Exception {
-
         RegionTopSearchEntity entity = new RegionTopSearchEntity();
         String validCountryShortName = "TW";
         int expectedResultListSize = 20;
@@ -25,11 +21,10 @@ public class RegionTopSearchEntityTest extends TestCase{
 
         assertNotNull("getCountryKeywords(String) return null", resultList);
         assertEquals(expectedResultListSize, resultList.size());
-
     }
 
+    @Test
     public void testGetCountryKeywords_withInvalidCountryName() throws Exception {
-
         RegionTopSearchEntity entity = new RegionTopSearchEntity();
         String validCountryShortName = "invalid";
         int expectedResultListSize = 0;
@@ -37,11 +32,10 @@ public class RegionTopSearchEntityTest extends TestCase{
 
         assertNotNull("getCountryKeywords(String) return null", resultList);
         assertEquals(expectedResultListSize, resultList.size());
-
     }
 
+    @Test
     public void testGetAllCountryKeywords() throws Exception {
-
         RegionTopSearchEntity entity = new RegionTopSearchEntity(){
             @Override
             public List<String> getCountryKeywords(String countryShortName) {
@@ -58,7 +52,6 @@ public class RegionTopSearchEntityTest extends TestCase{
         int expectedResultListSize = 20 * 47;
         assertNotNull("getAllCountryKeywords()", resultList);
         assertEquals(expectedResultListSize, resultList.size());
-
     }
 
 }
