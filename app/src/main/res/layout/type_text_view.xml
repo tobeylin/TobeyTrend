@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:text="New Text"/>
 
-    <View
+    <com.trend.tobeylin.tobeytrend.ui.custom.CursorView
         android:id="@+id/typeTextView_textCursorView"
         android:layout_width="1dp"
         android:layout_height="1dp"
