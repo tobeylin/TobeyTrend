@@ -1,46 +1,38 @@
 package com.trend.tobeylin.tobeytrend.data.generator;
 
-import android.test.AndroidTestCase;
-
 import com.trend.tobeylin.tobeytrend.data.generator.api.KeywordApiService;
 import com.trend.tobeylin.tobeytrend.entity.RegionTopSearchEntity;
 
-import org.junit.runner.RunWith;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
 import java.util.List;
 
-import static com.trend.tobeylin.tobeytrend.data.generator.KeywordGenerator.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
- * Created by tobeylin on 15/7/10.
+ * Created by tobeylin on 15/7/18.
  */
-@RunWith(MockitoJUnitRunner.class)
-public class KeywordGeneratorTest extends AndroidTestCase {
+public class KeywordGeneratorTest {
 
     private KeywordGenerator keywordGenerator;
+
+    @Mock
     private KeywordApiService keywordApiService;
 
+    @Before
     public void setUp() throws Exception {
-
-        super.setUp();
-
+        MockitoAnnotations.initMocks(this);
     }
 
+    @Test
     public void testSync_SuccessAndSync_ByDoAnswer(){
-
-        keywordApiService = mock(KeywordApiService.class);
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
@@ -50,7 +42,7 @@ public class KeywordGeneratorTest extends AndroidTestCase {
             }
         }).when(keywordApiService).start(any(KeywordApiService.ApiCallback.class));
         keywordGenerator = new KeywordGenerator(keywordApiService);
-        KeywordGeneratorSyncListener mockListener = mock(KeywordGeneratorSyncListener.class);
+        KeywordGenerator.KeywordGeneratorSyncListener mockListener = mock(KeywordGenerator.KeywordGeneratorSyncListener.class);
         keywordGenerator.setListener(mockListener);
 
         keywordGenerator.sync();
@@ -58,13 +50,12 @@ public class KeywordGeneratorTest extends AndroidTestCase {
         verify(keywordApiService, times(1)).start(any(KeywordApiService.ApiCallback.class));
         assertEquals(true, keywordGenerator.isSync());
         verify(mockListener).onSyncSuccess(any(RegionTopSearchEntity.class));
-
     }
 
+    @Test
     public void testSync_SuccessAndSync_ByCaptor(){
 
-        KeywordGeneratorSyncListener mockListener = mock(KeywordGeneratorSyncListener.class);
-        keywordApiService = mock(KeywordApiService.class);
+        KeywordGenerator.KeywordGeneratorSyncListener mockListener = mock(KeywordGenerator.KeywordGeneratorSyncListener.class);
         keywordGenerator = new KeywordGenerator(keywordApiService);
         keywordGenerator.setListener(mockListener);
         keywordGenerator.sync();
@@ -74,12 +65,10 @@ public class KeywordGeneratorTest extends AndroidTestCase {
         callbackCaptor.getValue().onSuccess(new RegionTopSearchEntity());
         assertEquals(true, keywordGenerator.isSync());
         verify(mockListener, times(1)).onSyncSuccess(any(RegionTopSearchEntity.class));
-
     }
 
+    @Test
     public void testSync_FailFromApiResponse(){
-
-        keywordApiService = mock(KeywordApiService.class);
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
@@ -94,17 +83,15 @@ public class KeywordGeneratorTest extends AndroidTestCase {
 
         verify(keywordApiService, times(1)).start(any(KeywordApiService.ApiCallback.class));
         assertEquals(false, keywordGenerator.isSync());
-
     }
 
+    @Test
     public void testGetKeywords_withCountryName(){
-
         RegionTopSearchEntity mockTopSearchEntity = mock(RegionTopSearchEntity.class);
         int countryKeywordCount = 20;
         List mockCountryList = mock(List.class);
         when(mockCountryList.size()).thenReturn(countryKeywordCount);
         doReturn(mockCountryList).when(mockTopSearchEntity).getCountryKeywords(anyString());
-        keywordApiService = mock(KeywordApiService.class);
         keywordGenerator = new KeywordGenerator(keywordApiService);
         keywordGenerator.setTopSearchEntity(mockTopSearchEntity);
 
@@ -113,21 +100,19 @@ public class KeywordGeneratorTest extends AndroidTestCase {
 
     }
 
+    @Test
     public void testGetKeywords_withAllRegion(){
-
         RegionTopSearchEntity mockTopSearchEntity = mock(RegionTopSearchEntity.class);
         int countryKeywordCount = 20;
         int countryCount = 47;
         List mockAllCountryList = mock(List.class);
         when(mockAllCountryList.size()).thenReturn(countryKeywordCount * countryCount);
         doReturn(mockAllCountryList).when(mockTopSearchEntity).getCountryKeywords(anyString());
-        keywordApiService = mock(KeywordApiService.class);
         keywordGenerator = new KeywordGenerator(keywordApiService);
         keywordGenerator.setTopSearchEntity(mockTopSearchEntity);
 
         String allRegion = "all";
         assertEquals(countryKeywordCount * countryCount, keywordGenerator.getKeywords(allRegion).size());
-
     }
 
     //    @Test
@@ -167,4 +152,5 @@ public class KeywordGeneratorTest extends AndroidTestCase {
     //
     //        verify(listener).onSyncSuccess(Matchers.isNotNull(RegionTopSearchEntity.class));
     //    }
+
 }
