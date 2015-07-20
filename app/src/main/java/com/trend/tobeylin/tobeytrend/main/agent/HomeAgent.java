@@ -23,6 +23,7 @@ public class HomeAgent implements KeywordGenerator.KeywordGeneratorSyncListener 
     private KeywordGenerator keywordGenerator = null;
     private int columnCount = 1;
     private int rowCount = 1;
+    private boolean isSync = false;
 
     public HomeAgent(Context context, HomeView homeView){
         this.homeView = homeView;
@@ -36,12 +37,20 @@ public class HomeAgent implements KeywordGenerator.KeywordGeneratorSyncListener 
         this.keywordGenerator.setListener(this);
     }
 
+    public void setHomeView(HomeView homeView) {
+        this.homeView = homeView;
+    }
+
     public int getRowCount() {
         return rowCount;
     }
 
     public int getColumnCount() {
         return columnCount;
+    }
+
+    public boolean isSync(){
+        return isSync;
     }
 
     public void init(){
@@ -56,11 +65,13 @@ public class HomeAgent implements KeywordGenerator.KeywordGeneratorSyncListener 
         homeView.showCountrySpinner();
         Log.i(TAG, "Sync Success");
         homeView.updateKeywordGrid(keywordGenerator.getKeywords(), columnCount, rowCount);
+        isSync = true;
     }
 
     @Override
     public void onSyncFail() {
         Log.i(TAG, "Sync Fail");
+        isSync = false;
     }
 
     public void openSelectViewDialog(){

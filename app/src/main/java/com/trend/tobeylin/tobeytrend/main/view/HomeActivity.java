@@ -49,16 +49,12 @@ public class HomeActivity extends FragmentActivity implements HomeView,
         initLayout();
         if(homeAgent == null) {
             homeAgent = new HomeAgent(this, this);
-            homeAgent.init();
         }
+        homeAgent.init();
     }
 
     public void setAgent(HomeAgent homeAgent) {
         this.homeAgent = homeAgent;
-    }
-
-    public HomeAgent getAgent() {
-        return homeAgent;
     }
 
     public void initLayout() {
