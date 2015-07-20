@@ -49,7 +49,7 @@ import static org.mockito.Mockito.*;
  */
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
-public class HomeActivityTest {
+public class HomeActivityUnitTest {
 
     private HomeActivity homeActivity;
     @Mock
