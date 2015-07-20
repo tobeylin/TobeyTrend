@@ -3,9 +3,7 @@ package com.trend.tobeylin.tobeytrend.main.agent;
 import android.content.Context;
 import android.util.Log;
 
-import com.trend.tobeylin.tobeytrend.Region;
 import com.trend.tobeylin.tobeytrend.data.generator.KeywordGenerator;
-import com.trend.tobeylin.tobeytrend.data.generator.api.KeywordApiService;
 import com.trend.tobeylin.tobeytrend.entity.RegionTopSearchEntity;
 import com.trend.tobeylin.tobeytrend.main.view.HomeView;
 import com.trend.tobeylin.tobeytrend.util.UrlUtil;
@@ -23,7 +21,6 @@ public class HomeAgent implements KeywordGenerator.KeywordGeneratorSyncListener 
     private KeywordGenerator keywordGenerator = null;
     private int columnCount = 1;
     private int rowCount = 1;
-    private boolean isSync = false;
 
     public HomeAgent(Context context, HomeView homeView){
         this.homeView = homeView;
@@ -49,10 +46,6 @@ public class HomeAgent implements KeywordGenerator.KeywordGeneratorSyncListener 
         return columnCount;
     }
 
-    public boolean isSync(){
-        return isSync;
-    }
-
     public void init(){
         keywordGenerator.sync();
         homeView.showCountry(keywordGenerator.getCountry());
@@ -65,13 +58,11 @@ public class HomeAgent implements KeywordGenerator.KeywordGeneratorSyncListener 
         homeView.showCountrySpinner();
         Log.i(TAG, "Sync Success");
         homeView.updateKeywordGrid(keywordGenerator.getKeywords(), columnCount, rowCount);
-        isSync = true;
     }
 
     @Override
     public void onSyncFail() {
         Log.i(TAG, "Sync Fail");
-        isSync = false;
     }
 
     public void openSelectViewDialog(){
