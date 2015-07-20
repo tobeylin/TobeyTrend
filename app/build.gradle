@@ -39,6 +39,8 @@ dependencies {
     androidTestCompile "com.google.dexmaker:dexmaker-mockito:1.+"
     androidTestCompile 'org.mockito:mockito-core:1.9.+'
     androidTestCompile 'com.android.support.test:runner:0.3'
+    androidTestCompile 'com.android.support.test:rules:0.3'
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2'
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.robolectric:robolectric:3.0'
