@@ -168,7 +168,6 @@ public class TypeTextViewTest {
         assertSame(mockParams, cursorView.getLayoutParams());
     }
 
-    @Test
     public void testStartTypeText() throws Exception {
         typeTextView = new TypeTextView(context, mockTextView, mockCursorView);
 
@@ -177,7 +176,8 @@ public class TypeTextViewTest {
 
         assertEquals(testText, typeTextView.getFullText());
         verify(mockCursorView).resetCursor();
-        //verify()
+
+        //TODO: start typing text testing
     }
 
 }
