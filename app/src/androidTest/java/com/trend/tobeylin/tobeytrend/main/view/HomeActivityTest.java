@@ -2,49 +2,66 @@ package com.trend.tobeylin.tobeytrend.main.view;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.espresso.Espresso;
 import android.support.test.espresso.IdlingResource;
-import android.support.test.espresso.assertion.ViewAssertions;
-import android.support.test.espresso.matcher.ViewMatchers;
+import android.support.test.rule.ActivityTestRule;
+import android.support.test.runner.AndroidJUnit4;
 import android.support.test.runner.lifecycle.ActivityLifecycleCallback;
 import android.support.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
 import android.support.test.runner.lifecycle.Stage;
-import android.test.ActivityInstrumentationTestCase2;
+import android.test.suitebuilder.annotation.LargeTest;
 
 import com.trend.tobeylin.tobeytrend.R;
 import com.trend.tobeylin.tobeytrend.entity.RegionTopSearchEntity;
 import com.trend.tobeylin.tobeytrend.main.agent.HomeAgent;
 
+import org.hamcrest.Matchers;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import static android.support.test.espresso.Espresso.*;
+import static android.support.test.espresso.action.ViewActions.*;
+import static android.support.test.espresso.assertion.ViewAssertions.*;
+import static android.support.test.espresso.matcher.ViewMatchers.*;
 
 /**
  * Created by tobeylin on 15/7/20.
  */
-public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActivity> {
+@RunWith(AndroidJUnit4.class)
+@LargeTest
+public class HomeActivityTest {
 
-    private HomeActivity homeActivity;
+    @Rule
+    public ActivityTestRule<HomeActivity> homeActivityTestRule = new ActivityTestRule<>(HomeActivity.class);
 
-    public HomeActivityTest() {
-        super("com.trend.tobeylin.tobeytrend.main.view", HomeActivity.class);
-    }
+    private HomeAgentInjector homeAgentInjector;
 
     @Before
     public void setUp() throws Exception {
-        super.setUp();
-        injectInstrumentation(InstrumentationRegistry.getInstrumentation());
-
-        HomeAgentInjector homeAgentInjector = new HomeAgentInjector();
+        homeAgentInjector = new HomeAgentInjector();
         ActivityLifecycleMonitorRegistry.getInstance().addLifecycleCallback(homeAgentInjector);
-        homeActivity = getActivity();
     }
 
+    @Test
+    public void checkOnCreate() {
+        onView(withId(R.id.actionbar_gridImageView)).check(matches(isDisplayed()));
+        onView(withId(R.id.actionbar_selectCountrySpinner)).check(matches(isDisplayed()));
+        onView(withId(R.id.home_progressBar)).check(matches(Matchers.not(isDisplayed())));
+        onView(withId(R.id.home_showTextView)).check(matches(withText("Showing the latest hot searches in All Regions.")));
+        onView(withId(R.id.home_keywordCardRecycleView)).check(matches(isDisplayed()));
+    }
 
     @Test
-    public void testOnCreate() {
+    public void testClickKeyword() {
 
-        Espresso.onView(ViewMatchers.withId(R.id.actionbar_gridImageView)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
+        onView(withId(R.id.actionbar_gridImageView)).check(matches(isDisplayed()));
+        onView(withId(R.id.actionbar_gridImageView)).perform(click());
+
+//        //check if have data
+//        onView(withId(R.id.home_keywordCardRecycleView)).check(matches(isDisplayed()));
+//        //yes, click
+//        onView(withId(R.id.home_keywordCardRecycleView)).perform(RecyclerViewActions.actionOnItem(withChild(withId(R.id.keywordCard_keywordTypeTextView)), click()).atPosition(0));
 
     }
 
@@ -54,14 +71,15 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
 
         @Override
         public void onActivityLifecycleChanged(Activity activity, Stage stage) {
+            HomeActivity homeActivity = (HomeActivity) activity;
             switch (stage) {
                 case PRE_ON_CREATE:
-                    HomeActivity homeActivity = (HomeActivity) activity;
                     homeIdlingResource = new HomeIdlingResource(homeActivity, homeActivity);
                     homeIdlingResource.setHomeView(homeActivity);
                     homeActivity.setAgent(homeIdlingResource);
-                    Espresso.registerIdlingResources(homeIdlingResource);
+                    registerIdlingResources(homeIdlingResource);
                     break;
+                default:
             }
         }
     }
@@ -80,7 +98,9 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         public void onSyncSuccess(RegionTopSearchEntity keywordResponseEntity) {
             super.onSyncSuccess(keywordResponseEntity);
             isSync = true;
-            callback.onTransitionToIdle();
+            if (callback != null) {
+                callback.onTransitionToIdle();
+            }
         }
 
         @Override
