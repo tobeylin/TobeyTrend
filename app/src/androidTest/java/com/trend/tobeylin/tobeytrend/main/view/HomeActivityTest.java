@@ -62,6 +62,12 @@ public class HomeActivityTest {
         onView(withId(R.id.home_keywordCardRecycleView)).check(matches(isDisplayed()));
     }
 
+    @Test
+    public void checkClickSelectGridView() {
+        onView(withId(R.id.actionbar_gridImageView)).check(matches(isDisplayed()));
+        onView(withId(R.id.actionbar_gridImageView)).perform(click());
+        onView(withId(R.id.selectViewDialog_widthNumberPicker)).check(matches(isDisplayed()));
+    }
 
     public void testClickKeyword() {
 
