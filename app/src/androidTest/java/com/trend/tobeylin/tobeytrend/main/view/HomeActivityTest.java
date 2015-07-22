@@ -2,23 +2,33 @@ package com.trend.tobeylin.tobeytrend.main.view;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.support.test.espresso.IdlingResource;
+import android.support.test.espresso.contrib.RecyclerViewActions;
+import android.support.test.espresso.intent.Intents;
+import android.support.test.espresso.intent.matcher.IntentMatchers;
+import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.test.runner.lifecycle.ActivityLifecycleCallback;
 import android.support.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
 import android.support.test.runner.lifecycle.Stage;
 import android.test.suitebuilder.annotation.LargeTest;
+import android.view.View;
 
 import com.trend.tobeylin.tobeytrend.R;
 import com.trend.tobeylin.tobeytrend.entity.RegionTopSearchEntity;
 import com.trend.tobeylin.tobeytrend.main.agent.HomeAgent;
 
 import org.hamcrest.Matchers;
+import org.hamcrest.core.AllOf;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import custom.matcher.RecyclerViewMatcher;
 
 import static android.support.test.espresso.Espresso.*;
 import static android.support.test.espresso.action.ViewActions.*;
@@ -33,7 +43,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.*;
 public class HomeActivityTest {
 
     @Rule
-    public ActivityTestRule<HomeActivity> homeActivityTestRule = new ActivityTestRule<>(HomeActivity.class);
+    public IntentsTestRule<HomeActivity> homeActivityIntentsTestRule = new IntentsTestRule<>(HomeActivity.class);
 
     private HomeAgentInjector homeAgentInjector;
 
@@ -52,16 +62,17 @@ public class HomeActivityTest {
         onView(withId(R.id.home_keywordCardRecycleView)).check(matches(isDisplayed()));
     }
 
-    @Test
+
     public void testClickKeyword() {
 
+        //check if have data
         onView(withId(R.id.actionbar_gridImageView)).check(matches(isDisplayed()));
-        onView(withId(R.id.actionbar_gridImageView)).perform(click());
-
-//        //check if have data
-//        onView(withId(R.id.home_keywordCardRecycleView)).check(matches(isDisplayed()));
-//        //yes, click
-//        onView(withId(R.id.home_keywordCardRecycleView)).perform(RecyclerViewActions.actionOnItem(withChild(withId(R.id.keywordCard_keywordTypeTextView)), click()).atPosition(0));
+        onView(withId(R.id.home_keywordCardRecycleView)).check(matches(isDisplayed()));
+        //yes, click
+        //TODO: click the keyword typeTextView
+        RecyclerViewMatcher recyclerViewMatcher = new RecyclerViewMatcher(R.id.home_keywordCardRecycleView);
+        onView(recyclerViewMatcher.atPositionOnView(0, R.id.keywordCard_keywordTypeTextView)).perform(click());
+        Intents.intended(AllOf.allOf(IntentMatchers.hasAction(Intent.ACTION_VIEW)));
 
     }
 
