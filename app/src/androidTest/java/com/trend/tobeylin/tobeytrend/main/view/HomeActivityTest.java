@@ -2,33 +2,25 @@ package com.trend.tobeylin.tobeytrend.main.view;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.support.test.espresso.IdlingResource;
-import android.support.test.espresso.contrib.RecyclerViewActions;
-import android.support.test.espresso.intent.Intents;
-import android.support.test.espresso.intent.matcher.IntentMatchers;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
-import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.test.runner.lifecycle.ActivityLifecycleCallback;
 import android.support.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
 import android.support.test.runner.lifecycle.Stage;
 import android.test.suitebuilder.annotation.LargeTest;
-import android.view.View;
+import android.util.Log;
 
 import com.trend.tobeylin.tobeytrend.R;
 import com.trend.tobeylin.tobeytrend.entity.RegionTopSearchEntity;
 import com.trend.tobeylin.tobeytrend.main.agent.HomeAgent;
 
 import org.hamcrest.Matchers;
-import org.hamcrest.core.AllOf;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import custom.matcher.RecyclerViewMatcher;
 
 import static android.support.test.espresso.Espresso.*;
 import static android.support.test.espresso.action.ViewActions.*;
@@ -43,14 +35,31 @@ import static android.support.test.espresso.matcher.ViewMatchers.*;
 public class HomeActivityTest {
 
     @Rule
-    public IntentsTestRule<HomeActivity> homeActivityIntentsTestRule = new IntentsTestRule<>(HomeActivity.class);
+    public IntentsTestRule<HomeActivity> homeActivityIntentsTestRule = new IntentsTestRule<HomeActivity>(HomeActivity.class){
+        @Override
+        protected void beforeActivityLaunched() {
+            super.beforeActivityLaunched();
+            homeAgentInjector = new HomeAgentInjector();
+            ActivityLifecycleMonitorRegistry.getInstance().addLifecycleCallback(homeAgentInjector);
+        }
+
+        @Override
+        protected void afterActivityFinished() {
+            super.afterActivityFinished();
+            ActivityLifecycleMonitorRegistry.getInstance().removeLifecycleCallback(homeAgentInjector);
+        }
+    };
 
     private HomeAgentInjector homeAgentInjector;
 
     @Before
     public void setUp() throws Exception {
-        homeAgentInjector = new HomeAgentInjector();
-        ActivityLifecycleMonitorRegistry.getInstance().addLifecycleCallback(homeAgentInjector);
+        Log.i("Test", "setUp");
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        Log.i("Test", "tearDown");
     }
 
     @Test
@@ -69,17 +78,17 @@ public class HomeActivityTest {
         onView(withId(R.id.selectViewDialog_widthNumberPicker)).check(matches(isDisplayed()));
     }
 
-    public void testClickKeyword() {
-
+    @Test
+    public void checkClickKeyword() {
         //check if have data
         onView(withId(R.id.actionbar_gridImageView)).check(matches(isDisplayed()));
         onView(withId(R.id.home_keywordCardRecycleView)).check(matches(isDisplayed()));
         //yes, click
         //TODO: click the keyword typeTextView
-        RecyclerViewMatcher recyclerViewMatcher = new RecyclerViewMatcher(R.id.home_keywordCardRecycleView);
-        onView(recyclerViewMatcher.atPositionOnView(0, R.id.keywordCard_keywordTypeTextView)).perform(click());
-        Intents.intended(AllOf.allOf(IntentMatchers.hasAction(Intent.ACTION_VIEW)));
-
+//        RecyclerViewMatcher recyclerViewMatcher = new RecyclerViewMatcher(R.id.home_keywordCardRecycleView);
+//        ViewAction customClick = actionWithAssertions(new GeneralClickAction(Tap.SINGLE, GeneralLocation.CENTER_LEFT, Press.FINGER));
+//        onView(recyclerViewMatcher.atPositionOnView(0, R.id.item_keywordCard)).perform(customClick);
+//        Intents.intended(IntentMatchers.hasAction(Intent.ACTION_VIEW));
     }
 
     private class HomeAgentInjector implements ActivityLifecycleCallback {
@@ -91,10 +100,14 @@ public class HomeActivityTest {
             HomeActivity homeActivity = (HomeActivity) activity;
             switch (stage) {
                 case PRE_ON_CREATE:
+                    Log.i("Test", "PRE ON CREATE");
                     homeIdlingResource = new HomeIdlingResource(homeActivity, homeActivity);
                     homeIdlingResource.setHomeView(homeActivity);
                     homeActivity.setAgent(homeIdlingResource);
                     registerIdlingResources(homeIdlingResource);
+                    break;
+                case DESTROYED:
+                    Log.i("Test", "DESTROYED");
                     break;
                 default:
             }
