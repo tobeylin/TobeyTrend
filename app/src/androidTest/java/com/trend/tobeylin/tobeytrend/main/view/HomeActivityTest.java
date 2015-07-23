@@ -9,6 +9,8 @@ import android.support.test.espresso.action.GeneralClickAction;
 import android.support.test.espresso.action.GeneralLocation;
 import android.support.test.espresso.action.Press;
 import android.support.test.espresso.action.Tap;
+import android.support.test.espresso.action.ViewActions;
+import android.support.test.espresso.contrib.CountingIdlingResource;
 import android.support.test.espresso.intent.Intents;
 import android.support.test.espresso.intent.matcher.IntentMatchers;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
@@ -24,6 +26,7 @@ import com.trend.tobeylin.tobeytrend.entity.RegionTopSearchEntity;
 import com.trend.tobeylin.tobeytrend.main.agent.HomeAgent;
 
 import org.hamcrest.Matchers;
+import org.hamcrest.core.AllOf;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -92,81 +95,83 @@ public class HomeActivityTest {
         onView(withId(R.id.actionbar_gridImageView)).perform(click());
         onView(withId(R.id.selectViewDialog_widthNumberPicker)).check(matches(isDisplayed()));
     }
+    @Test
+    public void checkSelectCountry(){
+        onView(withId(R.id.actionbar_selectCountrySpinner)).check(matches(isDisplayed()));
+        onView(withId(R.id.actionbar_selectCountrySpinner)).perform(click());
+    }
 
-//    @Test
-//    public void checkClickKeyword() {
-//        //check if have data
-//        onView(withId(R.id.actionbar_gridImageView)).check(matches(isDisplayed()));
-//        onView(withId(R.id.home_keywordCardRecycleView)).check(matches(isDisplayed()));
-//        //yes, click
-//        //TODO: click the keyword typeTextView
-////        RecyclerViewMatcher recyclerViewMatcher = new RecyclerViewMatcher(R.id.home_keywordCardRecycleView);
-////        ViewAction customClick = actionWithAssertions(new GeneralClickAction(Tap.SINGLE, GeneralLocation.CENTER_LEFT, Press.FINGER));
-////        onView(recyclerViewMatcher.atPositionOnView(0, R.id.item_keywordCard)).perform(customClick);
-////        Intents.intended(IntentMatchers.hasAction(Intent.ACTION_VIEW));
-//    }
+    public void checkClickKeyword() {
+        //check if have data
+        onView(withId(R.id.actionbar_gridImageView)).check(matches(isDisplayed()));
+        onView(withId(R.id.home_keywordCardRecycleView)).check(matches(isDisplayed()));
+
+        HomeActivity homeActivity = homeActivityIntentsTestRule.getActivity();
+
+        //yes, click
+        //TODO: click the keyword typeTextView
+        RecyclerViewMatcher recyclerViewMatcher = new RecyclerViewMatcher(R.id.home_keywordCardRecycleView);
+        //click 1
+        ViewAction customClick = actionWithAssertions(new GeneralClickAction(Tap.SINGLE, GeneralLocation.CENTER_LEFT, Press.FINGER));
+        onView(AllOf.allOf(recyclerViewMatcher.atPositionOnView(0, R.id.keywordCard_keywordTypeTextView), isDisplayed())).check(matches(isDisplayed()));
+
+        //Check if the intent is match
+        Intents.intended(IntentMatchers.hasAction(Intent.ACTION_VIEW));
+    }
 
     private class HomeAgentInjector implements ActivityLifecycleCallback {
 
-        private HomeIdlingResource homeIdlingResource;
-
+        private DecoratedHomeAgent decoratedHomeAgent;
+        private CountingIdlingResource homeAgentCounting;
         @Override
         public void onActivityLifecycleChanged(Activity activity, Stage stage) {
             HomeActivity homeActivity = (HomeActivity) activity;
+
             switch (stage) {
                 case PRE_ON_CREATE:
                     Log.i("Test", "PRE ON CREATE");
-                    homeIdlingResource = new HomeIdlingResource(homeActivity, homeActivity);
-                    homeActivity.setAgent(homeIdlingResource);
-                    registerIdlingResources(homeIdlingResource);
+                    homeAgentCounting = new CountingIdlingResource(HomeAgent.TAG);
+                    homeAgentCounting.increment();
+                    decoratedHomeAgent = new DecoratedHomeAgent(homeActivity, homeActivity, homeAgentCounting);
+                    homeActivity.setAgent(decoratedHomeAgent);
+                    registerIdlingResources(homeAgentCounting);
                     break;
                 case STOPPED:
                     Log.i("Test", "DESTROYED");
-                    unregisterIdlingResources(homeIdlingResource);
+                    registerIdlingResources(homeAgentCounting);
                     break;
                 default:
             }
         }
     }
 
-    private class HomeIdlingResource extends HomeAgent implements IdlingResource {
+    private class DecoratedHomeAgent extends HomeAgent {
 
-        private boolean isSync;
-        private ResourceCallback callback;
+        private CountingIdlingResource countingIdlingResource;
 
-        public HomeIdlingResource(Context context, HomeView homeView) {
+        public DecoratedHomeAgent(Context context, HomeView homeView, CountingIdlingResource countingIdlingResource) {
             super(context, homeView);
-            isSync = false;
+            this.countingIdlingResource = countingIdlingResource;
+            this.countingIdlingResource.decrement();
+        }
+
+        @Override
+        public void init() {
+            Log.i("Test", "busy");
+            countingIdlingResource.increment();
+            super.init();
         }
 
         @Override
         public void onSyncSuccess(RegionTopSearchEntity keywordResponseEntity) {
             super.onSyncSuccess(keywordResponseEntity);
-            isSync = true;
-            if (callback != null) {
-                callback.onTransitionToIdle();
-            }
+            countingIdlingResource.decrement();
         }
 
         @Override
         public void onSyncFail() {
             super.onSyncFail();
-            isSync = false;
-        }
-
-        @Override
-        public String getName() {
-            return "HomeIdlingResource";
-        }
-
-        @Override
-        public boolean isIdleNow() {
-            return isSync;
-        }
-
-        @Override
-        public void registerIdleTransitionCallback(ResourceCallback resourceCallback) {
-            this.callback = resourceCallback;
+            countingIdlingResource.decrement();
         }
     }
 }
