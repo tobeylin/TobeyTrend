@@ -33,6 +33,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.math.RoundingMode;
+
+import custom.matcher.NumberPickerViewMatcher;
 import custom.matcher.RecyclerViewMatcher;
 
 import static android.support.test.espresso.Espresso.*;
@@ -63,12 +66,11 @@ public class HomeActivityTest {
         @Override
         protected void afterActivityFinished() {
             Log.i("Test", "afterActivityFinished");
+            homeAgentInjector.destroy();
             ActivityLifecycleMonitorRegistry.getInstance().removeLifecycleCallback(homeAgentInjector);
             super.afterActivityFinished();
         }
     };
-
-
 
     @Before
     public void setUp() throws Exception {
@@ -93,12 +95,28 @@ public class HomeActivityTest {
     public void checkClickSelectGridView() {
         onView(withId(R.id.actionbar_gridImageView)).check(matches(isDisplayed()));
         onView(withId(R.id.actionbar_gridImageView)).perform(click());
+
+        // Check the content of the dialog is correct
+        onView(withText(getString(R.string.select_view_dialog_title))).check(matches(isDisplayed()));
         onView(withId(R.id.selectViewDialog_widthNumberPicker)).check(matches(isDisplayed()));
+        //TODO: check picker init value
+        //onView(AllOf.allOf(withText("1"), withParent(withId(R.id.selectViewDialog_heightNumberPicker)))).check(matches(isDisplayed()));
+        onView(NumberPickerViewMatcher.withValue(R.id.selectViewDialog_widthNumberPicker, "1")).check(matches(isDisplayed()));
+        onView(withId(R.id.selectViewDialog_heightNumberPicker)).check(matches(isDisplayed()));
+        //TODO: check picker init value
+        onView(withId(R.id.selectViewDialog_widthTextView)).check(matches(withText(Matchers.containsString(getString(R.string.select_view_dialog_width)))));
+        onView(withId(R.id.selectViewDialog_heightTextView)).check(matches(withText(Matchers.containsString(getString(R.string.select_view_dialog_height)))));
+        onView(withText(getString(R.string.select_view_confirm_button))).check(matches(isDisplayed()));
+        onView(withText(getString(R.string.select_view_cancel_button))).check(matches(isDisplayed()));
+
     }
+
     @Test
     public void checkSelectCountry(){
         onView(withId(R.id.actionbar_selectCountrySpinner)).check(matches(isDisplayed()));
         onView(withId(R.id.actionbar_selectCountrySpinner)).perform(click());
+        onData(AllOf.allOf(Matchers.is(Matchers.instanceOf(String.class)), Matchers.is("Taiwan"))).perform(click());
+        onView(withId(R.id.home_showTextView)).check(matches(withText(Matchers.containsString("Taiwan"))));
     }
 
     public void checkClickKeyword() {
@@ -119,7 +137,13 @@ public class HomeActivityTest {
         Intents.intended(IntentMatchers.hasAction(Intent.ACTION_VIEW));
     }
 
+    public String getString(int resourceId){
+        return homeActivityIntentsTestRule.getActivity().getString(resourceId);
+    }
+
     private class HomeAgentInjector implements ActivityLifecycleCallback {
+
+        public final String TAG = HomeAgentInjector.class.getSimpleName();
 
         private DecoratedHomeAgent decoratedHomeAgent;
         private CountingIdlingResource homeAgentCounting;
@@ -129,19 +153,24 @@ public class HomeActivityTest {
 
             switch (stage) {
                 case PRE_ON_CREATE:
-                    Log.i("Test", "PRE ON CREATE");
-                    homeAgentCounting = new CountingIdlingResource(HomeAgent.TAG);
+                    Log.i(TAG, "PRE ON CREATE: " + activity);
+                    homeAgentCounting = new CountingIdlingResource(activity + HomeAgent.TAG);
                     homeAgentCounting.increment();
                     decoratedHomeAgent = new DecoratedHomeAgent(homeActivity, homeActivity, homeAgentCounting);
                     homeActivity.setAgent(decoratedHomeAgent);
                     registerIdlingResources(homeAgentCounting);
+                    Log.i(TAG, "PRE ON CREATE: " + homeAgentCounting);
                     break;
                 case STOPPED:
-                    Log.i("Test", "DESTROYED");
-                    registerIdlingResources(homeAgentCounting);
+                    Log.i(TAG, "STOPPED: " + activity);
                     break;
                 default:
             }
+        }
+
+        public void destroy(){
+            Log.i(TAG, this + " destroy");
+            unregisterIdlingResources(homeAgentCounting);
         }
     }
 
@@ -157,7 +186,6 @@ public class HomeActivityTest {
 
         @Override
         public void init() {
-            Log.i("Test", "busy");
             countingIdlingResource.increment();
             super.init();
         }
