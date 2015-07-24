@@ -3,13 +3,11 @@ package com.trend.tobeylin.tobeytrend.main.view;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.support.test.espresso.IdlingResource;
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.action.GeneralClickAction;
 import android.support.test.espresso.action.GeneralLocation;
 import android.support.test.espresso.action.Press;
 import android.support.test.espresso.action.Tap;
-import android.support.test.espresso.action.ViewActions;
 import android.support.test.espresso.contrib.CountingIdlingResource;
 import android.support.test.espresso.intent.Intents;
 import android.support.test.espresso.intent.matcher.IntentMatchers;
@@ -32,8 +30,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.math.RoundingMode;
 
 import custom.matcher.NumberPickerViewMatcher;
 import custom.matcher.RecyclerViewMatcher;
@@ -99,16 +95,13 @@ public class HomeActivityTest {
         // Check the content of the dialog is correct
         onView(withText(getString(R.string.select_view_dialog_title))).check(matches(isDisplayed()));
         onView(withId(R.id.selectViewDialog_widthNumberPicker)).check(matches(isDisplayed()));
-        //TODO: check picker init value
-        //onView(AllOf.allOf(withText("1"), withParent(withId(R.id.selectViewDialog_heightNumberPicker)))).check(matches(isDisplayed()));
         onView(NumberPickerViewMatcher.withValue(R.id.selectViewDialog_widthNumberPicker, "1")).check(matches(isDisplayed()));
         onView(withId(R.id.selectViewDialog_heightNumberPicker)).check(matches(isDisplayed()));
-        //TODO: check picker init value
+        onView(NumberPickerViewMatcher.withValue(R.id.selectViewDialog_heightNumberPicker, "1")).check(matches(isDisplayed()));
         onView(withId(R.id.selectViewDialog_widthTextView)).check(matches(withText(Matchers.containsString(getString(R.string.select_view_dialog_width)))));
         onView(withId(R.id.selectViewDialog_heightTextView)).check(matches(withText(Matchers.containsString(getString(R.string.select_view_dialog_height)))));
         onView(withText(getString(R.string.select_view_confirm_button))).check(matches(isDisplayed()));
         onView(withText(getString(R.string.select_view_cancel_button))).check(matches(isDisplayed()));
-
     }
 
     @Test
