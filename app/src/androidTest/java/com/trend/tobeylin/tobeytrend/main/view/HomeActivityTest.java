@@ -9,6 +9,8 @@ import android.support.test.espresso.action.GeneralLocation;
 import android.support.test.espresso.action.Press;
 import android.support.test.espresso.action.Tap;
 import android.support.test.espresso.contrib.CountingIdlingResource;
+import android.support.test.espresso.contrib.PickerActions;
+import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.espresso.intent.Intents;
 import android.support.test.espresso.intent.matcher.IntentMatchers;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
@@ -31,6 +33,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import custom.action.NumberPickerAction;
 import custom.matcher.NumberPickerViewMatcher;
 import custom.matcher.RecyclerViewMatcher;
 
@@ -105,6 +108,39 @@ public class HomeActivityTest {
     }
 
     @Test
+    public void checkChangeColumn() {
+        onView(withId(R.id.actionbar_gridImageView)).check(matches(isDisplayed()));
+        onView(withId(R.id.actionbar_gridImageView)).perform(click());
+
+        // Check the content of the dialog is correct
+        onView(withText(getString(R.string.select_view_dialog_title))).check(matches(isDisplayed()));
+        onView(withId(R.id.selectViewDialog_widthNumberPicker)).check(matches(isDisplayed()));
+        onView(NumberPickerViewMatcher.withValue(R.id.selectViewDialog_widthNumberPicker, "1")).check(matches(isDisplayed()));
+        onView(withId(R.id.selectViewDialog_heightNumberPicker)).check(matches(isDisplayed()));
+        onView(NumberPickerViewMatcher.withValue(R.id.selectViewDialog_heightNumberPicker, "1")).check(matches(isDisplayed()));
+        onView(withId(R.id.selectViewDialog_widthTextView)).check(matches(withText(Matchers.containsString(getString(R.string.select_view_dialog_width)))));
+        onView(withId(R.id.selectViewDialog_heightTextView)).check(matches(withText(Matchers.containsString(getString(R.string.select_view_dialog_height)))));
+        onView(withText(getString(R.string.select_view_confirm_button))).check(matches(isDisplayed()));
+        onView(withText(getString(R.string.select_view_cancel_button))).check(matches(isDisplayed()));
+
+        //Change the column count from 1 to 2
+        int testColumnCount = 2;
+        int testRowCount = 1;
+        onView(withId(R.id.selectViewDialog_widthNumberPicker)).perform(NumberPickerAction.setValue(testColumnCount));
+        onView(withText(getString(R.string.select_view_confirm_button))).perform(click());
+
+        //Check the items in the recycler view
+        onView(withId(R.id.home_keywordCardRecycleView)).check(matches(Matchers.allOf(
+                isDisplayed(),
+                RecyclerViewMatcher.withColumnCount(testColumnCount)
+        )));
+        onView(withId(R.id.home_keywordCardRecycleView)).check(matches(Matchers.allOf(
+                isDisplayed(),
+                RecyclerViewMatcher.withRowCount(testRowCount)
+        )));
+    }
+
+    @Test
     public void checkSelectCountry(){
         onView(withId(R.id.actionbar_selectCountrySpinner)).check(matches(isDisplayed()));
         onView(withId(R.id.actionbar_selectCountrySpinner)).perform(click());
@@ -117,14 +153,7 @@ public class HomeActivityTest {
         onView(withId(R.id.actionbar_gridImageView)).check(matches(isDisplayed()));
         onView(withId(R.id.home_keywordCardRecycleView)).check(matches(isDisplayed()));
 
-        HomeActivity homeActivity = homeActivityIntentsTestRule.getActivity();
-
-        //yes, click
-        //TODO: click the keyword typeTextView
-        RecyclerViewMatcher recyclerViewMatcher = new RecyclerViewMatcher(R.id.home_keywordCardRecycleView);
-        //click 1
-        ViewAction customClick = actionWithAssertions(new GeneralClickAction(Tap.SINGLE, GeneralLocation.CENTER_LEFT, Press.FINGER));
-        onView(AllOf.allOf(recyclerViewMatcher.atPositionOnView(0, R.id.keywordCard_keywordTypeTextView), isDisplayed())).check(matches(isDisplayed()));
+        //TODO: click the item
 
         //Check if the intent is match
         Intents.intended(IntentMatchers.hasAction(Intent.ACTION_VIEW));
