@@ -30,7 +30,6 @@ public class NumberPickerViewMatcher {
     }
 
     public static Matcher<View> withValue(final int numberPickerId, final Matcher<View> valueMatcher) {
-
         checkNotNull(numberPickerId);
         checkNotNull(valueMatcher);
         Matcher<View> matcher = new TypeSafeMatcher<View>() {
@@ -42,7 +41,8 @@ public class NumberPickerViewMatcher {
 
             @Override
             public void describeTo(Description description) {
-               description.appendText("================== " + TAG + " ==================");
+                description.appendText("with value: ");
+                valueMatcher.describeTo(description);
             }
         };
         return matcher;
