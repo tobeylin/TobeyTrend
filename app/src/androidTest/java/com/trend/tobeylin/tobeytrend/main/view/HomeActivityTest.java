@@ -14,7 +14,9 @@ import android.support.test.runner.lifecycle.Stage;
 import android.test.suitebuilder.annotation.LargeTest;
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.trend.tobeylin.tobeytrend.R;
+import com.trend.tobeylin.tobeytrend.data.generator.api.KeywordApiService;
 import com.trend.tobeylin.tobeytrend.entity.RegionTopSearchEntity;
 import com.trend.tobeylin.tobeytrend.main.agent.HomeAgent;
 
@@ -25,6 +27,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import custom.action.NumberPickerAction;
 import custom.matcher.NumberPickerViewMatcher;
@@ -123,14 +128,8 @@ public class HomeActivityTest {
         onView(withText(getString(R.string.select_view_confirm_button))).perform(click());
 
         //Check the items in the recycler view
-        onView(withId(R.id.home_keywordCardRecycleView)).check(matches(Matchers.allOf(
-                isDisplayed(),
-                RecyclerViewMatcher.withColumnCount(testColumnCount)
-        )));
-        onView(withId(R.id.home_keywordCardRecycleView)).check(matches(Matchers.allOf(
-                isDisplayed(),
-                RecyclerViewMatcher.withRowCount(testRowCount)
-        )));
+        onView(withId(R.id.home_keywordCardRecycleView)).check(matches(Matchers.allOf(isDisplayed(), RecyclerViewMatcher.withColumnCount(testColumnCount))));
+        onView(withId(R.id.home_keywordCardRecycleView)).check(matches(Matchers.allOf(isDisplayed(), RecyclerViewMatcher.withRowCount(testRowCount))));
     }
 
     @Test
@@ -195,8 +194,23 @@ public class HomeActivityTest {
 
         public DecoratedHomeAgent(Context context, HomeView homeView, CountingIdlingResource countingIdlingResource) {
             super(context, homeView);
+            mock();
             this.countingIdlingResource = countingIdlingResource;
             this.countingIdlingResource.decrement();
+        }
+
+        private void mock(){
+            KeywordApiService mockKeywordApiService = Mockito.spy(new KeywordApiService(Mockito.mock(Context.class)));
+            Mockito.doAnswer(new Answer() {
+                @Override
+                public Object answer(InvocationOnMock invocation) throws Throwable {
+                    KeywordApiService mock = (KeywordApiService) invocation.getMock();
+                    KeywordApiService.ApiCallback callback = (KeywordApiService.ApiCallback) invocation.getArguments()[0];
+                    callback.onSuccess(mock.parse(KeywordApiServiceTestData.SUCCESS_RES));
+                    return null;
+                }
+            }).when(mockKeywordApiService).start(Mockito.any(KeywordApiService.ApiCallback.class));
+            keywordGenerator.setKeywordApiService(mockKeywordApiService);
         }
 
         @Override

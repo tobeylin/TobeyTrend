@@ -34,6 +34,10 @@ public class KeywordGenerator {
         this.keywordApiService = keywordApiService;
     }
 
+    public void setKeywordApiService(KeywordApiService keywordApiService) {
+        this.keywordApiService = keywordApiService;
+    }
+
     public void setListener(KeywordGeneratorSyncListener listener) {
         this.listener = listener;
     }

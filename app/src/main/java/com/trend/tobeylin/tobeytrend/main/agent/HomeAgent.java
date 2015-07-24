@@ -17,8 +17,8 @@ public class HomeAgent implements KeywordGenerator.KeywordGeneratorSyncListener 
 
     public static final String TAG = HomeAgent.class.getSimpleName();
 
-    private HomeView homeView = null;
-    private KeywordGenerator keywordGenerator = null;
+    protected HomeView homeView = null;
+    protected KeywordGenerator keywordGenerator = null;
     private int columnCount = 1;
     private int rowCount = 1;
 
