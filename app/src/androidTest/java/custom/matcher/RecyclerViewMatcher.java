@@ -126,4 +126,42 @@ public class RecyclerViewMatcher {
         };
     }
 
+    public static Matcher<View> atPositionOnKeywordText(final int recyclerViewId, final int position, final int targetViewId) {
+
+        return new TypeSafeMatcher<View>() {
+            Resources resources = null;
+            View childView;
+
+            public void describeTo(Description description) {
+                String idDescription = Integer.toString(recyclerViewId);
+                if (this.resources != null) {
+                    try {
+                        idDescription = this.resources.getResourceName(recyclerViewId);
+                    } catch (Resources.NotFoundException var4) {
+                        idDescription = String.format("%s (resource name not found)", new Object[]{Integer.valueOf(recyclerViewId)});
+                    }
+                }
+
+                description.appendText("with id: " + idDescription);
+            }
+
+            public boolean matchesSafely(View view) {
+                this.resources = view.getResources();
+                if (childView == null) {
+                    RecyclerView recyclerView = (RecyclerView) view.getRootView().findViewById(recyclerViewId);
+                    if (recyclerView != null && recyclerView.getId() == recyclerViewId) {
+                        childView = recyclerView.getChildAt(position);
+                    } else {
+                        return false;
+                    }
+                }
+                if(childView.findViewById(view.getId()) == null){
+                    return false;
+                }
+
+                return KeywordCardViewMatcher.withVisibleKeywordText(childView).matches(view);
+            }
+        };
+    }
+
 }

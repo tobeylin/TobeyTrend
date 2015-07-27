@@ -104,6 +104,7 @@ public class KeywordCard extends RelativeLayout implements TypeTextView.OnTypeLi
             keywordCardViews.add(keywordCard);
 
             TypeTextView keywordTypeTextView = (TypeTextView) keywordCard.findViewById(R.id.keywordCard_keywordTypeTextView);
+            keywordTypeTextView.setTag("keywordTypeTextView_" + i);
             keywordTypeTextView.setOnTypeListener(this);
             keywordTypeTextView.setOnClickListener(this);
             keywordTypeTextViews.add(keywordTypeTextView);

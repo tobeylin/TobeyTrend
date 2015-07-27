@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.test.espresso.contrib.CountingIdlingResource;
 import android.support.test.espresso.intent.Intents;
-import android.support.test.espresso.intent.matcher.IntentMatchers;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.test.runner.lifecycle.ActivityLifecycleCallback;
@@ -14,13 +13,11 @@ import android.support.test.runner.lifecycle.Stage;
 import android.test.suitebuilder.annotation.LargeTest;
 import android.util.Log;
 
-import com.google.gson.Gson;
 import com.trend.tobeylin.tobeytrend.R;
 import com.trend.tobeylin.tobeytrend.data.generator.api.KeywordApiService;
 import com.trend.tobeylin.tobeytrend.entity.RegionTopSearchEntity;
 import com.trend.tobeylin.tobeytrend.main.agent.HomeAgent;
 
-import org.hamcrest.Matchers;
 import org.hamcrest.core.AllOf;
 import org.junit.After;
 import org.junit.Before;
@@ -32,13 +29,17 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import custom.action.NumberPickerAction;
+import custom.matcher.KeywordCardViewMatcher;
 import custom.matcher.NumberPickerViewMatcher;
 import custom.matcher.RecyclerViewMatcher;
 
 import static android.support.test.espresso.Espresso.*;
 import static android.support.test.espresso.action.ViewActions.*;
 import static android.support.test.espresso.assertion.ViewAssertions.*;
+import static android.support.test.espresso.intent.matcher.IntentMatchers.*;
+import static android.support.test.espresso.intent.matcher.UriMatchers.*;
 import static android.support.test.espresso.matcher.ViewMatchers.*;
+import static org.hamcrest.Matchers.*;
 
 /**
  * Created by tobeylin on 15/7/20.
@@ -83,7 +84,7 @@ public class HomeActivityTest {
     public void checkOnCreate() {
         onView(withId(R.id.actionbar_gridImageView)).check(matches(isDisplayed()));
         onView(withId(R.id.actionbar_selectCountrySpinner)).check(matches(isDisplayed()));
-        onView(withId(R.id.home_progressBar)).check(matches(Matchers.not(isDisplayed())));
+        onView(withId(R.id.home_progressBar)).check(matches(not(isDisplayed())));
         onView(withId(R.id.home_showTextView)).check(matches(withText("Showing the latest hot searches in All Regions.")));
         onView(withId(R.id.home_keywordCardRecycleView)).check(matches(isDisplayed()));
     }
@@ -99,8 +100,8 @@ public class HomeActivityTest {
         onView(NumberPickerViewMatcher.withValue(R.id.selectViewDialog_widthNumberPicker, "1")).check(matches(isDisplayed()));
         onView(withId(R.id.selectViewDialog_heightNumberPicker)).check(matches(isDisplayed()));
         onView(NumberPickerViewMatcher.withValue(R.id.selectViewDialog_heightNumberPicker, "1")).check(matches(isDisplayed()));
-        onView(withId(R.id.selectViewDialog_widthTextView)).check(matches(withText(Matchers.containsString(getString(R.string.select_view_dialog_width)))));
-        onView(withId(R.id.selectViewDialog_heightTextView)).check(matches(withText(Matchers.containsString(getString(R.string.select_view_dialog_height)))));
+        onView(withId(R.id.selectViewDialog_widthTextView)).check(matches(withText(containsString(getString(R.string.select_view_dialog_width)))));
+        onView(withId(R.id.selectViewDialog_heightTextView)).check(matches(withText(containsString(getString(R.string.select_view_dialog_height)))));
         onView(withText(getString(R.string.select_view_confirm_button))).check(matches(isDisplayed()));
         onView(withText(getString(R.string.select_view_cancel_button))).check(matches(isDisplayed()));
     }
@@ -116,8 +117,8 @@ public class HomeActivityTest {
         onView(NumberPickerViewMatcher.withValue(R.id.selectViewDialog_widthNumberPicker, "1")).check(matches(isDisplayed()));
         onView(withId(R.id.selectViewDialog_heightNumberPicker)).check(matches(isDisplayed()));
         onView(NumberPickerViewMatcher.withValue(R.id.selectViewDialog_heightNumberPicker, "1")).check(matches(isDisplayed()));
-        onView(withId(R.id.selectViewDialog_widthTextView)).check(matches(withText(Matchers.containsString(getString(R.string.select_view_dialog_width)))));
-        onView(withId(R.id.selectViewDialog_heightTextView)).check(matches(withText(Matchers.containsString(getString(R.string.select_view_dialog_height)))));
+        onView(withId(R.id.selectViewDialog_widthTextView)).check(matches(withText(containsString(getString(R.string.select_view_dialog_width)))));
+        onView(withId(R.id.selectViewDialog_heightTextView)).check(matches(withText(containsString(getString(R.string.select_view_dialog_height)))));
         onView(withText(getString(R.string.select_view_confirm_button))).check(matches(isDisplayed()));
         onView(withText(getString(R.string.select_view_cancel_button))).check(matches(isDisplayed()));
 
@@ -128,27 +129,40 @@ public class HomeActivityTest {
         onView(withText(getString(R.string.select_view_confirm_button))).perform(click());
 
         //Check the items in the recycler view
-        onView(withId(R.id.home_keywordCardRecycleView)).check(matches(Matchers.allOf(isDisplayed(), RecyclerViewMatcher.withColumnCount(testColumnCount))));
-        onView(withId(R.id.home_keywordCardRecycleView)).check(matches(Matchers.allOf(isDisplayed(), RecyclerViewMatcher.withRowCount(testRowCount))));
+        onView(withId(R.id.home_keywordCardRecycleView)).check(matches(allOf(isDisplayed(), RecyclerViewMatcher.withColumnCount(testColumnCount))));
+        onView(withId(R.id.home_keywordCardRecycleView)).check(matches(allOf(isDisplayed(), RecyclerViewMatcher.withRowCount(testRowCount))));
     }
 
     @Test
     public void checkSelectCountry(){
         onView(withId(R.id.actionbar_selectCountrySpinner)).check(matches(isDisplayed()));
         onView(withId(R.id.actionbar_selectCountrySpinner)).perform(click());
-        onData(AllOf.allOf(Matchers.is(Matchers.instanceOf(String.class)), Matchers.is("Taiwan"))).perform(click());
-        onView(withId(R.id.home_showTextView)).check(matches(withText(Matchers.containsString("Taiwan"))));
+        onData(AllOf.allOf(is(instanceOf(String.class)), is("Taiwan"))).perform(click());
+        onView(withId(R.id.home_showTextView)).check(matches(withText(containsString("Taiwan"))));
     }
 
+    @Test
     public void checkClickKeyword() {
         //check if have data
         onView(withId(R.id.actionbar_gridImageView)).check(matches(isDisplayed()));
         onView(withId(R.id.home_keywordCardRecycleView)).check(matches(isDisplayed()));
 
-        //TODO: click the item
+        //Click the item
+        int testClickPosition = 0;
+        onView(RecyclerViewMatcher.atPositionOnKeywordText(
+                R.id.home_keywordCardRecycleView,
+                testClickPosition,
+                R.id.keywordCard_keywordTypeTextView))
+                .perform(click());
 
         //Check if the intent is match
-        Intents.intended(IntentMatchers.hasAction(Intent.ACTION_VIEW));
+        String expectedUriHost = "www.google.com";
+        String expectedUriPath = "/search";
+        String expectedUriParam = "q";
+        Intents.intended(allOf(
+                hasAction(equalTo(Intent.ACTION_VIEW)),
+                hasData(allOf(hasHost(expectedUriHost), hasPath(expectedUriPath), hasParamWithName(expectedUriParam))),
+                toPackage("com.android.browser")));
     }
 
     public String getString(int resourceId){
