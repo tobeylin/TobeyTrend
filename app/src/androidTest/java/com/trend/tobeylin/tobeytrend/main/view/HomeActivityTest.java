@@ -1,15 +1,10 @@
 package com.trend.tobeylin.tobeytrend.main.view;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.test.espresso.contrib.CountingIdlingResource;
 import android.support.test.espresso.intent.Intents;
-import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.support.test.runner.lifecycle.ActivityLifecycleCallback;
-import android.support.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
-import android.support.test.runner.lifecycle.Stage;
 import android.test.suitebuilder.annotation.LargeTest;
 import android.util.Log;
 
@@ -19,8 +14,6 @@ import com.trend.tobeylin.tobeytrend.entity.RegionTopSearchEntity;
 import com.trend.tobeylin.tobeytrend.main.agent.HomeAgent;
 
 import org.hamcrest.core.AllOf;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,17 +22,29 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import custom.action.NumberPickerAction;
-import custom.matcher.KeywordCardViewMatcher;
 import custom.matcher.NumberPickerViewMatcher;
 import custom.matcher.RecyclerViewMatcher;
+import custom.rule.BaseTestRule;
 
-import static android.support.test.espresso.Espresso.*;
-import static android.support.test.espresso.action.ViewActions.*;
-import static android.support.test.espresso.assertion.ViewAssertions.*;
-import static android.support.test.espresso.intent.matcher.IntentMatchers.*;
-import static android.support.test.espresso.intent.matcher.UriMatchers.*;
-import static android.support.test.espresso.matcher.ViewMatchers.*;
-import static org.hamcrest.Matchers.*;
+import static android.support.test.espresso.Espresso.onData;
+import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.intent.matcher.IntentMatchers.hasAction;
+import static android.support.test.espresso.intent.matcher.IntentMatchers.hasData;
+import static android.support.test.espresso.intent.matcher.IntentMatchers.toPackage;
+import static android.support.test.espresso.intent.matcher.UriMatchers.hasHost;
+import static android.support.test.espresso.intent.matcher.UriMatchers.hasParamWithName;
+import static android.support.test.espresso.intent.matcher.UriMatchers.hasPath;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 
 /**
  * Created by tobeylin on 15/7/20.
@@ -49,36 +54,7 @@ import static org.hamcrest.Matchers.*;
 public class HomeActivityTest {
 
     @Rule
-    public IntentsTestRule<HomeActivity> homeActivityIntentsTestRule = new IntentsTestRule<HomeActivity>(HomeActivity.class){
-
-        private HomeAgentInjector homeAgentInjector;
-
-        @Override
-        protected void beforeActivityLaunched() {
-            Log.i("Test", "beforeActivityLaunched");
-            super.beforeActivityLaunched();
-            homeAgentInjector = new HomeAgentInjector();
-            ActivityLifecycleMonitorRegistry.getInstance().addLifecycleCallback(homeAgentInjector);
-        }
-
-        @Override
-        protected void afterActivityFinished() {
-            Log.i("Test", "afterActivityFinished");
-            homeAgentInjector.destroy();
-            ActivityLifecycleMonitorRegistry.getInstance().removeLifecycleCallback(homeAgentInjector);
-            super.afterActivityFinished();
-        }
-    };
-
-    @Before
-    public void setUp() throws Exception {
-        Log.i("Test", "setUp");
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        Log.i("Test", "tearDown");
-    }
+    public BaseTestRule<HomeActivity, DecoratedHomeAgent> homeActivityTestRule = new BaseTestRule<>(HomeActivity.class, DecoratedHomeAgent.class);
 
     @Test
     public void checkOnCreate() {
@@ -166,48 +142,18 @@ public class HomeActivityTest {
     }
 
     public String getString(int resourceId){
-        return homeActivityIntentsTestRule.getActivity().getString(resourceId);
+        return homeActivityTestRule.getActivity().getString(resourceId);
     }
 
-    private class HomeAgentInjector implements ActivityLifecycleCallback {
+    public static class DecoratedHomeAgent extends HomeAgent {
 
-        public final String TAG = HomeAgentInjector.class.getSimpleName();
-
-        private DecoratedHomeAgent decoratedHomeAgent;
-        private CountingIdlingResource homeAgentCounting;
-        @Override
-        public void onActivityLifecycleChanged(Activity activity, Stage stage) {
-            HomeActivity homeActivity = (HomeActivity) activity;
-
-            switch (stage) {
-                case PRE_ON_CREATE:
-                    Log.i(TAG, "PRE ON CREATE: " + activity);
-                    homeAgentCounting = new CountingIdlingResource(activity + HomeAgent.TAG);
-                    homeAgentCounting.increment();
-                    decoratedHomeAgent = new DecoratedHomeAgent(homeActivity, homeActivity, homeAgentCounting);
-                    homeActivity.setAgent(decoratedHomeAgent);
-                    registerIdlingResources(homeAgentCounting);
-                    Log.i(TAG, "PRE ON CREATE: " + homeAgentCounting);
-                    break;
-                case STOPPED:
-                    Log.i(TAG, "STOPPED: " + activity);
-                    break;
-                default:
-            }
-        }
-
-        public void destroy(){
-            Log.i(TAG, this + " destroy");
-            unregisterIdlingResources(homeAgentCounting);
-        }
-    }
-
-    private class DecoratedHomeAgent extends HomeAgent {
+        public final String TAG = DecoratedHomeAgent.class.getSimpleName();
 
         private CountingIdlingResource countingIdlingResource;
 
         public DecoratedHomeAgent(Context context, HomeView homeView, CountingIdlingResource countingIdlingResource) {
             super(context, homeView);
+            Log.i(TAG, "DecoratedHomeAgent construct.");
             mock();
             this.countingIdlingResource = countingIdlingResource;
             this.countingIdlingResource.decrement();

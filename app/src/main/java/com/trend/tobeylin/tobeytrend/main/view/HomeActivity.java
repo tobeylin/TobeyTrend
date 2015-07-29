@@ -26,6 +26,7 @@ import com.trend.tobeylin.tobeytrend.ui.custom.KeywordCard;
 import java.util.List;
 
 public class HomeActivity extends FragmentActivity implements HomeView,
+        AgentView<HomeAgent>,
         View.OnClickListener,
         AdapterView.OnItemSelectedListener,
         KeywordCardAdapter.OnItemClickListener,
@@ -47,14 +48,20 @@ public class HomeActivity extends FragmentActivity implements HomeView,
         setContentView(R.layout.activity_home);
 
         initLayout();
-        if(homeAgent == null) {
+        if (homeAgent == null) {
             homeAgent = new HomeAgent(this, this);
         }
         homeAgent.init();
     }
 
+    @Override
     public void setAgent(HomeAgent homeAgent) {
         this.homeAgent = homeAgent;
+    }
+
+    @Override
+    public HomeAgent getAgent() {
+        return null;
     }
 
     public void initLayout() {
@@ -107,14 +114,14 @@ public class HomeActivity extends FragmentActivity implements HomeView,
     }
 
     @Override
-    public void showGridImageView(){
+    public void showGridImageView() {
         ImageView gridImageView = (ImageView) getActionBar().getCustomView().findViewById(R.id.actionbar_gridImageView);
         gridImageView.setVisibility(View.VISIBLE);
         gridImageView.setOnClickListener(this);
     }
 
     @Override
-    public void showCountrySpinner(){
+    public void showCountrySpinner() {
         countrySpinner = (Spinner) getActionBar().getCustomView().findViewById(R.id.actionbar_selectCountrySpinner);
         countrySpinner.setVisibility(View.VISIBLE);
         CountrySpinnerAdapter countrySpinnerAdapter = new CountrySpinnerAdapter(Region.getAllCountriesFullName());

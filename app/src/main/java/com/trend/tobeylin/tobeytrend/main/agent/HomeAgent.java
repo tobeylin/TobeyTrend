@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Created by tobeylin on 15/7/1.
  */
-public class HomeAgent implements KeywordGenerator.KeywordGeneratorSyncListener {
+public class HomeAgent implements BaseAgent, KeywordGenerator.KeywordGeneratorSyncListener {
 
     public static final String TAG = HomeAgent.class.getSimpleName();
 
