@@ -4,8 +4,6 @@ import android.content.Context;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 /**
@@ -30,10 +28,6 @@ public class VolleyRequestQueue {
     public VolleyRequestQueue(RequestQueue requestQueue){
         this.requestQueue = requestQueue;
     }
-
-//    public void sendGetRequest(String url, Response.Listener successListener, Response.ErrorListener errorListener){
-//        requestQueue.add(new StringRequest(Request.Method.GET, url, successListener, errorListener));
-//    }
 
     public void sendRequest(Request request){
         requestQueue.add(request);
