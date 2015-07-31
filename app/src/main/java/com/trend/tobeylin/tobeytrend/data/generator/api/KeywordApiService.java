@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.trend.tobeylin.tobeytrend.VolleyRequestQueue;
 import com.trend.tobeylin.tobeytrend.entity.RegionTopSearchEntity;
+import com.trend.tobeylin.tobeytrend.manager.AppCenter;
 
 /**
  * Created by tobeylin on 15/7/9.
@@ -27,8 +28,8 @@ public class KeywordApiService {
         void onFail();
     }
 
-    public KeywordApiService(Context context) {
-        requestQueue = VolleyRequestQueue.getInstance(context.getApplicationContext());
+    public KeywordApiService() {
+        requestQueue = (VolleyRequestQueue) AppCenter.getInstance().getVolleyRequestQueue();
     }
 
     public KeywordApiService(VolleyRequestQueue volleyRequestQueue) {

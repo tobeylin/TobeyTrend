@@ -26,8 +26,8 @@ public class KeywordGenerator {
         void onSyncFail();
     }
 
-    public KeywordGenerator(Context context){
-        keywordApiService = new KeywordApiService(context);
+    public KeywordGenerator(){
+        keywordApiService = new KeywordApiService();
     }
 
     public KeywordGenerator(KeywordApiService keywordApiService) {

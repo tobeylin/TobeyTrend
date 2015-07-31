@@ -22,9 +22,9 @@ public class HomeAgent implements BaseAgent, KeywordGenerator.KeywordGeneratorSy
     private int columnCount = 1;
     private int rowCount = 1;
 
-    public HomeAgent(Context context, HomeView homeView){
+    public HomeAgent(HomeView homeView){
         this.homeView = homeView;
-        keywordGenerator = new KeywordGenerator(context);
+        keywordGenerator = new KeywordGenerator();
         keywordGenerator.setListener(this);
     }
 

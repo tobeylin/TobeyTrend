@@ -5,24 +5,18 @@ import android.content.Context;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.trend.tobeylin.tobeytrend.manager.Manager;
 
 /**
  * Created by tobeylin on 15/7/6.
  */
-public class VolleyRequestQueue {
+public class VolleyRequestQueue implements Manager {
 
     private static VolleyRequestQueue instance = null;
     private RequestQueue requestQueue = null;
 
-    private VolleyRequestQueue(Context context){
+    public VolleyRequestQueue(Context context){
         requestQueue = Volley.newRequestQueue(context);
-    }
-
-    public static VolleyRequestQueue getInstance(Context context) {
-        if(instance == null){
-            instance = new VolleyRequestQueue(context);
-        }
-        return instance;
     }
 
     public VolleyRequestQueue(RequestQueue requestQueue){
