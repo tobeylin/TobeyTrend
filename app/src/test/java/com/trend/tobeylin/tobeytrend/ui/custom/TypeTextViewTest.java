@@ -5,7 +5,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -15,30 +14,19 @@ import com.trend.tobeylin.tobeytrend.R;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.Robolectric;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
-import org.robolectric.res.Attribute;
-import org.robolectric.res.ResourceLoader;
-import org.robolectric.shadows.RoboAttributeSet;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 import static org.assertj.android.api.Assertions.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-/**
- * Created by tobeylin on 15/7/16.
- */
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class)
 public class TypeTextViewTest {
 
@@ -80,7 +68,7 @@ public class TypeTextViewTest {
         assertEquals(typeTextView.getTextShadowDy(), textView.getShadowDy(), 0);
         CursorView textCursorView = (CursorView) typeTextView.findViewById(R.id.typeTextView_textCursorView);
         assertNotNull(textCursorView);
-        assertEquals(typeTextView.getCursorColor(), Shadows.shadowOf(textCursorView).getBackgroundColor());
+        assertEquals(typeTextView.getCursorColor(), Shadows.shadowOf(textCursorView.getBackground()).getCreatedFromResId());
         assertThat(textCursorView).isGone();
     }
 
@@ -94,27 +82,25 @@ public class TypeTextViewTest {
         String testShadowColor = "#0000FF";
         String testShadowDy = "2";
         String testShadowDx = "3";
-        String appPackageName = context.getPackageName();
-        List<Attribute> attributeList = new ArrayList<>();
-        attributeList.add(new Attribute(appPackageName + ":attr/textColor", testTextColor, appPackageName));
-        attributeList.add(new Attribute(appPackageName + ":attr/textSize", testTextSize, appPackageName));
-        attributeList.add(new Attribute(appPackageName + ":attr/cursorColor", testCursorColor, appPackageName));
-        attributeList.add(new Attribute(appPackageName + ":attr/shadowRadius", testShadowRadius, appPackageName));
-        attributeList.add(new Attribute(appPackageName + ":attr/shadowColor", testShadowColor, appPackageName));
-        attributeList.add(new Attribute(appPackageName + ":attr/shadowDy", testShadowDy, appPackageName));
-        attributeList.add(new Attribute(appPackageName + ":attr/shadowDx", testShadowDx, appPackageName));
-        ResourceLoader resourceLoader = Shadows.shadowOf(context.getResources()).getResourceLoader();
-        AttributeSet attrs = new RoboAttributeSet(attributeList, resourceLoader);
+        AttributeSet attrs = Robolectric.buildAttributeSet()
+                .addAttribute(R.styleable.TypeTextView_textColor, testTextColor)
+                .addAttribute(R.styleable.TypeTextView_textSize, testTextSize)
+                .addAttribute(R.styleable.TypeTextView_cursorColor, testCursorColor)
+                .addAttribute(R.styleable.TypeTextView_shadowRadius, testShadowRadius)
+                .addAttribute(R.styleable.TypeTextView_shadowColor, testShadowColor)
+                .addAttribute(R.styleable.TypeTextView_shadowDx, testShadowDx)
+                .addAttribute(R.styleable.TypeTextView_shadowDy, testShadowDy)
+                .build();
 
         typeTextView = new TypeTextView(context, attrs);
 
         int expectedTextColor = Color.parseColor(testTextColor);
         float expectedTextSize = 25;
         int expectedCursorColor = Color.parseColor(testCursorColor);
-        int expectedShadowRadius = new Integer(testShadowRadius);
+        int expectedShadowRadius = Integer.valueOf(testShadowRadius);
         int expectedShadowColor = Color.parseColor(testShadowColor);
-        int expectedShadowDy = new Integer(testShadowDy);
-        int expectedShadowDx = new Integer(testShadowDx);
+        int expectedShadowDy = Integer.valueOf(testShadowDy);
+        int expectedShadowDx = Integer.valueOf(testShadowDx);
         assertEquals(expectedTextSize, typeTextView.getTextSize(), 0);
         assertEquals(expectedTextColor, typeTextView.getTextColor());
         assertEquals(expectedCursorColor, typeTextView.getCursorColor());
@@ -133,7 +119,7 @@ public class TypeTextViewTest {
         assertEquals(typeTextView.getTextShadowDy(), textView.getShadowDy(), 0);
         CursorView textCursorView = (CursorView) typeTextView.findViewById(R.id.typeTextView_textCursorView);
         assertNotNull(textCursorView);
-        assertEquals(typeTextView.getCursorColor(), Shadows.shadowOf(textCursorView).getBackgroundColor());
+        assertEquals(typeTextView.getCursorColor(), Shadows.shadowOf(textCursorView.getBackground()).getCreatedFromResId());
         assertThat(textCursorView).isGone();
     }
 

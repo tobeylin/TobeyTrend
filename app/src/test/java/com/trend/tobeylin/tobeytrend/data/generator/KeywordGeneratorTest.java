@@ -3,12 +3,13 @@ package com.trend.tobeylin.tobeytrend.data.generator;
 import com.trend.tobeylin.tobeytrend.data.generator.api.KeywordApiService;
 import com.trend.tobeylin.tobeytrend.entity.RegionTopSearchEntity;
 
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
 import java.util.List;
@@ -16,20 +17,14 @@ import java.util.List;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-/**
- * Created by tobeylin on 15/7/18.
- */
+@RunWith(MockitoJUnitRunner.class)
 public class KeywordGeneratorTest {
 
+    @InjectMocks
     private KeywordGenerator keywordGenerator;
 
     @Mock
     private KeywordApiService keywordApiService;
-
-    @Before
-    public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
-    }
 
     @Test
     public void testSync_SuccessAndSync_ByDoAnswer(){
@@ -41,7 +36,6 @@ public class KeywordGeneratorTest {
                 return null;
             }
         }).when(keywordApiService).start(any(KeywordApiService.ApiCallback.class));
-        keywordGenerator = new KeywordGenerator(keywordApiService);
         KeywordGenerator.KeywordGeneratorSyncListener mockListener = mock(KeywordGenerator.KeywordGeneratorSyncListener.class);
         keywordGenerator.setListener(mockListener);
 
@@ -56,7 +50,6 @@ public class KeywordGeneratorTest {
     public void testSync_SuccessAndSync_ByCaptor(){
 
         KeywordGenerator.KeywordGeneratorSyncListener mockListener = mock(KeywordGenerator.KeywordGeneratorSyncListener.class);
-        keywordGenerator = new KeywordGenerator(keywordApiService);
         keywordGenerator.setListener(mockListener);
         keywordGenerator.sync();
 
@@ -77,7 +70,6 @@ public class KeywordGeneratorTest {
                 return null;
             }
         }).when(keywordApiService).start(any(KeywordApiService.ApiCallback.class));
-        keywordGenerator = new KeywordGenerator(keywordApiService);
 
         keywordGenerator.sync();
 
@@ -92,7 +84,6 @@ public class KeywordGeneratorTest {
         List mockCountryList = mock(List.class);
         when(mockCountryList.size()).thenReturn(countryKeywordCount);
         doReturn(mockCountryList).when(mockTopSearchEntity).getCountryKeywords(anyString());
-        keywordGenerator = new KeywordGenerator(keywordApiService);
         keywordGenerator.setTopSearchEntity(mockTopSearchEntity);
 
         String validCountryName = "TW";
@@ -108,7 +99,6 @@ public class KeywordGeneratorTest {
         List mockAllCountryList = mock(List.class);
         when(mockAllCountryList.size()).thenReturn(countryKeywordCount * countryCount);
         doReturn(mockAllCountryList).when(mockTopSearchEntity).getCountryKeywords(anyString());
-        keywordGenerator = new KeywordGenerator(keywordApiService);
         keywordGenerator.setTopSearchEntity(mockTopSearchEntity);
 
         String allRegion = "all";

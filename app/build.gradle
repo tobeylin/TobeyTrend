@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion "23.0.0 rc2"
+    compileSdkVersion 23
+    buildToolsVersion "24.0.1"
     defaultConfig {
         applicationId "com.trend.tobeylin.tobeytrend"
         minSdkVersion 14
-        targetSdkVersion 21
+        targetSdkVersion 23
         versionCode 1
         versionName "1.0"
 
@@ -34,30 +34,30 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:22.2.0'
-    compile 'com.google.code.gson:gson:2.3.1'
+
+    compile 'com.android.support:design:23.1.1'
+    compile 'com.google.code.gson:gson:2.4'
     compile 'eu.the4thfloor.volley:com.android.volley:2015.05.28'
-    compile 'com.android.support:recyclerview-v7:+'
     compile 'com.squareup.assertj:assertj-android:1.0.0'
-    compile 'com.android.support:support-annotations:22.2.0'
 
     androidTestCompile 'junit:junit:4.12'
-    androidTestCompile "com.google.dexmaker:dexmaker:1.+"
-    androidTestCompile "com.google.dexmaker:dexmaker-mockito:1.+"
-    androidTestCompile 'org.mockito:mockito-core:1.9.+'
-    androidTestCompile 'com.android.support.test:runner:0.3'
-    androidTestCompile 'com.android.support.test:rules:0.3'
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2'
-    androidTestCompile 'com.android.support.test.espresso:espresso-intents:2.2'
-    androidTestCompile ('com.android.support.test.espresso:espresso-contrib:2.2') {
-        exclude group: 'com.android.support', module: 'appcompat'
+    androidTestCompile 'com.crittercism.dexmaker:dexmaker:1.4'
+    androidTestCompile 'com.crittercism.dexmaker:dexmaker-dx:1.4'
+    androidTestCompile 'com.crittercism.dexmaker:dexmaker-mockito:1.4'
+    androidTestCompile 'org.mockito:mockito-core:1.10.19'
+    androidTestCompile 'com.android.support.test:runner:0.5'
+    androidTestCompile 'com.android.support.test:rules:0.5'
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'
+    androidTestCompile 'com.android.support.test.espresso:espresso-intents:2.2.1'
+    androidTestCompile ('com.android.support.test.espresso:espresso-contrib:2.2.1') {
         exclude group: 'com.android.support', module: 'support-v4'
-        exclude module: 'recyclerview-v7'
+        exclude group: 'com.android.support', module: 'recyclerview-v7'
     }
+    androidTestCompile 'com.android.support:support-annotations:23.1.1'
 
     testCompile 'junit:junit:4.12'
-    testCompile 'org.robolectric:robolectric:3.0'
+    testCompile 'org.robolectric:robolectric:3.1.4'
     testCompile 'org.robolectric:shadows-support-v4:3.0'
-    testCompile 'com.google.dexmaker:dexmaker:1.2'
-    testCompile 'org.mockito:mockito-core:1.9.5'
+    testCompile 'com.crittercism.dexmaker:dexmaker:1.4'
+    testCompile 'org.mockito:mockito-core:1.10.19'
 }
